@@ -46,16 +46,18 @@ nav.sticky .logo a {
     color: #fff;
 }
 
+.nav-content .nav-left {
+    display: flex; /* Added to create a flexible box layout */
+}
+
 .nav-content .nav-links {
     display: flex;
-    margin-left: 50%;
     align-items: center;
 }
 
 .nav-content .nav-links li {
     list-style: none;
     margin: 0 10px;
-    text-wrap: nowrap;
 }
 
 .nav-links li a {
@@ -81,8 +83,10 @@ nav.sticky .logo a {
     vertical-align: middle; /* Aligns the image with the text */
 }
 
-.profile{
-    margin-left:20px;
+.profile {
+    margin-left: 20px;
+    display: flex; /* To align profile icon and text */
+    align-items: center; /* Centers the icon and text vertically */
 }
 
 .nav-links li a span {
@@ -105,9 +109,14 @@ nav.sticky .nav-links li a:hover {
     color: #0E2431;
 }
 
-nav.sticky .hamburger{
+nav.sticky .hamburger {
     color: #fff;
     transition: all 0.4s ease;
+}
+
+/* Prevent navbar links from shifting due to longer text */
+.nav-links li {
+    white-space: nowrap; /* Ensures text doesn't wrap */
 }
 
 .sidebar {
