@@ -40,9 +40,9 @@ body {
   backface-visibility: hidden;
 }
 
-.container #flip:checked ~ .cover {
+/* .container #flip:checked ~ .cover {
   transform: rotateY(-180deg);
-}
+} */
 
 .container .cover .front {
   position: absolute;

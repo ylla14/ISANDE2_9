@@ -27,14 +27,14 @@ db.connect((err) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'login.html')); // Serve the login.html
+    res.sendFile(path.join(__dirname, 'views', 'login.html')); 
 });
 
 app.get('/dashboardIM.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'dashboardIM.html'));
 });
 
-// Serve dashboardSR.html for Sales Representative role
+
 app.get('/dashboardSR.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'dashboardSR.html'));
 });
@@ -42,17 +42,16 @@ app.get('/dashboardSR.html', (req, res) => {
 
  
 app.post('/login', (req, res) => {
-    const { userId, password } = req.body; // Extract userId and password from request body
+    const { userId, password } = req.body; // Get userId and password from request body
 
-    // Validate the presence of userId and password
+    // Check if may given na uid and pass
     if (!userId || !password) {
         return res.status(400).json({ message: 'User ID and password are required.' });
     }
 
-    // Placeholder for user role
-    let userRole = '';
+    let userRole = ''; //idk what im gonna do pa w dis pero keep muna
 
-    // First, check the InventoryManager table
+    // check muna im table
     const inventoryManagerQuery = 'SELECT * FROM InventoryManager WHERE inventory_manager_id = ?';
 
     db.execute(inventoryManagerQuery, [userId], (error, inventoryManagerResults) => {
@@ -62,8 +61,8 @@ app.post('/login', (req, res) => {
         }
 
         if (inventoryManagerResults.length > 0) {
-            const user = inventoryManagerResults[0]; // Get the user data from InventoryManager
-            if (user.password === password) { // In practice, use bcrypt.compare() for hashed passwords
+            const user = inventoryManagerResults[0]; 
+            if (user.password === password) {
                 userRole = 'InventoryManager'; // Set role
                 return res.json({
                     message: 'Login successful',
@@ -101,7 +100,6 @@ app.post('/login', (req, res) => {
         }
     });
 });
-
 
 
 // Start the server

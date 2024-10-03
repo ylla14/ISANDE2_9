@@ -47,7 +47,7 @@ nav.sticky .logo a {
 }
 
 .nav-content .nav-left {
-    display: flex; /* Added to create a flexible box layout */
+    display: flex; 
 }
 
 .nav-content .nav-links {
@@ -67,7 +67,7 @@ nav.sticky .logo a {
     font-weight: 500;
     padding: 1px 4px;
     transition: all 0.3s ease;
-    align-items: center; /* Ensures that the icon and text are vertically aligned */
+    align-items: center; 
 }
 
 .nav-links li a:hover {
@@ -75,23 +75,23 @@ nav.sticky .logo a {
 }
 
 .profile-icon {
-    width: 32px; /* Set the size of the profile icon */
+    width: 32px; 
     height: 32px;
-    border-radius: 50%; /* Makes the image a circle */
-    object-fit: cover; /* Ensures the image fills the circle without distortion */
-    margin-right: 10px; /* Adds space between the image and the text */
-    vertical-align: middle; /* Aligns the image with the text */
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-right: 10px; 
+    vertical-align: middle; 
 }
 
 .profile {
     margin-left: 20px;
-    display: flex; /* To align profile icon and text */
-    align-items: center; /* Centers the icon and text vertically */
+    display: flex; 
+    align-items: center; 
 }
 
 .nav-links li a span {
-    font-size: 20px; /* Adjust the font size of "Profile" */
-    color: inherit; /* Makes the text color the same as the link */
+    font-size: 20px; 
+    color: inherit; 
 }
 
 nav.sticky .nav-links li a {
@@ -114,9 +114,9 @@ nav.sticky .hamburger {
     transition: all 0.4s ease;
 }
 
-/* Prevent navbar links from shifting due to longer text */
+/* Prevent navbar links from shifting pag may longer text */
 .nav-links li {
-    white-space: nowrap; /* Ensures text doesn't wrap */
+    white-space: nowrap; 
 }
 
 .sidebar {
@@ -188,20 +188,20 @@ h2 {
     box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/*below is not applicable to other pages*/
+/*below might not be applicable to other pages*/
 
 /*rectangles row 1*/
 
 .overview {
     display: flex;
-    justify-content: center; /* Center the rectangles */
-    gap: 20px; /* Control the space between the rectangles */
+    justify-content: center; 
+    gap: 20px; /* gap btwn the rectangles */
     padding: 20px 80px;
     position: relative;
     top: 250px;
 }
 
-.overview .rectangle { /* More specific selector */
+.overview .rectangle { 
     width: 500px;
     height: 100px;
     border: 2px solid #000058; /* Border color */
@@ -210,7 +210,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #000058; /* Text color matching the border */
+    color: #000058; 
     font-size: 18px;
     font-weight: 500;
     margin: 0 10px;
@@ -219,7 +219,7 @@ h2 {
 .graph {
     display: flex;
     justify-content: center; /* Center the rectangles */
-    gap: 24px; /* Control the space between the rectangles */
+    gap: 24px; /* gap btwn the rectangles */
     padding: 20px 80px;
     position: relative;
     top: 300px;
@@ -234,7 +234,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #000058; /* Text color matching the border */
+    color: #000058; 
     font-size: 18px;
     font-weight: 500;
     margin: 0 10px;
