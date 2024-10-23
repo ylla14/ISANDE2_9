@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IM Dashboard</title>
-    <link rel="stylesheet" href="css/dashboardIMStyle.css"> <!--for node/local host-->
-    <!-- <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> --> <!--for live server-->
+    <title>IMS Dashboard</title>
+    <!-- <link rel="stylesheet" href="css/dashboardIMStyle.css"> for node/local host -->
+    <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> <!--for live server-->
 </head>
 <body>
     <nav>
         <div class="nav-content">
             <div class="logo">
-                <a href="#">Logo</a>
+                <img src="/public/resources/logo.png" alt="Logo" class="logo-icon">
             </div>
             <div class="nav-left">
                 <ul class="nav-links">
@@ -19,22 +19,20 @@
                     <li><a href="#">Inventory</a></li>
                     <li><a href="#">Sales Orders</a></li>
                     <li><a href="#">Suppliers</a></li>
-                </ul>
+                </ul> 
             </div>
             <div class="profile">
-                <li> 
-                    <a href="#">
-                        <img src="resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
-                        <span>Profile</span>
-                    </a>
-                </li>
+                <a href="#">
+                    <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
             </div>
             <div class="hamburger" onclick="toggleSidebar()">
                 &#9776; <!-- Hamburger icon -->
             </div>
         </div>
     </nav>
-
+     <!-- SIDE BAR -->
     <div class="sidebar" id="sidebar">
         <div class="close-btn" onclick="toggleSidebar()">&times;</div>
         <div class="sidebar-content">
@@ -58,12 +56,88 @@
         <div class="graphcon">Helloor 1</div>
         <div class="graphcon">Helloor 2</div>
     </div>
+
+     <!-- Fast Selling Section -->
+    <div class="fast-selling">
+        <div class="section-header">
+            <h2>Fast Selling Products</h2>
+            <div class="button-container">
+                <button class="view-btn">View All</button>
+                <button class="download-btn" onclick="downloadFastSelling()">Download</button>
+            </div>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Product 1</td>
+                    <td>50</td>
+                    <td>2024-12-31</td>
+                </tr>
+                <tr>
+                    <td>Product 2</td>
+                    <td>30</td>
+                    <td>2025-01-15</td>
+                </tr>
+                <tr>
+                    <td>Product 3</td>
+                    <td>20</td>
+                    <td>2024-11-05</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Stock Aging Section -->
+    <div class="table-section">
+        <div class="section-header">
+            <h2>Stock Aging Report</h2>
+            <div class="button-container">
+                <button class="view-btn">View All</button>
+                <button class="download-btn" onclick="downloadStockAging()">Download</button>
+            </div>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Product 1</td>
+                    <td>50</td>
+                    <td>2024-12-31</td>
+                </tr>
+                <tr>
+                    <td>Product 2</td>
+                    <td>30</td>
+                    <td>2025-01-15</td>
+                </tr>
+                <tr>
+                    <td>Product 3</td>
+                    <td>20</td>
+                    <td>2024-11-05</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     
     <section class="footer"></section>
     <div class="text">
         <h2>Fotah</h2>
     </div>
-
+    
+    <!-- SIDE BAR -->
     <script>
         let nav = document.querySelector("nav");
         window.onscroll = function() {
@@ -78,6 +152,16 @@
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("active");
         }
+
+        function downloadFastSelling() {
+        // Logic to download Fast Selling Products data
+        alert("Download Fast Selling Products data.");
+        }
+
+        function downloadStockAging() {
+        // Logic to download Stock Aging Report data
+        alert("Download Stock Aging Report data.");
+         }
     </script>
 </body>
 </html>

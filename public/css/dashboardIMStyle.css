@@ -9,6 +9,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/* header */
 nav {
     position: fixed;
     top: 0;
@@ -35,15 +36,14 @@ nav .nav-content {
 }
 
 nav .logo a {
-    font-weight: 600;
-    font-size: 35px;
-    color: #000058;
-    position: relative;
-    right: inherit;
+    display: flex; /* Ensures the image fits inside the anchor */
+    align-items: center; /* Vertically centers the image */
 }
 
-nav.sticky .logo a {
-    color: #fff;
+.logo-icon {
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
 }
 
 .nav-content .nav-left {
@@ -74,6 +74,9 @@ nav.sticky .logo a {
     color: #000058;
 }
 
+
+/* profile header part */
+
 .profile-icon {
     width: 32px; 
     height: 32px;
@@ -83,12 +86,18 @@ nav.sticky .logo a {
     vertical-align: middle; 
 }
 
-.profile {
-    margin-left: 20px;
-    display: flex; 
-    align-items: center; 
+.profile a {
+    text-decoration: none;
+    color: #0E2431; /* Match this with other nav text */
+    font-size: 18px;
+    font-weight: 500;
 }
 
+.profile a:hover {
+    color: #000058; /* Hover color like other nav links */
+}
+
+/* sticky (stay on screen adn change appearance when scroll) */
 .nav-links li a span {
     font-size: 20px; 
     color: inherit; 
@@ -99,8 +108,20 @@ nav.sticky .nav-links li a {
     transition: all 0.4s ease;
 }
 
+nav.sticky .profile a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
 nav.sticky .nav-links li a:hover {
     color: #0E2431;
+}
+
+nav.sticky .logo-icon {
+    content: url("/public/resources/logo_light.png"); /* Path to the sticky version of the logo */
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
 }
 
 .hamburger {
@@ -167,19 +188,13 @@ nav.sticky .hamburger {
 }
 
 .footer {
-    height: 100vh;
+    height: 50vh;
     width: 100%;
     background: url("images/background.png") no-repeat;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     font-family: 'Ubuntu', sans-serif;
-}
-
-h2 {
-    font-size: 30px;
-    margin-bottom: 6px;
-    color: #4070f4;
 }
 
 .text {
@@ -216,6 +231,8 @@ h2 {
     margin: 0 10px;
 }
 
+/* graphs */
+
 .graph {
     display: flex;
     justify-content: center; /* Center the rectangles */
@@ -238,4 +255,138 @@ h2 {
     font-size: 18px;
     font-weight: 500;
     margin: 0 10px;
+}
+
+/* FAST SELLING */
+
+.fast-selling {
+    margin: 20px auto; /* Center the table horizontally */
+    text-align: center;
+    top: 300px;
+    position: relative;
+    padding: 20px 80px;
+
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+table thead {
+    background-color: #333;
+    color: white;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+table th {
+    background-color: #000058;
+    color: white;
+    text-transform: uppercase;
+}
+
+.fast-selling h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #000058;
+    text-align: left;
+}
+
+
+/* TABLES */
+
+.table-section {
+    margin: 20px auto; /* Center the table horizontally */
+    text-align: center;
+    top: 300px;
+    position: relative;
+    padding: 20px 80px;
+
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+table thead {
+    background-color: #333;
+    color: white;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+table th {
+    background-color: #000058;
+    color: white;
+    text-transform: uppercase;
+}
+
+.table-section h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #000058;
+    text-align: left;
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.button-container {
+    gap: 5%;
+    white-space: nowrap;
+}
+
+.view-btn, .download-btn {
+    background-color: #000058;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-left: 0; 
+}
+
+.view-btn:hover, .download-btn:hover {
+    background-color: #333;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    color: #000058;
+    margin: 0;
 }
