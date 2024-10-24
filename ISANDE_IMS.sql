@@ -15,36 +15,6 @@ USE ims;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES */;
 
--- Table structure for table Products
-DROP TABLE IF EXISTS Products;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
-CREATE TABLE Products (
-  product_id VARCHAR(50) NOT NULL, 
-  product_category VARCHAR(50) DEFAULT NULL,
-  product_name VARCHAR(100) DEFAULT NULL,
-  brand VARCHAR(50) DEFAULT NULL,
-  pack_size VARCHAR(50) DEFAULT NULL,
-  selling_price DECIMAL(10,2) DEFAULT NULL,
-  expiration_date DATE DEFAULT NULL,
-  description TEXT DEFAULT NULL,
-  current_stock_level INT DEFAULT NULL,
-  reorder_level INT DEFAULT NULL,
-  min_order_quantity INT DEFAULT NULL,
-  lead_time INT DEFAULT NULL, -- In days
-  product_image VARCHAR(255) DEFAULT NULL, 
-  PRIMARY KEY (product_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- Inserting into Products table
-LOCK TABLES Products WRITE;
-/*!40000 ALTER TABLE Products DISABLE KEYS */;
-INSERT INTO Products VALUES 
-('PRD001', 'LENS', 'Contact Lens', 'Acuvue', '1 Box (6 Lenses)', 1200.00, '2025-12-31', 'Soft contact lenses for daily use', 150, 50, 20, 10, 'path/to/image1.jpg'),
-('PRD002', 'GELS', 'Lubricating Gel', 'TheraTears', '100 ml', 500.00, '2024-08-15', 'Eye lubricating gel', 200, 60, 30, 15, 'path/to/image2.jpg');
-/*!40000 ALTER TABLE Products ENABLE KEYS */;
-UNLOCK TABLES;
-
 -- Table structure for table Suppliers
 DROP TABLE IF EXISTS Suppliers;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
@@ -68,9 +38,98 @@ CREATE TABLE Suppliers (
 LOCK TABLES Suppliers WRITE;
 /*!40000 ALTER TABLE Suppliers DISABLE KEYS */;
 INSERT INTO Suppliers VALUES 
-('SUP001', 'Pharma Supplies Inc.', 'John Doe', 'john@pharmasupplies.com', '123-456-789', '123 Pharma St., Manila', 'PO Box 123, Manila', 'BRN12345', '2025-06-30', '30 days after delivery', 'Bank: BDO, Acc: 123456789'),
-('SUP002', 'Medical Goods Co.', 'Jane Smith', 'jane@medicalgoods.com', '987-654-321', '456 Medical Ave., Cebu', 'PO Box 456, Cebu', 'BRN67890', '2024-12-31', '15 days after delivery', 'Bank: BPI, Acc: 987654321');
+('SUP001', 'Aurolab', 'John Doe', 'john@pharmasupplies.com', '123-456-789', '123 Pharma St., Manila', 'PO Box 123, Manila', 'BRN12345', '2025-06-30', '30 days after delivery', 'Bank: BDO, Acc: 123456789'),
+('SUP002', 'Brady Super Block', 'Jane Smith', 'jane@medicalgoods.com', '987-654-321', '456 Medical Ave., Cebu', 'PO Box 456, Cebu', 'BRN67890', '2024-12-31', '15 days after delivery', 'Bank: BPI, Acc: 987654321');
 /*!40000 ALTER TABLE Suppliers ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- Table structure for table Products
+DROP TABLE IF EXISTS Products;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+CREATE TABLE Products (
+  product_id VARCHAR(50) NOT NULL, 
+  product_category VARCHAR(50) DEFAULT NULL,
+  product_name VARCHAR(100) DEFAULT NULL,
+  supplier_id VARCHAR(50) DEFAULT NULL,
+  pack_size VARCHAR(50) DEFAULT NULL,
+  selling_price DECIMAL(10,2) DEFAULT NULL,
+  expiration_date DATE DEFAULT NULL,
+  description TEXT DEFAULT NULL,
+  current_stock_level INT DEFAULT NULL,
+  reorder_level INT DEFAULT NULL,
+  min_order_quantity INT DEFAULT NULL,
+  lead_time INT DEFAULT NULL, -- In days
+  product_image VARCHAR(255) DEFAULT NULL, 
+  PRIMARY KEY (product_id),
+  FOREIGN KEY (supplier_id) REFERENCES Suppliers(supplier_id) -- This connects the Products to the Suppliers table
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- Inserting into Products table
+/*!40000 ALTER TABLE Products DISABLE KEYS */;
+INSERT INTO Products (product_id, product_category, product_name, supplier_id, pack_size, selling_price, expiration_date, description, current_stock_level, reorder_level, min_order_quantity, lead_time, product_image) VALUES
+('AR001', 'LENS', 'PMMA Lenses Single/Three piece', 'SUP001', '1 pc', 700.00, '2026-12-31', 'PMMA lenses for vision correction', 600, 500, 600, 14, 'path/to/image3.jpg'),
+('AR002', 'LENS', 'PMMA Lenses Single - AC', 'SUP001', '1 pc', 1000.00, '2026-12-31', 'Single-piece PMMA lenses', 650, 500, 600, 14, 'path/to/image4.jpg'),
+('AR003', 'LENS', 'Scleral Fixation Lens', 'SUP001', '1 pc', 2000.00, '2026-12-31', 'Scleral fixation lens for special eye conditions', 700, 500, 600, 14, 'path/to/image5.jpg'),
+('AR004', 'LENS', 'Aurovue EV Hydrophobic Preloaded IOL', 'SUP001', '1 pc', 4375.00, '2026-12-31', 'Hydrophobic foldable acrylic IOL', 800, 500, 600, 14, 'path/to/image6.jpg'),
+('AR005', 'LENS', 'Aurovue (Multipiece Preloaded)', 'SUP001', '1 pc', 5313.00, '2026-12-31', 'Multipiece preloaded IOL lens', 900, 600, 650, 14, 'path/to/image7.jpg'),
+('AR006', 'LENS', 'Aurovue Vivid EDOF Lens', 'SUP001', '1 pc', 27500.00, '2026-12-31', 'Extended depth of focus lens for eye surgery', 1000, 600, 650, 14, 'path/to/image8.jpg'),
+('AR007', 'LENS', 'Aurovue Dfine Multifocal Lens', 'SUP001', '1 pc', 27500.00, '2026-12-31', 'Multifocal lens for cataract surgery', 1100, 700, 700, 14, 'path/to/image9.jpg'),
+('AR008', 'GELS', 'Aurovisc', 'SUP001', '2 ml', 525.00, '2028-12-31', 'HPMC 2% Pre-Filled Syringe', 750, 500, 600, 14, 'path/to/image10.jpg'),
+('AR009', 'GELS', 'Aurogel', 'SUP001', '1 pc', 1563.00, '2026-12-31', 'Ophthalmic gel', 800, 600, 650, 14, 'path/to/image11.jpg'),
+('AR010', 'GELS', 'Aurocoat', 'SUP001', '1 pc', 4375.00, '2026-12-31', 'Coating gel for eye surgery', 900, 500, 600, 14, 'path/to/image12.jpg'),
+('AR011', 'SUTURES', 'Aurolon Sutures 6402N/T0-0 (model #1)', 'SUP001', '12', 6500.00, '2026-12-31', 'Aurolon Sutures model #1', 500, 500, 600, 12, 'path/to/image11.jpg'),
+('AR012', 'SUTURES', 'Aurolon Sutures 6492N/9-0 (model #2)', 'SUP001', '12', 6500.00, '2026-12-31', 'Aurolon Sutures model #2', 500, 500, 600, 12, 'path/to/image12.jpg'),
+('AR013', 'SUTURES', 'Aurolon Sutures NO204/10-0 Taper Point (model #3)', 'SUP001', '12', 10625.00, '2026-12-31', 'Aurolon Sutures model #3', 500, 500, 600, 12, 'path/to/image13.jpg'),
+('AR014', 'SUTURES', 'Aurobond Sutures (Single Arm) E4101/4-0 (model #1)', 'SUP001', '12', 13250.00, '2026-12-31', 'Aurobond Sutures Single Arm model #1', 500, 500, 600, 12, 'path/to/image14.jpg'),
+('AR015', 'SUTURES', 'Aurobond Sutures (Single Arm) E5101/5-0 (model #2)', 'SUP001', '12', 13250.00, '2026-12-31', 'Aurobond Sutures Single Arm model #2', 500, 500, 600, 12, 'path/to/image15.jpg'),
+('AR016', 'SUTURES', 'Aurobond Sutures (Double Arm) E4101/4-0 (model #1)', 'SUP001', '12', 13250.00, '2026-12-31', 'Aurobond Sutures Double Arm model #1', 500, 500, 600, 12, 'path/to/image16.jpg'),
+('AR017', 'SUTURES', 'Aurobond Sutures (Double Arm) E5101/5-0 (model #2)', 'SUP001', '12', 13250.00, '2026-12-31', 'Aurobond Sutures Double Arm model #2', 500, 500, 600, 12, 'path/to/image17.jpg'),
+('AR018', 'SUTURES', 'Aurolene Sutures AS-000-6 Straight Double Am (9-0/10-0)', 'SUP001', '12', 18125.00, '2026-12-31', 'Aurolene Sutures Straight Double Arm model', 500, 500, 600, 12, 'path/to/image18.jpg'),
+('AR019', 'SUTURES', 'Aurolene Sutures AS-160-6 Double Arm (10-0)', 'SUP001', '12', 18125.00, '2026-12-31', 'Aurolene Sutures Double Arm model', 500, 500, 600, 12, 'path/to/image19.jpg'),
+('AR020', 'SUTURES', 'Polycryl Absorbable Sutures A6108/6-0', 'SUP001', '12', 12200.00, '2026-12-31', 'Polycryl Absorbable Sutures model A6108/6-0', 500, 500, 600, 12, 'path/to/image20.jpg'),
+('AR021', 'SUTURES', 'Polycryl Absorbable Sutures A7102/7-0', 'SUP001', '12', 12200.00, '2026-12-31', 'Polycryl Absorbable Sutures model A7102/7-0', 500, 500, 600, 12, 'path/to/image21.jpg'),
+('AR022', 'SUTURES', 'Polycryl Absorbable Sutures A8104/8-0', 'SUP001', '12', 12200.00, '2026-12-31', 'Polycryl Absorbable Sutures model A8104/8-0', 500, 500, 600, 12, 'path/to/image22.jpg'),
+('AR023', 'SUTURES', 'Polycryl Absorbable Sutures A0101/10-0', 'SUP001', '12', 12200.00, '2026-12-31', 'Polycryl Absorbable Sutures model A0101/10-0', 500, 500, 600, 12, 'path/to/image23.jpg'),
+('AR024', 'DYE SOLUTION', 'Auroblue', 'SUP001', '5 x 1ml', 1690.00, '2026-12-31', 'Trypan Blue dye solution', 500, 500, 600, 12, 'path/to/image24.jpg'),
+('AR025', 'DYE SOLUTION', 'Ocublue Plus', 'SUP001', '5 x 1ml', 9375.00, '2026-12-31', 'Brilliant Blue G Solution 0.05%', 500, 500, 600, 12, 'path/to/image25.jpg'),
+('AR026', 'DYE SOLUTION', 'Aurogreen', 'SUP001', '25mg', 6875.00, '2026-12-31', 'Indocycine Green 0.5%', 500, 500, 600, 12, 'path/to/image26.jpg'),
+('AR027', 'DYE SOLUTION', 'Flures', 'SUP001', '10 x 3ml', 4700.00, '2026-12-31', 'Fluorescein Injection USP 20% w/v', 500, 500, 600, 12, 'path/to/image27.jpg'),
+('AR028', 'AUROSLEEK', 'Surgical Blade Keratome', 'SUP001', '1 pc', 440.00, '2026-12-31', 'Surgical Blade Keratome', 500, 500, 600, 12, 'path/to/image28.jpg'),
+('AR029', 'AUROSLEEK', 'Surgical Blade Crescent', 'SUP001', '1 pc', 440.00, '2026-12-31', 'Surgical Blade Crescent', 500, 500, 600, 12, 'path/to/image29.jpg'),
+('AR030', 'AUROSLEEK', 'Surgical Blade Side Port', 'SUP001', '1 pc', 440.00, '2026-12-31', 'Surgical Blade Side Port', 500, 500, 600, 12, 'path/to/image30.jpg'),
+('AR031', 'RETINA', 'Aurosil 1000 Cst Silicone Oil', 'SUP001', '10ml', 5625.00, '2026-12-31', '1000 Cst Silicone Oil', 500, 500, 600, 12, 'path/to/image31.jpg'),
+('AR032', 'RETINA', 'Aurosil 1500 Cst Silicone Oil', 'SUP001', '10ml', 7500.00, '2026-12-31', '1500 Cst Silicone Oil', 500, 500, 600, 12, 'path/to/image32.jpg'),
+('AR033', 'RETINA', 'Aurocort', 'SUP001', '5 x 1ml', 4125.00, '2026-12-31', 'Triamcinolone Acetonide 4% suspension', 500, 500, 600, 12, 'path/to/image33.jpg'),
+('AR034', 'ORBIT & OCULOPLASTY', 'Aurosling Ptosis sling', 'SUP001', '1 pc', 7190.00, '2026-12-31', 'Ptosis sling', 500, 500, 600, 12, 'path/to/image34.jpg'),
+('AR035', 'ORBIT & OCULOPLASTY', 'Aurolac Lacrimal Intubation Set', 'SUP001', '1 pc', 3250.00, '2026-12-31', 'Lacrimal Intubation Set', 500, 500, 600, 12, 'path/to/image35.jpg'),
+('AR036', 'GLAUCOMA', 'AADI', 'SUP001', '1 pc', 14375.00, '2026-12-31', 'Glaucoma shunt', 500, 500, 600, 12, 'path/to/image36.jpg'),
+('AR037', 'EYEDROPS', 'Aurosol', 'SUP001', '10ml', 275.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image37.jpg'),
+('AR038', 'EYEDROPS', 'Tob-Dex', 'SUP001', '5ml', 282.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image38.jpg'),
+('AR039', 'EYEDROPS', 'Auropred', 'SUP001', '10ml', 285.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image39.jpg'),
+('AR040', 'EYEDROPS', 'Aurocaine', 'SUP001', '5ml', 270.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image40.jpg'),
+('AR041', 'EYEDROPS', 'Auromide Plus', 'SUP001', '5ml', 365.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image41.jpg'),
+('AR042', 'EYEDROPS', 'Auropent', 'SUP001', '5ml', 315.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image42.jpg'),
+('AR043', 'EYEDROPS', 'Vozole', 'SUP001', '30mg', 1220.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image43.jpg'),
+('AR044', 'EYEDROPS', 'Vozole - PF', 'SUP001', '1 mg', 1220.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image44.jpg'),
+('AR045', 'EYEDROPS', 'Ocuchol', 'SUP001', '5 x 1ml', 1095.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image45.jpg'),
+('AR046', 'EYEDROPS', 'Auromox', 'SUP001', '5 x 1ml', 1563.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image46.jpg'),
+('AR047', 'EYEDROPS', 'Aurodone', 'SUP001', '5ml', 313.00, '2026-12-31', 'Eyedrops', 500, 500, 600, 12, 'path/to/image47.jpg'),
+('AR048', 'EYEDROPS', 'Blephagiene Eyelid Cleanser', 'SUP001', '50ml', 512.50, '2026-12-31', 'Eyelid Cleanser', 500, 500, 600, 12, 'path/to/image48.jpg'),
+('SB001', 'JARS', 'Jar Silverlining', 'SUP002', '20g', 7500.00, NULL, 'Jar Silverlining 20g', 600, 500, 700, 12, 'path/to/image1.jpg'),
+('SB002', 'JARS', 'Gel pump', 'SUP002', '30ml', 7500.00, NULL, 'Gel pump 30ml', 600, 500, 700, 12, 'path/to/image2.jpg'),
+('SB003', 'JARS', 'Cosmetic Jar', 'SUP002', '50g', 7500.00, NULL, 'Cosmetic Jar 50g', 600, 500, 700, 12, 'path/to/image3.jpg'),
+('SB004', 'BOTTLES', 'Clear Bottle w/ Fliptop Cap', 'SUP002', '50ml', 7500.00, NULL, 'Clear Bottle w/ Fliptop Cap 50ml', 600, 500, 700, 12, 'path/to/image4.jpg'),
+('SB005', 'BOTTLES', 'Clear Bottle w/ Fliptop Cap', 'SUP002', '100ml', 7500.00, NULL, 'Clear Bottle w/ Fliptop Cap 100ml', 600, 500, 700, 12, 'path/to/image5.jpg'),
+('SB006', 'BOTTLES', 'Clear Bottle w/ Pump', 'SUP002', '125ml', 7500.00, NULL, 'Clear Bottle w/ Pump 125ml', 600, 500, 700, 12, 'path/to/image6.jpg'),
+('SB007', 'BOTTLES', 'Clear Bottle w/ Pump', 'SUP002', '250ml', 7500.00, NULL, 'Clear Bottle w/ Pump 250ml', 600, 500, 700, 12, 'path/to/image7.jpg'),
+('SB008', 'PROMO JARS', 'Jar Silverlining', 'SUP002', '20g', 28125.00, NULL, 'Jar Silverlining 20g (Promo)', 600, 500, 700, 12, 'path/to/image8.jpg'),
+('SB009', 'PROMO JARS', 'Gel pump', 'SUP002', '30ml', 28125.00, NULL, 'Gel pump 30ml (Promo)', 600, 500, 700, 12, 'path/to/image9.jpg'),
+('SB010', 'PROMO JARS', 'Cosmetic Jar', 'SUP002', '50g', 28125.00, NULL, 'Cosmetic Jar 50g (Promo)', 600, 500, 700, 12, 'path/to/image10.jpg'),
+('SB011', 'PROMO BOTTLES', 'Clear Bottle w/ Fliptop Cap', 'SUP002', '50ml', 28125.00, NULL, 'Clear Bottle w/ Fliptop Cap 50ml (Promo)', 600, 500, 700, 12, 'path/to/image11.jpg'),
+('SB012', 'PROMO BOTTLES', 'Clear Bottle w/ Fliptop Cap', 'SUP002', '100ml', 28125.00, NULL, 'Clear Bottle w/ Fliptop Cap 100ml (Promo)', 600, 500, 700, 12, 'path/to/image12.jpg'),
+('SB013', 'PROMO BOTTLES', 'Clear Bottle w/ Pump', 'SUP002', '125ml', 28125.00, NULL, 'Clear Bottle w/ Pump 125ml (Promo)', 600, 500, 700, 12, 'path/to/image13.jpg');
+/*!40000 ALTER TABLE Products ENABLE KEYS */;
 UNLOCK TABLES;
 
 -- Table structure for table Customers
@@ -145,8 +204,8 @@ CREATE TABLE SalesOrders (
 LOCK TABLES SalesOrders WRITE;
 /*!40000 ALTER TABLE SalesOrders DISABLE KEYS */;
 INSERT INTO SalesOrders VALUES 
-('ORD001', 'CST001', 'SR001', 'PRD001', 'PAY12345', '2024-09-30', '123 Main Street, Manila, NCR', 'Dr. Santos', '2024-09-25'),
-('ORD002', 'CST002', 'SR002', 'PRD002', 'PAY67890', '2024-10-01', '456 Elm Street, Cebu, Central Visayas', 'Dr. Cruz', '2024-09-26');
+('ORD001', 'CST001', 'SR001', 'AR001', 'PAY12345', '2024-09-30', '123 Main Street, Manila, NCR', 'Dr. Santos', '2024-09-25'),
+('ORD002', 'CST002', 'SR002', 'AR002', 'PAY67890', '2024-10-01', '456 Elm Street, Cebu, Central Visayas', 'Dr. Cruz', '2024-09-26');
 /*!40000 ALTER TABLE SalesOrders ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,8 +231,8 @@ CREATE TABLE PurchaseOrders (
 LOCK TABLES PurchaseOrders WRITE;
 /*!40000 ALTER TABLE PurchaseOrders DISABLE KEYS */;
 INSERT INTO PurchaseOrders VALUES 
-('PO001', 'PRD001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila', 1200.00, 100),
-('PO002', 'PRD002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu', 500.00, 200);
+('PO001', 'AR001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila', 1200.00, 100),
+('PO002', 'AR002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu', 500.00, 200);
 /*!40000 ALTER TABLE PurchaseOrders ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -200,8 +259,8 @@ CREATE TABLE OrderDetails (
 
 LOCK TABLES OrderDetails WRITE;
 /*!40000 ALTER TABLE OrderDetails DISABLE KEYS */;
-INSERT INTO OrderDetails VALUES ('ORDD001', 'ORD001', 'PRD001', 10, 1200.00, 12000.00);
-INSERT INTO OrderDetails VALUES ('ORDD002', 'ORD002', 'PRD002', 20, 500.00, 10000.00);
+INSERT INTO OrderDetails VALUES ('ORDD001', 'ORD001', 'AR001', 10, 1200.00, 12000.00);
+INSERT INTO OrderDetails VALUES ('ORDD002', 'ORD002', 'AR002', 20, 500.00, 10000.00);
 /*!40000 ALTER TABLE OrderDetails ENABLE KEYS */;
 UNLOCK TABLES;
 
