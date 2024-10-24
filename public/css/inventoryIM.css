@@ -125,67 +125,9 @@ nav.sticky .logo-icon {
     object-fit: contain; /* Ensure the image scales properly without distortion */
 }
 
-.hamburger {
-    font-size: 28px;
-    cursor: pointer;
-    color: #0E2431;
-}
-
-nav.sticky .hamburger {
-    color: #fff;
-    transition: all 0.4s ease;
-}
-
 /* Prevent navbar links from shifting pag may longer text */
 .nav-links li {
     white-space: nowrap; 
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    right: -300px; /* Hidden by default */
-    width: 250px;
-    height: 100%;
-    background: #fff;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    transition: right 0.3s ease;
-    z-index: 1000;
-}
-
-.sidebar.active {
-    right: 0; /* Show the sidebar */
-}
-
-.sidebar .close-btn {
-    font-size: 30px;
-    color: #000;
-    cursor: pointer;
-    padding: 10px;
-    text-align: right;
-}
-
-.sidebar ul {
-    padding: 20px;
-    margin: 10px;
-}
-
-.sidebar ul li {
-    list-style: none;
-    margin: 15px 0;
-}
-
-.sidebar ul li a {
-    text-decoration: none;
-    color: #000000;
-    font-size: 14px;
-}
-
-.sidebar h2{
-    font-size: 16px;
-    margin: 10px;
-    color: #000058;
-    text-align: center;
 }
 
 .footer {
@@ -204,117 +146,12 @@ nav.sticky .hamburger {
     box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/*below might not be applicable to other pages*/
+/* INVENTORY TABLE */
 
-/*rectangles row 1*/
-
-.overview {
-    display: flex;
-    justify-content: center; 
-    gap: 20px; /* gap btwn the rectangles */
-    padding: 20px 80px;
-    position: relative;
-    top: 250px;
-}
-
-.overview .rectangle { 
-    width: 500px;
-    height: 100px;
-    border: 2px solid #000058; /* Border color */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for 3D effect */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #000058; 
-    font-size: 18px;
-    font-weight: 500;
-    margin: 0 10px;
-}
-
-/* graphs */
-
-.graph {
-    display: flex;
-    justify-content: center; /* Center the rectangles */
-    gap: 24px; /* gap btwn the rectangles */
-    padding: 20px 80px;
-    position: relative;
-    top: 300px;
-}
-
-.graph .graphcon { /* More specific selector */
-    width: 770px;
-    height: 400px;
-    border: 2px solid #000058; /* Border color */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for 3D effect */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #000058; 
-    font-size: 18px;
-    font-weight: 500;
-    margin: 0 10px;
-}
-
-/* FAST SELLING */
-
-.fast-selling {
+.inventory-list {
     margin: 20px auto; /* Center the table horizontally */
     text-align: center;
-    top: 300px;
-    position: relative;
-    padding: 20px 80px;
-
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 18px;
-    text-align: left;
-}
-
-table thead {
-    background-color: #333;
-    color: white;
-}
-
-table th, table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #f3f3f3;
-}
-
-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-table th {
-    background-color: #000058;
-    color: white;
-    text-transform: uppercase;
-}
-
-.fast-selling h2 {
-    margin-bottom: 10px;
-    font-size: 24px;
-    color: #000058;
-    text-align: left;
-}
-
-
-/* TABLES */
-
-.table-section {
-    margin: 20px auto; /* Center the table horizontally */
-    text-align: center;
-    top: 300px;
+    top: 150px;
     position: relative;
     padding: 20px 80px;
 

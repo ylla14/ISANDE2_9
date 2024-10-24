@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMS Dashboard</title>
-    <!-- <link rel="stylesheet" href="css/dashboardIMStyle.css"> for node/local host -->
-    <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> <!--for live server-->
+    <link rel="stylesheet" href="css/dashboardIMStyle.css">
+    <!-- <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> for live server -->
+    <script src="/js/inventoryIM.js" defer></script>
 </head>
 <body>
     <nav>
         <div class="nav-content">
             <div class="logo">
-                <img src="/public/resources/logo.png" alt="Logo" class="logo-icon">
+                <!-- <img src="/public/resources/logo.png" alt="Logo" class="logo-icon"> -->
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
             </div>
             <div class="nav-left">
                 <ul class="nav-links">
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">Inventory</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
                     <li><a href="#">Sales Orders</a></li>
                     <li><a href="#">Suppliers</a></li>
                 </ul> 
             </div>
             <div class="profile">
                 <a href="#">
-                    <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <!-- <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon"> -->
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
                     <span>Profile</span>
                 </a>
             </div>

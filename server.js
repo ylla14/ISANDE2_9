@@ -8,7 +8,7 @@ const PORT =  3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public'))); // For CSS, JS, and resource
-
+app.use(express.static(path.join(__dirname, 'views')));
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -30,14 +30,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html')); 
 });
 
-app.get('/dashboardIM.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'dashboardIM.html'));
-});
+//idk if this works na without having to use these middlewares
+// app.get('/dashboardIM.html', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'views', 'dashboardIM.html'));
+// });
 
 
-app.get('/dashboardSR.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'dashboardSR.html'));
-});
+// app.get('/dashboardSR.html', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'views', 'dashboardSR.html'));
+// });
 
 
  

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS Dashboard</title>
+    <link rel="stylesheet" href="css/inventoryIM.css">
+    <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
+    <script src="/js/inventoryIM.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <!-- <img src="/public/resources/logo.png" alt="Logo" class="logo-icon"> -->
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#">Sales Orders</a></li>
+                    <li><a href="#">Suppliers</a></li>
+                </ul> 
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <!-- <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon"> -->
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Inventory table -->
+    <div class="inventory-list">
+        <div class="section-header">
+            <div class="button-container">
+                <button class="view-btn">View All</button>
+                <button class="download-btn" onclick="downloadStockAging()">Download</button>
+            </div>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Product 1</td>
+                    <td>50</td>
+                    <td>2024-12-31</td>
+                </tr>
+                <tr>
+                    <td>Product 2</td>
+                    <td>30</td>
+                    <td>2025-01-15</td>
+                </tr>
+                <tr>
+                    <td>Product 3</td>
+                    <td>20</td>
+                    <td>2024-11-05</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <section class="footer"></section>
+    <div class="text">
+        <h2>Fotah</h2>
+    </div>
+
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }
+    </script>
+</body>
+</html>
