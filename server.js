@@ -102,6 +102,31 @@ app.post('/login', (req, res) => {
     });
 });
 
+// Define route to get product data with supplier name
+app.get('/api/products', (req, res) => {
+    const query = `
+      SELECT 
+        p.product_id, 
+        p.product_name, 
+        s.supplier_name AS brand, 
+        p.product_category, 
+        p.selling_price, 
+        p.current_stock_level, 
+        p.expiration_date 
+      FROM 
+        Products p
+      JOIN 
+        Suppliers s ON p.supplier_id = s.supplier_id
+    `;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        res.status(500).send('Error retrieving data from database');
+        return;
+      }
+      res.json(results);
+    });
+  });
 
 // Start the server
 app.listen(PORT, () => {
