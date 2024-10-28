@@ -114,7 +114,8 @@ nav.sticky .profile a {
 }
 
 nav.sticky .nav-links li a:hover {
-    color: #0E2431;
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 nav.sticky .logo-icon {
@@ -151,7 +152,7 @@ nav.sticky .logo-icon {
 .inventory-list {
     margin: 20px auto; /* Center the table horizontally */
     text-align: center;
-    top: 150px;
+    top: 100px;
     position: relative;
     padding: 20px 80px;
 
@@ -208,7 +209,7 @@ table th {
     white-space: nowrap;
 }
 
-.view-btn, .download-btn {
+.search-btn, .filter-btn {
     background-color: #000058;
     color: white;
     border: none;
@@ -219,12 +220,17 @@ table th {
     margin-left: 0; 
 }
 
-.view-btn:hover, .download-btn:hover {
+.search-btn:hover, .filter-btn:hover {
     background-color: #333;
 }
 
-.section-header h2 {
-    font-size: 24px;
-    color: #000058;
+.add-btn {
+    background-color: #000058;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
     margin: 0;
 }

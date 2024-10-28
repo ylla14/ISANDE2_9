@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMS Dashboard</title>
-    <link rel="stylesheet" href="css/inventoryIM.css">
+    <link rel="stylesheet" href="css/suppliersIM.css">
     <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
-    <script src="/js/inventoryIM.js" defer></script>
+    <script src="/js/suppliersIM.js" defer></script>
 </head>
 <body>
     <nav>
@@ -33,10 +33,9 @@
         </div>
     </nav>
 
-       <!-- Inventory table -->
-    <div class="inventory-list">
+       <!-- Suppliers table -->
+       <div class="suppliers-list">
         <div class="section-header">
-            <button class="add-btn">Add</button>
             <div class="button-container">
                 <button class="search-btn">Search</button>
                 <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
@@ -45,15 +44,12 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>SKU</th>
+                    <th>Supplier ID</th>
                     <th>Name</th>
-                    <th>Brand</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>QTY</th>
-                    <th>Reorder Lvl</th>
-                    <th>Expiraton</th>
-                    <th>Alert</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Contact No.</th>
+                    <th>History</th> <!--idk if isasama pa toh -->
                 </tr>
             </thead>
             <tbody>

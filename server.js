@@ -111,12 +111,34 @@ app.get('/api/products', (req, res) => {
         s.supplier_name AS brand, 
         p.product_category, 
         p.selling_price, 
-        p.current_stock_level, 
+        p.current_stock_level,
+        p.reorder_level, 
         p.expiration_date 
       FROM 
         Products p
       JOIN 
         Suppliers s ON p.supplier_id = s.supplier_id
+    `;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        res.status(500).send('Error retrieving data from database');
+        return;
+      }
+      res.json(results);
+    });
+  });
+
+  app.get('/api/suppliers', (req, res) => {
+    const query = `
+      SELECT 
+        s.supplier_id,
+        s.supplier_name, 
+        s.contact_person,
+        s.email_address,
+        s.contact_details
+      FROM 
+        Suppliers s
     `;
   
     db.query(query, (err, results) => {
