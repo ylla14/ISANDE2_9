@@ -23,40 +23,46 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
 
 
 // script.js
-async function loadSuppliersData() {
+async function loadSalesOrderData() {
     try {
-        const response = await fetch('/api/suppliers');
-        const suppliers = await response.json(); // Renamed variable to "suppliers" to match its content
+        const response = await fetch('/api/salesorders');
+        const salesorders = await response.json(); // Use a plural variable name for clarity
 
-        const tbody = document.querySelector('.suppliers-list table tbody'); // Targeting tbody within the table
+        const tbody = document.querySelector('.salesorders-list table tbody'); // Targeting tbody within the table
         tbody.innerHTML = ''; // Clear any existing rows
 
-        suppliers.forEach(supplier => { // Iterating over each supplier correctly
+        salesorders.forEach(salesorder => { // Iterating over each sales order
             const row = document.createElement('tr');
 
+            // Convert dates for the current sales order
+            const orderDate = new Date(salesorder.order_date);
+            const deliveryDate = new Date(salesorder.delivery_date);
+            
+            const orderDateDisplay = orderDate.toLocaleDateString();
+            const deliveryDateDisplay = deliveryDate.toLocaleDateString();
+
             row.innerHTML = `
-                <td>${supplier.supplier_id}</td>
-                <td>${supplier.supplier_name}</td>
-                <td>${supplier.contact_person}</td>
-                <td>${supplier.email_address}</td>
-                <td>${supplier.contact_details}</td>
-                <td>Order History</td> <!-- Placeholder for "Order History" column -->
+                <td>${salesorder.order_id}</td>
+                <td>${salesorder.customer_id}</td>
+                <td>${orderDateDisplay}</td>
+                <td>${deliveryDateDisplay}</td> <!-- Use salesorder instead of supplier -->
+                <td>${salesorder.total_order_value}</td>
             `;
             
             tbody.appendChild(row);
         });
     } catch (error) {
-        console.error('Error loading suppliers data:', error);
+        console.error('Error loading sales order data:', error);
     }
 }
 
-function searchSuppliers() {
+function searchSalesOrder() {
     const searchInput = document.querySelector('.search-input').value.toLowerCase();
-    const rows = document.querySelectorAll('.suppliers-list tbody tr');
+    const rows = document.querySelectorAll('.salesorders-list tbody tr');
     
     rows.forEach(row => {
-        const supplierName = row.children[1].textContent.toLowerCase(); // Assumes supplier name is in the 2nd column
-        if (supplierName.includes(searchInput)) {
+        const orderNumber = row.children[0].textContent.toLowerCase(); // Assumes supplier name is in the 2nd column
+        if (orderNumber.includes(searchInput)) {
             row.style.display = ''; // Show row if it matches
         } else {
             row.style.display = 'none'; // Hide row if it doesn't match
@@ -66,4 +72,4 @@ function searchSuppliers() {
 
 
 // Call the function to load data when the page loads
-window.onload = loadSuppliersData;
+window.onload = loadSalesOrderData;

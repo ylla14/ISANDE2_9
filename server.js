@@ -150,6 +150,45 @@ app.get('/api/products', (req, res) => {
     });
   });
 
+  app.get('/api/salesorders', (req, res) => {
+    const query = `
+    SELECT 
+        so.order_id,
+        so.customer_id,
+        so.sales_rep_id,
+        so.payment_reference_number,
+        so.delivery_date,
+        so.order_address,
+        so.order_receiver,
+        so.order_date,
+        COUNT(od.order_detail_id) AS total_products,
+        SUM(od.total_price) AS total_order_value
+    FROM 
+        SalesOrders so
+    LEFT JOIN 
+        OrderDetails od ON so.order_id = od.order_id
+    GROUP BY 
+        so.order_id, 
+        so.customer_id, 
+        so.sales_rep_id, 
+        so.payment_reference_number,
+        so.delivery_date, 
+        so.order_address, 
+        so.order_receiver, 
+        so.order_date
+    `;
+  
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving data from database');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
