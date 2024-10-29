@@ -1,3 +1,5 @@
+// HEADER REDIRECT
+
 document.getElementById("home-link").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "dashboardIM.html"; // Redirect to the inventory page
@@ -22,7 +24,6 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
 });
 
 
-// script.js
 async function loadInventoryData() {
     try {
         const response = await fetch('/api/products');

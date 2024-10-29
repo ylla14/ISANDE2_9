@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMS Dashboard</title>
     <link rel="stylesheet" href="css/dashboardIMStyle.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
     <!-- <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> for live server -->
     <script src="/js/dashboardIM.js" defer></script>
 </head>
 <body>
+    <!-- header -->
     <nav>
         <div class="nav-content">
             <div class="logo">
@@ -46,6 +48,7 @@
             <!-- more deets later -->
         </div>
     </div>
+    <!-- end of header -->
 
     <!-- rectangles overview -->
     <div class="overview">
@@ -134,13 +137,13 @@
         </table>
     </div>
 
-    
+    <!-- FOOTER -->
     <section class="footer"></section>
     <div class="text">
         <h2>Fotah</h2>
     </div>
     
-    <!-- SIDE BAR -->
+    <!-- STICKY FOR HEADER -->
     <script>
         let nav = document.querySelector("nav");
         window.onscroll = function() {
@@ -150,7 +153,7 @@
                 nav.classList.remove("sticky");
             }
         }
-
+        // SIDE BAR CODE
         function toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("active");
