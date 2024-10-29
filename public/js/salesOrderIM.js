@@ -61,8 +61,12 @@ function searchSalesOrder() {
     const rows = document.querySelectorAll('.salesorders-list tbody tr');
     
     rows.forEach(row => {
-        const orderNumber = row.children[0].textContent.toLowerCase(); // Assumes supplier name is in the 2nd column
-        if (orderNumber.includes(searchInput)) {
+        const rowText = Array.from(row.children) // Get all cells in the row
+            .map(cell => cell.textContent.toLowerCase()) // Convert text content to lowercase
+            .join(' '); // Join all cell content to make searchable string
+
+        // Check if the search input is included in the row text
+        if (rowText.includes(searchInput)) {
             row.style.display = ''; // Show row if it matches
         } else {
             row.style.display = 'none'; // Hide row if it doesn't match
