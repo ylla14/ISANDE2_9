@@ -240,14 +240,11 @@ INSERT INTO SalesRepresentatives VALUES
 /*!40000 ALTER TABLE SalesRepresentatives ENABLE KEYS */;
 UNLOCK TABLES;
 
--- Table structure for table SalesOrders
 DROP TABLE IF EXISTS SalesOrders;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
 CREATE TABLE SalesOrders (
   order_id VARCHAR(50) NOT NULL,
   customer_id VARCHAR(50) DEFAULT NULL,
   sales_rep_id VARCHAR(50) DEFAULT NULL,
-  product_id VARCHAR(50) NOT NULL,
   payment_reference_number VARCHAR(100) DEFAULT NULL,
   delivery_date DATE DEFAULT NULL,
   order_address TEXT DEFAULT NULL,
@@ -255,73 +252,82 @@ CREATE TABLE SalesOrders (
   order_date DATE DEFAULT NULL,
   PRIMARY KEY (order_id),
   FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),
-  FOREIGN KEY (sales_rep_id) REFERENCES SalesRepresentatives(sales_rep_id),
-  FOREIGN KEY (product_id) REFERENCES Products(product_id)
+  FOREIGN KEY (sales_rep_id) REFERENCES SalesRepresentatives(sales_rep_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Inserting into SalesOrders table
 LOCK TABLES SalesOrders WRITE;
 /*!40000 ALTER TABLE SalesOrders DISABLE KEYS */;
 INSERT INTO SalesOrders VALUES 
-('ORD001', 'CST001', 'SR001', 'AR001', 'PAY12345', '2024-09-30', '123 Main Street, Manila, NCR', 'Dr. Santos', '2024-09-25'),
-('ORD002', 'CST002', 'SR002', 'AR002', 'PAY67890', '2024-10-01', '456 Elm Street, Cebu, Central Visayas', 'Dr. Cruz', '2024-09-26');
+('ORD001', 'CST001', 'SR001', 'PAY12345', '2024-09-30', '123 Main Street, Manila, NCR', 'Dr. Santos', '2024-09-25'),
+('ORD002', 'CST002', 'SR002', 'PAY67890', '2024-10-01', '456 Elm Street, Cebu, Central Visayas', 'Dr. Cruz', '2024-09-26');
 /*!40000 ALTER TABLE SalesOrders ENABLE KEYS */;
 UNLOCK TABLES;
 
--- Table structure for table PurchaseOrders
+-- Drop existing tables
 DROP TABLE IF EXISTS PurchaseOrders;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
+DROP TABLE IF EXISTS PurchaseOrderDetails;
+
+-- Create PurchaseOrders table
 CREATE TABLE PurchaseOrders (
   porder_id VARCHAR(50) NOT NULL,
-  product_id VARCHAR(50) NOT NULL,
   supplier_id VARCHAR(50) NOT NULL,
   order_date DATE DEFAULT NULL,
   delivery_date DATE DEFAULT NULL,
   order_address TEXT DEFAULT NULL,
-  unit_price DECIMAL(10,2) DEFAULT NULL,
-  quantity INT,
   PRIMARY KEY (porder_id),
-  FOREIGN KEY (product_id) REFERENCES Products(product_id),
   FOREIGN KEY (supplier_id) REFERENCES Suppliers(supplier_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- Inserting into PurchaseOrders table
-LOCK TABLES PurchaseOrders WRITE;
-/*!40000 ALTER TABLE PurchaseOrders DISABLE KEYS */;
-INSERT INTO PurchaseOrders VALUES 
-('PO001', 'AR001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila', 1200.00, 100),
-('PO002', 'AR002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu', 500.00, 200);
-/*!40000 ALTER TABLE PurchaseOrders ENABLE KEYS */;
 UNLOCK TABLES;
 
+-- Create OrderDetails table for PurchaseOrders
+CREATE TABLE PurchaseOrderDetails (
+  order_detail_id VARCHAR(50) NOT NULL,
+  porder_id VARCHAR(50) NOT NULL,
+  product_id VARCHAR(50) NOT NULL,
+  unit_price DECIMAL(10,2) DEFAULT NULL,
+  quantity INT DEFAULT NULL,
+  total_price DECIMAL(10,2) DEFAULT NULL,
+  PRIMARY KEY (order_detail_id),
+  FOREIGN KEY (porder_id) REFERENCES PurchaseOrders(porder_id),
+  FOREIGN KEY (product_id) REFERENCES Products(product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+UNLOCK TABLES;
+
+LOCK TABLES PurchaseOrders WRITE, PurchaseOrderDetails WRITE;
+/*!40000 ALTER TABLE PurchaseOrders DISABLE KEYS */;
+
+INSERT INTO PurchaseOrders VALUES 
+('PO001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila'),
+('PO002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu');
+/*!40000 ALTER TABLE PurchaseOrders ENABLE KEYS */;
+
+INSERT INTO PurchaseOrderDetails VALUES
+('POD001', 'PO001', 'AR001', 1200.00, 100, 120000.00), -- Details for PO001
+('POD002', 'PO002', 'AR002', 500.00, 200, 100000.00); -- Details for PO002
+UNLOCK TABLES;
 --
 -- Table structure for table OrderDetails
 -- might or might not remove this (for computation and tracking ng inventory pero it ight be redundant if pwede naman yung sales order nalang)
 
 DROP TABLE IF EXISTS OrderDetails;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE OrderDetails (
-  order_detail_id VARCHAR(50) NOT NULL, -- Non-auto incrementing ID
-  order_id VARCHAR(50) NOT NULL, -- Foreign key to SalesOrders
-  product_id VARCHAR(50) NOT NULL, -- Foreign key to Products (Ensure same type as Products table)
+  order_detail_id VARCHAR(50) NOT NULL,
+  order_id VARCHAR(50) NOT NULL,
+  product_id VARCHAR(50) NOT NULL,
   quantity INT DEFAULT NULL,
   unit_price DECIMAL(10,2) DEFAULT NULL,
   total_price DECIMAL(10,2) DEFAULT NULL,
   PRIMARY KEY (order_detail_id),
   FOREIGN KEY (order_id) REFERENCES SalesOrders(order_id),
-  FOREIGN KEY (product_id) REFERENCES Products(product_id) -- Same type and charset as Products table
+  FOREIGN KEY (product_id) REFERENCES Products(product_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 
 LOCK TABLES OrderDetails WRITE;
-/*!40000 ALTER TABLE OrderDetails DISABLE KEYS */;
-INSERT INTO OrderDetails VALUES ('ORDD001', 'ORD001', 'AR001', 10, 1200.00, 12000.00);
-INSERT INTO OrderDetails VALUES ('ORDD002', 'ORD002', 'AR002', 20, 500.00, 10000.00);
-/*!40000 ALTER TABLE OrderDetails ENABLE KEYS */;
+INSERT INTO OrderDetails VALUES
+('OD001', 'ORD001', 'AR001', 10, 250.00, 2500.00), -- 10 units of AR001 in order ORD001
+('OD002', 'ORD001', 'AR002', 5, 300.00, 1500.00),  -- 5 units of AR002 in order ORD001
+('OD003', 'ORD001', 'AR001', 3, 250.00, 750.00), -- 3 more units of AR001 in order ORD001
+('OD004', 'ORD002', 'SB003', 15, 300.00, 4500.00);
 UNLOCK TABLES;
 
 --
