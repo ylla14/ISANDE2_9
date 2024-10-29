@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS Dashboard</title>
+    <link rel="stylesheet" href="css/orderSR.css">
+    <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
+    <script src="/js/orderSR.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <!-- <img src="/public/resources/logo.png" alt="Logo" class="logo-icon"> -->
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <!-- <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon"> -->
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+       <!-- Inventory table -->
+    <div class="inventory-list">
+        <div class="section-header">
+            <button class="add-btn" id="add-new-button">Add New</button>
+            <div class="button-container">
+                <input type="text" class="search-input" placeholder="Search" oninput="searchInventory()" />
+                <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
+            </div>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Purchased Date</th>
+                    <th>Customer ID</th>
+                    <th>Customer Name</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be populated by script.js -->
+            </tbody>
+        </table>
+    </div>
+    
+    <section class="footer"></section>
+    <div class="text">
+        <h2>Fotah</h2>
+    </div>
+
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }
+    </script>
+</body>
+</html>

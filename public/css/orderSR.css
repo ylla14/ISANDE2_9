@@ -1,0 +1,262 @@
+/* Google Font Import Link */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* header */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+nav.sticky {
+    padding: 15px 20px;
+    background: #000058;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+nav .nav-content {
+    height: 100%;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav .logo a {
+    display: flex; /* Ensures the image fits inside the anchor */
+    align-items: center; /* Vertically centers the image */
+}
+
+.logo-icon {
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
+}
+
+.nav-content .nav-left {
+    display: flex; 
+}
+
+.nav-content .nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-content .nav-links li {
+    list-style: none;
+    margin: 0 10px;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #0E2431;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 1px 4px;
+    transition: all 0.3s ease;
+    align-items: center; 
+}
+
+.nav-links li a:hover {
+    color: #000058;
+}
+
+
+/* profile header part */
+
+.profile-icon {
+    width: 32px; 
+    height: 32px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-right: 10px; 
+    vertical-align: middle; 
+}
+
+.profile a {
+    text-decoration: none;
+    color: #0E2431; /* Match this with other nav text */
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.profile a:hover {
+    color: #000058; /* Hover color like other nav links */
+}
+
+/* sticky (stay on screen adn change appearance when scroll) */
+.nav-links li a span {
+    font-size: 20px; 
+    color: inherit; 
+}
+
+nav.sticky .nav-links li a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+nav.sticky .profile a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+nav.sticky .nav-links li a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+nav.sticky .logo-icon {
+    /* content: url("/public/resources/logo_light.png"); Path to the sticky version of the logo */
+    content: url("/resources/logo_light.png"); /* Path to the sticky version of the logo */
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
+}
+
+/* Prevent navbar links from shifting pag may longer text */
+.nav-links li {
+    white-space: nowrap; 
+}
+
+.footer {
+    height: 50vh;
+    width: 100%;
+    background: url("images/background.png") no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.text {
+    text-align: justify;
+    padding: 40px 80px;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* INVENTORY TABLE */
+
+.inventory-list {
+    margin: 20px auto; /* Center the table horizontally */
+    text-align: center;
+    top: 100px;
+    position: relative;
+    padding: 20px 80px;
+
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+table thead {
+    background-color: #333;
+    color: white;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+table th {
+    background-color: #000058;
+    color: white;
+    text-transform: uppercase;
+}
+
+.table-section h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #000058;
+    text-align: left;
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    max-width: 100%; /* Prevent overflow if too wide */
+}
+
+.button-container {
+    display: flex;
+    white-space: nowrap;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 250px; /* Adjusted width for compact look */
+    margin-right: 10px; /* Reduced margin for better alignment */
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #000058;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.add-btn {
+    background-color: #228B22;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+.filter-btn {
+    background-color: #000058;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+.filter-btn:hover, .add-btn:hover {
+    background-color: #333;
+}
+
+.section-header h2 {
+    font-size: 24px;
+    color: #000058;
+    margin: 0;
+}
+
+
