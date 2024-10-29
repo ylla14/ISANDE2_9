@@ -201,36 +201,49 @@ table th {
 .section-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
+    max-width: 100%; /* Prevent overflow if too wide */
 }
 
 .button-container {
-    gap: 5%;
+    display: flex;
     white-space: nowrap;
 }
 
-.search-btn, .filter-btn {
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 250px; /* Adjusted width for compact look */
+    margin-right: 10px; /* Reduced margin for better alignment */
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #000058;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.filter-btn, .add-btn {
     background-color: #000058;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 15px;
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
-    margin-left: 0; 
+    margin-left: 8px; /* Reduces spacing between buttons */
 }
 
-.search-btn:hover, .filter-btn:hover {
+.filter-btn:hover, .add-btn:hover {
     background-color: #333;
 }
 
-.add-btn {
-    background-color: #000058;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
+.section-header h2 {
+    font-size: 24px;
+    color: #000058;
     margin: 0;
 }

@@ -44,5 +44,20 @@ async function loadSuppliersData() {
     }
 }
 
+function searchSuppliers() {
+    const searchInput = document.querySelector('.search-input').value.toLowerCase();
+    const rows = document.querySelectorAll('.suppliers-list tbody tr');
+    
+    rows.forEach(row => {
+        const supplierName = row.children[1].textContent.toLowerCase(); // Assumes supplier name is in the 2nd column
+        if (supplierName.includes(searchInput)) {
+            row.style.display = ''; // Show row if it matches
+        } else {
+            row.style.display = 'none'; // Hide row if it doesn't match
+        }
+    });
+}
+
+
 // Call the function to load data when the page loads
 window.onload = loadSuppliersData;
