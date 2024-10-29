@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SR Dashboard</title>
+    <link rel="stylesheet" href="css/dashboardSRStyle.css">
+    <script src="js/dashboardSR.js" defer></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class ="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Content -->
+    <main class="dashboard-content">
+
+        <!-- Statistic Cards -->
+        <div class="overview">
+            <section class="statistics">
+                <div class="stat-card"><b> Total Sales </b> <span>$900k</span></div>
+                <div class="stat-card"><b>Target Sales</b> <span>$1M</span></div>
+                <div class="stat-card"><b>Total Customers</b> <span>270</span></div>
+                <div class="stat-card"><b>Total Orders</b> <span>127</span></div>
+                <div class="stat-card"><b>Total Deliveries</b> <span>270</span></div>
+            </section>
+        </div>
+        
+        <!-- Top Products Table -->
+         <div class="section-header">
+            <h2>Top Products</h2>
+            <div class="button-container">
+                <button class="view-btn">View</button>
+                <button class="download-btn">Download</button>
+            </div>
+        </div>
+        <section class="inventory-level">
+            <div class="inventory-container">
+                <div class="inventory-item">
+                    <span class="product-name">Super Block SPF50++</span>
+                    <div class="inventory-bar" style="width: 50%; background: #8a2be2;"></div>
+                    <span class="inventory-total">  45%</span>
+                </div>
+                <div class="inventory-item">
+                    <span class="product-name">Thioderm</span>
+                    <div class="inventory-bar" style="width: 30%; background: #ff6347;"></div>
+                    <span class="inventory-total">  20%</span>
+                </div>
+                <div class="inventory-item">
+                    <span class="product-name">Oatsense - Moisturizer</span>
+                    <div class="inventory-bar" style="width: 20%; background: #4682b4;"></div>
+                    <span class="inventory-total">  15%</span>
+                </div>
+                <div class="inventory-item">
+                    <span class="product-name">Cell Repair Cream</span>
+                    <div class="inventory-bar" style="width: 20%; background: #4682b4;"></div>
+                    <span class="inventory-total">  10%</span>
+                </div>
+                <div class="inventory-item">
+                    <span class="product-name">Thioderm Skin Lightening Bar</span>
+                    <div class="inventory-bar" style="width: 20%; background: #4682b4;"></div>
+                    <span class="inventory-total">  10%</span>
+                </div>
+            </div>
+        </section>
+
+
+    <!-- top products table -->
+        <section class="product-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Popularity</th>
+                        <th>Sales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>01</td><td>Super Block SPF50++</td><td>45%</td><td>$1000</td></tr>
+                    <tr><td>02</td><td>Thioderm</td><td>20%</td><td>$800</td></tr>
+                    <tr><td>03</td><td>Oatsense - Moisturizer</td><td>15%</td><td>$500</td></tr>
+                    <tr><td>04</td><td>Cell Repair Cream</td><td>10%</td><td>$400</td></tr>
+                    <tr><td>05</td><td>Thioderm Skin Lightening Bar</td><td>10%</td><td>$400</td></tr>
+            
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Inventory Level Section -->
+        
+        
+        
+
+    </main>
+
+</body>
+</html>
