@@ -10,7 +10,7 @@
     <script src="/js/dashboardIM.js" defer></script>
 </head>
 <body>
-    <!-- header -->
+    <!-- HEADER -->
     <nav>
         <div class="nav-content">
             <div class="logo">
@@ -48,7 +48,7 @@
             <!-- more deets later -->
         </div>
     </div>
-    <!-- end of header -->
+    <!-- END OF HEADER -->
 
     <!-- rectangles overview -->
     <div class="overview">
@@ -138,12 +138,19 @@
     </div>
 
     <!-- FOOTER -->
-    <section class="footer"></section>
-    <div class="text">
-        <h2>Fotah</h2>
+    <section class="gap"></section>
+    <div>
+        <section class="footer">
+            <div class="footer-logo">
+                <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
+            </div>
+            <div class="footer-text">
+                <p>&copy; 2024 PharmaTrack</p> 
+            </div>
+        </section>
     </div>
     
-    <!-- STICKY FOR HEADER -->
+    <!-- COPY FOR HEADER -->
     <script>
         let nav = document.querySelector("nav");
         window.onscroll = function() {
@@ -152,7 +159,8 @@
             } else {
                 nav.classList.remove("sticky");
             }
-        }
+        }//END OF SCRIPT FOR HEADER
+        
         // SIDE BAR CODE
         function toggleSidebar() {
             const sidebar = document.getElementById("sidebar");

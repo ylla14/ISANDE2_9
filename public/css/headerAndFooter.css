@@ -198,13 +198,38 @@ nav.sticky .hamburger {
 /* END OF HEADER STYLES */
 
 /* FOOTER */
+
 .footer {
-    height: 50vh;
+    height: 30vh;
     width: 100%;
     background: url("images/background.png") no-repeat;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     font-family: 'Ubuntu', sans-serif;
+    text-align: center; /* Center content */
+    color: #fff; /* Text color for better visibility on background */
+    padding: 20px 0; /* Add some padding */
+    margin-top: 10%;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+    padding: 40px 80px;
+    z-index: 1000; /* Ensure it's on top of other elements */
+    position: relative;
 }
+
+.footer-logo {
+    margin-bottom: 20px; /* Space below the logo */
+}
+
+.logo-image {
+    max-width: 150px; /* Adjust as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.footer-text p {
+    font-size: 12px;
+    color: #ada5a5; /* Lighter color for the copyright text */
+    margin: 10px 0 0;
+}
+
 

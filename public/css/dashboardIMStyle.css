@@ -9,6 +9,11 @@
     font-family: 'Poppins', sans-serif;
 }
 
+.gap{
+    height: 30vh;
+    width: 100%;
+}
+
 /*below might not be applicable to other pages*/
 
 /*rectangles row 1*/
@@ -74,47 +79,8 @@
 
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 18px;
-    text-align: left;
-}
 
-table thead {
-    background-color: #333;
-    color: white;
-}
-
-table th, table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #f3f3f3;
-}
-
-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-table th {
-    background-color: #000058;
-    color: white;
-    text-transform: uppercase;
-}
-
-.fast-selling h2 {
-    margin-bottom: 10px;
-    font-size: 24px;
-    color: #000058;
-    text-align: left;
-}
-
-
-/* TABLES */
+/* STOCK AGING */
 
 .table-section {
     margin: 20px auto; /* Center the table horizontally */
@@ -122,7 +88,7 @@ table th {
     top: 300px;
     position: relative;
     padding: 20px 80px;
-
+    flex-grow: 1;
 }
 
 table {
@@ -163,6 +129,7 @@ table th {
     color: #000058;
     text-align: left;
 }
+
 
 /* Section Header */
 .section-header {
