@@ -25,6 +25,14 @@ function handleLogin(event) {
     .then(data => {
         console.log('Response:', data);
         if (data.message === 'Login successful') {
+
+            sessionStorage.setItem('userId', userId);
+            //added this to store sales rep info and pass
+            if (data.salesRep) {
+                localStorage.setItem('salesRepId', data.salesRep.id);
+                localStorage.setItem('salesRepName', data.salesRep.name);
+            }
+            
             window.location.href = data.homepage; // Redirect to the homepage on successful login
         } else {
             loginMessage.textContent = "Invalid User ID or password";

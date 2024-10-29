@@ -1,0 +1,312 @@
+/* Google Font Import Link */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header styles remain unchanged */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+nav.sticky {
+    padding: 15px 20px;
+    background: #000058;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+nav .nav-content {
+    height: 100%;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav .logo a {
+    display: flex; /* Ensures the image fits inside the anchor */
+    align-items: center; /* Vertically centers the image */
+}
+
+.logo-icon {
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
+}
+
+.nav-content .nav-left {
+    display: flex; 
+}
+
+.nav-content .nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-content .nav-links li {
+    list-style: none;
+    margin: 0 10px;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #0E2431;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 1px 4px;
+    transition: all 0.3s ease;
+    align-items: center; 
+}
+
+.nav-links li a:hover {
+    color: #000058;
+}
+
+
+/* Profile header part */
+.profile-icon {
+    width: 32px; 
+    height: 32px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-right: 10px; 
+    vertical-align: middle; 
+}
+
+.profile a {
+    text-decoration: none;
+    color: #0E2431; /* Match this with other nav text */
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.profile a:hover {
+    color: #000058; /* Hover color like other nav links */
+}
+
+/* Sticky (stay on screen and change appearance when scroll) */
+.nav-links li a span {
+    font-size: 20px; 
+    color: inherit; 
+}
+
+nav.sticky .nav-links li a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+nav.sticky .profile a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+nav.sticky .nav-links li a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+nav.sticky .logo-icon {
+    content: url("/resources/logo_light.png"); /* Path to the sticky version of the logo */
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
+}
+
+/* Prevent navbar links from shifting due to longer text */
+.nav-links li {
+    white-space: nowrap; 
+}
+
+/* Order Form Styles */
+main {
+    padding: 80px 20px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 20px;
+    background-color: #f1e05f;
+    padding: 20px; 
+    border-radius: 8px;
+}
+
+.page-title {
+    font-size: 24px;
+    color: #333333;
+    text-align: center;
+}
+
+container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: #f1e05f; 
+    padding: 20px; 
+    border-radius: 8px;
+}
+
+/* Card Styles */
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto; 
+    max-width: 1200px; 
+}
+
+
+/* Order Form Layout */
+.order-form {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.section {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+    width: 48%; 
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+
+label {
+    display: block; /* Stacks the labels vertically */
+    margin-bottom: 10px; /* Spacing below each label */
+}
+
+input[type="text"], input[type="date"], input[type="number"], select {
+    width: calc(100% - 10px); 
+    padding: 8px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    margin-top: 5px; 
+}
+
+.half-width {
+    width: 45%; 
+    margin-right: 5%;
+}
+
+.half-width:last-child {
+    margin-right: 0; 
+}
+
+.add-item {
+    margin: 20px auto; 
+    display: block; 
+    font-size: 16px;
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 4px; 
+    color: white;
+    cursor: pointer; 
+    transition: background-color 0.3s;
+    background-color: #000058;
+}
+
+.submit-button {
+    margin: 20px auto;
+    display: block; 
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none; 
+    border-radius: 4px; 
+    background-color: #228B22; 
+    color: white;
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+}
+
+.submit-button:hover {
+    background-color: #000040; 
+}
+
+
+.sales-rep-table {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px; 
+}
+
+.sales-rep-table th,
+.sales-rep-table td {
+    padding: 10px; 
+    text-align: left; 
+    border: 1px solid #ccc; 
+}
+
+.sales-rep-table th {
+    background-color: #f0f0f0; 
+    font-weight: 500; 
+}
+
+
+.order-details {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+    width: 95%; 
+    max-width: 1300px; 
+    margin: 20px auto; 
+}
+
+.order-details-row {
+    display: flex;
+    justify-content: space-between; 
+    margin-top: 10px; 
+}
+
+.order-details-row label {
+    flex: 1; 
+    margin-right: 10px;
+}
+
+.order-details-row label:last-child {
+    margin-right: 0;
+}
+
+.order-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+

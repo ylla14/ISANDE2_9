@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS Dashboard</title>
+    <link rel="stylesheet" href="css/createorderSR.css">
+    <script src="/js/createorderSR.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="header-container">
+            <h1 class="page-title">CREATE ORDER</h1>
+        </div>
+
+        <div class="card">
+            <h3>Sales Representative Details</h3>
+            <div class="container">
+                <table class="sales-rep-table">
+                    <thead>
+                        <tr>
+                            <th>Sales Rep #</th>
+                            <th>Name</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="sales-rep-code"></td>
+                            <td id="sales-rep-name"></td> 
+                            <td id="sales-rep-date"></td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="order-form">
+                <div class="section customer-details">
+                    <h2>Customer's Details</h2>
+                    <label>Order Code: <input type="text" /></label>
+                    <label>Customer Code: <input type="text" /></label>
+                    <label>Customer’s Name:</label>
+                    <input type="text" placeholder="Last Name" class="half-width" />
+                    <input type="text" placeholder="First Name" class="half-width" />
+                    <label>Contact Number: <input type="text" /></label>
+                    <label>Email Address: <input type="text" /></label>
+                    <label>Payment Reference Number: <input type="text" /></label>
+                </div>
+
+                <div class="section delivery-details">
+                    <h2>Delivery Details</h2>
+                    <label>Delivery Date: <input type="date" /></label>
+                    <label>Order Address: <input type="text" /></label>
+                    <label>City: <input type="text" /></label>
+                    <label>Barangay: <input type="text" /></label>
+                    <label>Zip Code: <input type="text" /></label>
+                    <label>Order Receiver: <input type="text" /></label>
+                </div>
+            </div>
+
+            <div class="section order-details">
+                <h2>Order Details</h2>
+                <div id="order-items">
+                  
+                    <div class="order-row item-card">
+                        <label>Qty: <input type="number" class="qty-input" /></label>
+                        <label>Product Description:
+                            <select class="brand-name">
+                                <option value="">Select Brand Name</option>
+                                <!-- Populate options dynamically from MySQL -->
+                            </select>
+                            <select class="product-name">
+                                <option value="">Select Product Name</option>
+                                <!-- Populate options dynamically from MySQL -->
+                            </select>
+                        </label>
+                        <label>Unit Price: <input type="text" class="unit-price-input" /></label>
+                        <label>Total Price: <input type="text" class="total-price-input" /></label>
+                    </div>
+                </div>
+                <button class="add-item">Add Item</button>
+            </div>
+            
+            
+            <button class="submit-button">SUBMIT</button>
+        </div>
+    </main>
+</body>
+</html>

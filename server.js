@@ -88,7 +88,11 @@ app.post('/login', (req, res) => {
                         userRole = 'SalesRepresentative'; // Set role
                         return res.json({
                             message: 'Login successful',
-                            homepage: '/dashboardSR.html' // Redirect to Sales Representative dashboard
+                            homepage: '/dashboardSR.html', // Redirect to Sales Representative dashboard
+                            salesRep: {
+                                id: user.sales_rep_id,
+                                name: user.name // Assume 'name' field stores Sales Rep's name
+                            }
                         });
                     } else {
                         return res.status(401).json({ message: 'Wrong User ID or password.' });
@@ -187,6 +191,23 @@ app.get('/api/products', (req, res) => {
     });
 });
 
+
+app.get('/api/sales-representative/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    const query = 'SELECT sales_rep_id, name, CURRENT_DATE() AS order_date FROM SalesRepresentatives WHERE sales_rep_id = ?';
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error retrieving sales representative data:', err);
+            return res.status(500).send('Error retrieving sales representative data');
+        }
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.json({ sales_rep_id: null, sales_rep_name: null, order_date: null });
+        }
+    });
+});
 
 
 // Start the server
