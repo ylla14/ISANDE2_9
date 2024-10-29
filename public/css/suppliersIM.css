@@ -158,6 +158,14 @@ nav.sticky .logo-icon {
 
 }
 
+.suppliers-list table tbody tr {
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.suppliers-list table tbody tr:hover {
+    background-color: #f0f0f0; /* Optional: Add a hover effect */
+}
+
 table {
     width: 100%;
     border-collapse: collapse;

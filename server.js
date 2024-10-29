@@ -188,6 +188,21 @@ app.get('/api/products', (req, res) => {
 });
 
 
+// used to display the info of the supplier w/ just one layout for all
+app.get('/api/suppliers/:supplierId', (req, res) => {
+    const supplierId = req.params.supplierId;
+    const query = `SELECT * FROM Suppliers WHERE supplier_id = ?`;
+    
+    db.query(query, [supplierId], (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving supplier data');
+            return;
+        }
+        res.json(results[0]); // Send back the first result
+    });
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {

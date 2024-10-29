@@ -34,6 +34,12 @@ async function loadSuppliersData() {
         suppliers.forEach(supplier => { // Iterating over each supplier correctly
             const row = document.createElement('tr');
 
+            row.addEventListener('click', () => {
+                // Navigate to the supplier details page with the supplier_id as a query parameter
+                window.location.href = `/supplierDetailsIM.html?supplierId=${supplier.supplier_id}`;
+            });
+
+
             row.innerHTML = `
                 <td>${supplier.supplier_id}</td>
                 <td>${supplier.supplier_name}</td>
