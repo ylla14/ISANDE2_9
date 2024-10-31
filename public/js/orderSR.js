@@ -42,7 +42,7 @@ async function loadOrderSRData() {
             const orderDateDisplay = orderDate.toLocaleDateString();
 
             row.innerHTML = `
-                <td>${order.order_id}</td>
+                <td>${order.order_code}</td>
                 <td>${orderDateDisplay}</td>
                 <td>${order.customer_id}</td>
                 <td>${order.customer_name}</td>

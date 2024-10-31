@@ -91,3 +91,80 @@ document.addEventListener("DOMContentLoaded", function () {
         orderItemsContainer.appendChild(itemCard);
     });
 });
+
+
+//fill in the ff info if customer is already in the DB
+document.querySelector('.last-name-input').addEventListener('blur', function() {
+    const lastName = this.value;
+    if (lastName) {
+        fetch(`/api/customers/${lastName}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Customer not found');
+                return response.json();
+            })
+            .then(data => {
+                // Fill the form fields with customer data
+                document.querySelector('.customer-code-input').value = data.customer_id;
+                document.querySelector('.first-name-input').value = data.fname;
+                document.querySelector('.contact-number-input').value = data.contact_num;
+                document.querySelector('.email-address-input').value = data.email;
+            })
+            .catch(error => console.error('Error fetching customer:', error));
+    }
+});
+
+let currentOrderId = null; // To keep track of the generated order ID
+
+// Function to generate order ID
+function generateOrderId() {
+    const orderIdNumber = Math.floor(Math.random() * 1000); //FIX THIS
+    currentOrderId = `ORD${String(orderIdNumber).padStart(3, '0')}`; // Format as ORDxxx
+    document.getElementById("generated-order-id").textContent = currentOrderId; // Display it
+}
+
+// Call this function when the user interacts with the form (e.g., when they enter customer details)
+document.querySelector('.customer-code-input').addEventListener('input', generateOrderId);
+
+// On submit, send the data to the server
+document.querySelector(".submit-button").addEventListener("click", function() {
+    const customerCode = document.querySelector('.customer-code-input').value;
+    const paymentRefNum = document.querySelector('input[type="text"][placeholder="Payment Reference Number"]').value;
+    const deliveryDate = document.querySelector('input[type="date"]').value;
+    const city = document.querySelector('input[type="text"][placeholder="City"]').value;
+    const barangay = document.querySelector('input[type="text"][placeholder="Barangay"]').value;
+    const address = document.querySelector('input[type="text"][placeholder="Order Address"]').value;
+    const orderReceiver = document.querySelector('input[type="text"][placeholder="Order Receiver"]').value;
+    const qty = document.querySelector('.qty-input').value; // Assuming you get the qty from the first item row
+    const brandName = document.querySelector('.brand-name').value; // Assuming the first item row
+    const productName = document.querySelector('.product-name').value; // Assuming the first item row
+    const unitPrice = document.querySelector('.unit-price-input').value; // Assuming the first item row
+    
+    // Send a request to the server to store the order
+    fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            customer_id: customerCode,
+            payment_ref_num: paymentRefNum,
+            delivery_date: deliveryDate,
+            city: city,
+            barangay: barangay,
+            address: address,
+            order_receiver: orderReceiver,
+            qty: qty,
+            brand_name: brandName,
+            product_name: productName,
+            unit_price: unitPrice
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Message:', data);
+        // Optionally, reset form or show success message
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+});

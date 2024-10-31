@@ -227,11 +227,12 @@ app.get('/api/sales-representative/:userId', (req, res) => {
 app.get('/api/OrdersSR', (req, res) => {
     const query = `
     SELECT
-    osr.order_id,
-    osr.purchased_date,
-    osr.customer_id,
-    CONCAT(c.fname, ' ', c.lname) AS customer_name, 
-    SUM(osr.total_price) AS total_order
+        CONCAT('ORD', LPAD(osr.order_id, 3, '0')) AS order_code,
+        osr.order_id,
+        osr.purchased_date,
+        osr.customer_id,
+        CONCAT(c.fname, ' ', c.lname) AS customer_name, 
+        SUM(osr.total_price) AS total_order
     FROM 
         OrdersSR osr
     LEFT JOIN 
@@ -240,8 +241,8 @@ app.get('/api/OrdersSR', (req, res) => {
         osr.order_id,
         osr.purchased_date,
         osr.customer_id,
-        c.fname,  -- Group by fname
-        c.lname;  -- Group by lname
+        c.fname,
+        c.lname;
     `;
   
     db.query(query, (err, results) => {
@@ -252,6 +253,116 @@ app.get('/api/OrdersSR', (req, res) => {
         }
         res.json(results);
     });    
+});
+
+
+
+app.get('/api/customers/:lastName', (req, res) => {
+    const lastName = req.params.lastName;
+    const query = `SELECT * FROM Customers WHERE lname = ?`;
+
+    db.query(query, [lastName], (err, results) => {
+        if (err) {
+            console.error('Error retrieving customer data:', err);
+            return res.status(500).send('Error retrieving customer data');
+        }
+        if (results.length > 0) {
+            res.json(results[0]); // Return the first matching customer
+        } else {
+            res.status(404).json({ message: 'Customer not found' });
+        }
+    });
+});
+
+app.post('/api/orders', (req, res) => {
+    const { customer_id, payment_ref_num, delivery_date, city, barangay, address, order_receiver, qty, brand_name, product_name, unit_price, supplier_id } = req.body;
+
+    // Check if required fields are present
+    if (!customer_id || !qty || !unit_price) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Log the request body for debugging
+    console.log('Request Body:', req.body);
+
+    // Fetch the supplier's name using the supplier ID
+    const supplierQuery = `SELECT supplier_name FROM Suppliers WHERE supplier_id = ?`;
+    db.query(supplierQuery, [supplier_id], (supplierErr, supplierResult) => {
+        if (supplierErr) {
+            console.error('Error fetching supplier name:', supplierErr.message);
+            return res.status(500).json({ message: 'Error fetching supplier name', error: supplierErr.message });
+        }
+
+        // Check if the supplier name was found
+        if (supplierResult.length === 0) {
+            return res.status(404).json({ message: 'Supplier not found' });
+        }
+
+        const supplierName = supplierResult[0].supplier_name;
+
+        // Calculate total price
+        const totalPrice = unit_price * qty;
+
+        // Insert the order with supplier name only
+        const insertQuery = `
+            INSERT INTO OrdersSR (
+                purchased_date, customer_id, payment_ref_num, delivery_date, city, barangay, address, 
+                order_receiver, qty, brand_name, product_name, unit_price, total_price, supplier_name
+            ) VALUES (CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(insertQuery, [customer_id, payment_ref_num, delivery_date, city, barangay, address, order_receiver, qty, brand_name, product_name, unit_price, totalPrice, supplierName], (insertErr, result) => {
+            if (insertErr) {
+                console.error('Error inserting order:', insertErr.message);
+                return res.status(500).json({ message: 'Error inserting order', error: insertErr.message });
+            }
+
+            res.json({ orderId: result.insertId, message: 'Order created successfully' });
+        });
+    });
+});
+
+
+app.get('/api/brands', (req, res) => {
+    const query = `SELECT supplier_id, supplier_name FROM Suppliers`;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+          res.status(500).send('Error retrieving brands from database');
+          return;
+      }
+      res.json(results);
+    });
+});
+
+app.get('/api/productName', (req, res) => {
+    const query = `SELECT product_id, product_name FROM Products`;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+          res.status(500).send('Error retrieving products from database');
+          return;
+      }
+      res.json(results);
+    });
+});
+
+
+app.get('/api/products/:supplierId', (req, res) => {
+    const supplierId = req.params.supplierId;
+    const query = `
+        SELECT product_id, product_name, selling_price 
+        FROM Products 
+        WHERE supplier_id = ?
+    `;
+
+    db.query(query, [supplierId], (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving products from database');
+            return;
+        }
+        res.json(results);
+    });
 });
 
 

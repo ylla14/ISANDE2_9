@@ -58,24 +58,26 @@
             <div class="order-form">
                 <div class="section customer-details">
                     <h2>Customer's Details</h2>
-                    <label>Order Code: <input type="text" /></label>
-                    <label>Customer Code: <input type="text" /></label>
-                    <label>Customer’s Name:</label>
-                    <input type="text" placeholder="Last Name" class="half-width" />
-                    <input type="text" placeholder="First Name" class="half-width" />
-                    <label>Contact Number: <input type="text" /></label>
-                    <label>Email Address: <input type="text" /></label>
-                    <label>Payment Reference Number: <input type="text" /></label>
+                    <label>Order ID: <span id="generated-order-id">Not generated yet</span></label>
+
+                    <label>Customer Code: <input type="text" class="customer-code-input" placeholder="Customer Code" /> </label>
+                    <label>Customer’s Name:
+                        <input type="text" class="last-name-input" placeholder="Last Name" />
+                        <input type="text" class="first-name-input" placeholder="First Name" /> 
+                    </label>
+                    <label>Contact Number: <input type="text" class="contact-number-input" placeholder="Contact Number" /> </label>
+                    <label>Email Address: <input type="text" class="email-address-input" placeholder="Email Address" /> </label>
+
+                    <label>Payment Reference Number: <input type="text" placeholder="Payment Reference Number"/></label>
                 </div>
 
                 <div class="section delivery-details">
                     <h2>Delivery Details</h2>
                     <label>Delivery Date: <input type="date" /></label>
-                    <label>Order Address: <input type="text" /></label>
-                    <label>City: <input type="text" /></label>
-                    <label>Barangay: <input type="text" /></label>
-                    <label>Zip Code: <input type="text" /></label>
-                    <label>Order Receiver: <input type="text" /></label>
+                    <label>Order Address: <input type="text" placeholder="Order Address" /></label>
+                    <label>City: <input type="text" placeholder="City" /></label>
+                    <label>Barangay: <input type="text" placeholder="Barangay" /></label>
+                    <label>Order Receiver: <input type="text" placeholder="Order Receiver" /></label>
                 </div>
             </div>
 
@@ -88,16 +90,17 @@
                         <label>Product Description:
                             <select class="brand-name">
                                 <option value="">Select Brand Name</option>
-                                <!-- Populate options dynamically from MySQL -->
+                                <!-- Options populated from brands -->
                             </select>
                             <select class="product-name">
                                 <option value="">Select Product Name</option>
-                                <!-- Populate options dynamically from MySQL -->
+                                <!-- Options populated based on selected brand -->
                             </select>
                         </label>
-                        <label>Unit Price: <input type="text" class="unit-price-input" /></label>
-                        <label>Total Price: <input type="text" class="total-price-input" /></label>
+                        <label>Unit Price: <input type="text" class="unit-price-input" readonly /></label>
+                        <label>Total Price: <input type="text" class="total-price-input" readonly /></label>
                     </div>
+                    
                 </div>
                 <button class="add-item">Add Item</button>
             </div>
@@ -117,6 +120,89 @@
                 nav.classList.remove("sticky");
             }
         }//END OF SCRIPT FOR HEADER
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch brands and populate the brand dropdown
+    fetch('/api/brands')
+        .then(response => response.json())
+        .then(data => {
+            const brandSelect = document.querySelector('.brand-name');
+            data.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.supplier_id;
+                option.textContent = brand.supplier_name;
+                brandSelect.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching brands:', error));
+
+    // Fetch products when a brand is selected
+    const brandSelect = document.querySelector('.brand-name');
+    const productSelect = document.querySelector('.product-name');
+    const unitPriceInput = document.querySelector('.unit-price-input');
+    const qtyInput = document.querySelector('.qty-input');
+    const totalPriceInput = document.querySelector('.total-price-input');
+
+    brandSelect.addEventListener('change', () => {
+        const supplierId = brandSelect.value;
+
+        // Clear the product dropdown
+        productSelect.innerHTML = '<option value="">Select Product Name</option>';
+
+        if (supplierId) {
+            fetch(`/api/products/${supplierId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.product_id;
+                        option.textContent = product.product_name;
+                        productSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+    });
+
+    // Fetch unit price when a product is selected
+
+    productSelect.addEventListener('change', () => {
+        const productId = productSelect.value;
+
+        if (productId) {
+            fetch(`/api/products/${brandSelect.value}`) // Call the product API again to get selling_price
+                .then(response => response.json())
+                .then(products => {
+                    const product = products.find(p => p.product_id === productId);
+                    if (product) {
+                        const sellingPrice = parseFloat(product.selling_price); // Convert to number
+                        if (!isNaN(sellingPrice)) {
+                            unitPriceInput.value = sellingPrice.toFixed(2); // Set unit price
+                            calculateTotalPrice(); // Calculate total price
+                        } else {
+                            console.error('Selling price is not a valid number:', product.selling_price);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching product details:', error));
+        }
+    });
+
+
+    // Calculate total price whenever quantity is changed
+    qtyInput.addEventListener('input', calculateTotalPrice);
+
+    function calculateTotalPrice() {
+        const quantity = parseFloat(qtyInput.value) || 0; // Default to 0 if not a number
+        const unitPrice = parseFloat(unitPriceInput.value) || 0;
+        const totalPrice = (quantity * unitPrice).toFixed(2);
+        totalPriceInput.value = totalPrice; // Update total price input
+    }
+});
+
+
+
     </script>
 </body>
 </html>
