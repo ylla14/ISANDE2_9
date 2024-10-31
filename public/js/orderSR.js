@@ -27,7 +27,39 @@ document.getElementById("add-new-button").addEventListener("click", function(eve
 });
 
 
+async function loadOrderSRData() {
+    try {
+        const response = await fetch('/api/OrdersSR');
+        const ordersSR = await response.json();
+        console.log('Fetched orders:', ordersSR); // Check what data is received
 
+        const tbody = document.querySelector('.order-list table tbody');
+        tbody.innerHTML = '';
+
+        ordersSR.forEach(order => {
+            const row = document.createElement('tr');
+            const orderDate = new Date(order.purchased_date); // Use the correct date field
+            const orderDateDisplay = orderDate.toLocaleDateString();
+
+            row.innerHTML = `
+                <td>${order.order_id}</td>
+                <td>${orderDateDisplay}</td>
+                <td>${order.customer_id}</td>
+                <td>${order.customer_name}</td>
+                <td>${parseFloat(order.total_order).toFixed(2)}</td> <!-- Convert to number and format -->
+                <td>${order.status || 'Pending'}</td> <!-- Handle status gracefully -->
+                <td>
+                    <button class="add-btn" data-id="${order.order_id}">View</button>
+                    <button class="add-btn" data-id="${order.order_id}">Delete</button>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading sales order data:', error);
+    }
+}
 
 
 
@@ -48,3 +80,5 @@ function searchInventory() {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', loadOrderSRData);

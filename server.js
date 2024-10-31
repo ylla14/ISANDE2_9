@@ -224,8 +224,40 @@ app.get('/api/sales-representative/:userId', (req, res) => {
     });
 });
 
+app.get('/api/OrdersSR', (req, res) => {
+    const query = `
+    SELECT
+    osr.order_id,
+    osr.purchased_date,
+    osr.customer_id,
+    CONCAT(c.fname, ' ', c.lname) AS customer_name, 
+    SUM(osr.total_price) AS total_order
+    FROM 
+        OrdersSR osr
+    LEFT JOIN 
+        Customers c ON osr.customer_id = c.customer_id
+    GROUP BY 
+        osr.order_id,
+        osr.purchased_date,
+        osr.customer_id,
+        c.fname,  -- Group by fname
+        c.lname;  -- Group by lname
+    `;
+  
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error retrieving data from OrdersSR:', err); 
+            res.status(500).send('Error retrieving data from database');
+            return;
+        }
+        res.json(results);
+    });    
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+

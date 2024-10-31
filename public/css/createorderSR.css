@@ -139,7 +139,7 @@ main {
     justify-content: center; 
     align-items: center; 
     margin-bottom: 20px;
-    background-color: #f1e05f;
+    background-color: #FFDEAD;
     padding: 20px; 
     border-radius: 8px;
 }
@@ -155,7 +155,7 @@ container {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
-    background-color: #f1e05f; 
+    background-color: #FFFFC5; 
     padding: 20px; 
     border-radius: 8px;
 }

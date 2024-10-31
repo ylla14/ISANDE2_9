@@ -147,9 +147,9 @@ nav.sticky .logo-icon {
     box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* INVENTORY TABLE */
+/* ORDERS TABLE */
 
-.inventory-list {
+.order-list {
     margin: 20px auto; /* Center the table horizontally */
     text-align: center;
     top: 100px;
