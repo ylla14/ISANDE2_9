@@ -23,6 +23,12 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
     window.location.href = "suppliersIM.html"; // Redirect to the inventory page
 });
 
+document.getElementById("add-prod").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "addProdIM.html"; // Redirect to the inventory page
+});
+
+
 
 async function loadInventoryData() {
     try {
