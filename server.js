@@ -231,8 +231,7 @@ app.get('/api/OrdersSR', (req, res) => {
         osr.order_id,
         osr.purchased_date,
         osr.customer_id,
-        CONCAT(c.fname, ' ', c.lname) AS customer_name, 
-        SUM(osr.total_price) AS total_order
+        CONCAT(c.fname, ' ', c.lname) AS customer_name 
     FROM 
         OrdersSR osr
     LEFT JOIN 
@@ -274,53 +273,39 @@ app.get('/api/customers/:lastName', (req, res) => {
     });
 });
 
-app.post('/api/orders', (req, res) => {
-    const { customer_id, payment_ref_num, delivery_date, city, barangay, address, order_receiver, qty, brand_name, product_name, unit_price, supplier_id } = req.body;
+// Route to generate a new customer ID
+app.get('/api/generate-new-customer-id', (req, res) => {
+    const query = `SELECT MAX(customer_id) AS max_id FROM Customers`;
 
-    // Check if required fields are present
-    if (!customer_id || !qty || !unit_price) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    // Log the request body for debugging
-    console.log('Request Body:', req.body);
-
-    // Fetch the supplier's name using the supplier ID
-    const supplierQuery = `SELECT supplier_name FROM Suppliers WHERE supplier_id = ?`;
-    db.query(supplierQuery, [supplier_id], (supplierErr, supplierResult) => {
-        if (supplierErr) {
-            console.error('Error fetching supplier name:', supplierErr.message);
-            return res.status(500).json({ message: 'Error fetching supplier name', error: supplierErr.message });
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error generating new customer ID:', err);
+            return res.status(500).send('Error generating new customer ID');
         }
 
-        // Check if the supplier name was found
-        if (supplierResult.length === 0) {
-            return res.status(404).json({ message: 'Supplier not found' });
-        }
+        const maxId = results[0].max_id;
+        const newCustomerId = maxId ? maxId + 1 : 1; // Increment the max ID or start from 1 if no customers exist
 
-        const supplierName = supplierResult[0].supplier_name;
-
-        // Calculate total price
-        const totalPrice = unit_price * qty;
-
-        // Insert the order with supplier name only
-        const insertQuery = `
-            INSERT INTO OrdersSR (
-                purchased_date, customer_id, payment_ref_num, delivery_date, city, barangay, address, 
-                order_receiver, qty, brand_name, product_name, unit_price, total_price, supplier_name
-            ) VALUES (CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
-        db.query(insertQuery, [customer_id, payment_ref_num, delivery_date, city, barangay, address, order_receiver, qty, brand_name, product_name, unit_price, totalPrice, supplierName], (insertErr, result) => {
-            if (insertErr) {
-                console.error('Error inserting order:', insertErr.message);
-                return res.status(500).json({ message: 'Error inserting order', error: insertErr.message });
-            }
-
-            res.json({ orderId: result.insertId, message: 'Order created successfully' });
-        });
+        res.json({ newCustomerId });
     });
 });
+
+// Route to handle storing new customer information
+app.post('/api/create-customer', (req, res) => {
+    const { customer_code, first_name, last_name, contact_number, email_address } = req.body;
+    const query = `
+        INSERT INTO Customers (customer_id, fname, lname, contact_num, email)
+        VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(query, [customer_code, first_name, last_name, contact_number, email_address], (err, results) => {
+        if (err) {
+            console.error('Error saving customer data:', err);
+            return res.status(500).send('Error saving customer data');
+        }
+        res.json({ success: true });
+    });
+});
+
 
 
 app.get('/api/brands', (req, res) => {
@@ -362,6 +347,180 @@ app.get('/api/products/:supplierId', (req, res) => {
             return;
         }
         res.json(results);
+    });
+});
+
+
+// Function to generate a new numeric Order ID
+const getNewOrderIdFromDatabase = async () => {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT MAX(order_id) AS last_order_id FROM OrdersSR', (err, results) => {
+            if (err) {
+                reject(err);  // If there's an error, reject the promise
+            } else {
+                const lastOrderId = results[0].last_order_id || 0;
+                const newOrderId = lastOrderId + 1;  // Increment the order_id
+                resolve(newOrderId);  // Return the new numeric order ID
+            }
+        });
+    });
+};
+
+// Example API endpoint to get a new formatted order ID
+app.get('/api/generate-order-id', async (req, res) => {
+    try {
+        const newOrderId = await getNewOrderIdFromDatabase(); // Fetch new numeric order ID
+        const formattedOrderId = `ORD${newOrderId.toString().padStart(3, '0')}`;  // Format it with 'ORD' prefix
+        res.json({ order_id: formattedOrderId });  // Return the formatted new order ID as JSON
+    } catch (error) {
+        console.error('Error generating Order ID:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// Route to create an order
+app.post('/api/create-order', async (req, res) => {
+    const {
+        customer_code, 
+        payment_ref_num, 
+        delivery_date, 
+        order_address, 
+        city, 
+        barangay, 
+        order_receiver, 
+        order_items // Array of order items
+    } = req.body;
+
+    // Validate input fields
+    if (!customer_code || !payment_ref_num || !delivery_date || !order_address || !city || !barangay || !order_receiver || !order_items || order_items.length === 0) {
+        return res.status(400).json({ success: false, error: "Missing required fields or order items" });
+    }
+
+    // Start a transaction
+    db.beginTransaction(async (err) => {
+        if (err) {
+            console.error('Error starting transaction:', err);
+            return res.status(500).json({ success: false, error: 'Failed to start transaction' });
+        }
+
+        try {
+            // Check if the customer exists
+            const customerQuery = 'SELECT * FROM Customers WHERE customer_id = ?';
+            db.query(customerQuery, [customer_code], async (customerErr, customerResults) => {
+                if (customerErr) {
+                    console.error('Error checking customer:', customerErr);
+                    return db.rollback(() => {
+                        res.status(500).json({ success: false, error: 'Error checking customer' });
+                    });
+                }
+
+                if (customerResults.length === 0) {
+                    // Customer doesn't exist, so insert a new customer
+                    const newCustomerQuery = `
+                        INSERT INTO Customers (customer_id, fname, lname, contact_num, email)
+                        VALUES (?, ?, ?, ?, ?)`;
+                    
+                    const { first_name, last_name, contact_number, email_address } = req.body;
+
+                    db.query(newCustomerQuery, [customer_code, first_name, last_name, contact_number, email_address], (insertErr) => {
+                        if (insertErr) {
+                            console.error('Error inserting customer:', insertErr);
+                            return db.rollback(() => {
+                                res.status(500).json({ success: false, error: 'Error inserting new customer' });
+                            });
+                        }
+
+                        console.log('Customer inserted successfully');
+                        proceedToCreateOrder();  // Proceed with order creation after customer is inserted
+                    });
+                } else {
+                    // Customer exists, proceed with creating the order
+                    proceedToCreateOrder();
+                }
+            });
+
+            // Function to proceed with creating the order
+            function proceedToCreateOrder() {
+                // Generate new numeric order ID
+                getNewOrderIdFromDatabase().then((newOrderId) => {
+                    // Insert the order into the OrdersSR table (store numeric order_id)
+                    const insertOrderQuery = `
+                        INSERT INTO OrdersSR (order_id, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+                    db.query(insertOrderQuery, [
+                        newOrderId,  // Use the numeric order ID
+                        customer_code, 
+                        payment_ref_num, 
+                        delivery_date, 
+                        order_address, 
+                        city, 
+                        barangay, 
+                        order_receiver
+                    ], (insertOrderErr) => {
+                        if (insertOrderErr) {
+                            console.error('Error inserting order:', insertOrderErr);
+                            return db.rollback(() => {
+                                res.status(500).json({ success: false, error: 'Error inserting order' });
+                            });
+                        }
+
+                        console.log('Order inserted successfully');
+                        
+                        // Insert the order items
+                        const insertOrderItemsQuery = `
+                            INSERT INTO OrderDetails (order_id, product_id, quantity, unit_price, total_price)
+                            VALUES (?, ?, ?, ?, ?)`;
+
+                        const itemInsertions = order_items.map(item => {
+                            const { product_id, quantity, unit_price } = item;
+                            const total_price = quantity * unit_price; // Calculate total price
+
+                            return new Promise((resolve, reject) => {
+                                db.query(insertOrderItemsQuery, [newOrderId, product_id, quantity, unit_price, total_price], (insertItemErr) => {
+                                    if (insertItemErr) {
+                                        reject(insertItemErr);
+                                    } else {
+                                        resolve();
+                                    }
+                                });
+                            });
+                        });
+
+                        // Execute all item insertions and commit the transaction if successful
+                        Promise.all(itemInsertions).then(() => {
+                            db.commit((commitErr) => {
+                                if (commitErr) {
+                                    console.error('Error committing transaction:', commitErr);
+                                    return db.rollback(() => {
+                                        res.status(500).json({ success: false, error: 'Failed to commit transaction' });
+                                    });
+                                }
+
+                                // Format the order ID with 'ORD' prefix and send the response
+                                const formattedOrderId = `ORD${newOrderId.toString().padStart(3, '0')}`;
+                                res.status(200).json({ success: true, order_id: formattedOrderId });
+                            });
+                        }).catch(insertItemErr => {
+                            console.error('Error inserting order items:', insertItemErr);
+                            return db.rollback(() => {
+                                res.status(500).json({ success: false, error: 'Error inserting order items' });
+                            });
+                        });
+                    });
+                }).catch((err) => {
+                    console.error('Error getting new order ID:', err);
+                    return db.rollback(() => {
+                        res.status(500).json({ success: false, error: 'Error generating new order ID' });
+                    });
+                });
+            }
+        } catch (error) {
+            console.error('Error during order creation process:', error);
+            return db.rollback(() => {
+                res.status(500).json({ success: false, error: 'Error during order creation' });
+            });
+        }
     });
 });
 

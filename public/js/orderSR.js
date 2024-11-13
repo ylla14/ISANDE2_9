@@ -46,7 +46,6 @@ async function loadOrderSRData() {
                 <td>${orderDateDisplay}</td>
                 <td>${order.customer_id}</td>
                 <td>${order.customer_name}</td>
-                <td>${parseFloat(order.total_order).toFixed(2)}</td> <!-- Convert to number and format -->
                 <td>${order.status || 'Pending'}</td> <!-- EDIT THIS IF CREATE ORDER IS POLISHED -->
                 <td>
                     <button class="add-btn" data-id="${order.order_id}">View</button>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="css/createorderSR.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="/js/OrderDetail.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main>
+
+    <div class="order-details-container">
+        <h2>Order Details</h2>
+
+        <!-- Display Order Information -->
+        <p><strong>Order ID:</strong> <span id="order-id"></span></p>
+        <p><strong>Customer Name:</strong> <span id="customer-name"></span></p>
+        <p><strong>Contact:</strong> <span id="customer-contact"></span></p>
+        <p><strong>Delivery Address:</strong> <span id="order-address"></span></p>
+        <p><strong>Delivery Date:</strong> <span id="delivery-date"></span></p>
+        <p><strong>Receiver:</strong> <span id="order-receiver"></span></p>
+
+        <h3>Order Items</h3>
+        <div id="order-items"></div>
+
+        <!-- Back to Orders Button -->
+        <button onclick="window.location.href='orderSR.html'">Back to Orders</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const orderId = sessionStorage.getItem("order_id");  // Get the order_id from session storage
+
+            if (orderId) {
+                // Fetch the order details using the order ID
+                fetch(`/api/order-details/${orderId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const order = data.order;
+
+                            // Display order details
+                            document.getElementById("order-id").textContent = order.order_id;
+                            document.getElementById("customer-name").textContent = `${order.first_name} ${order.last_name}`;
+                            document.getElementById("customer-contact").textContent = `Contact: ${order.contact_number}`;
+                            document.getElementById("order-address").textContent = `Address: ${order.order_address}, ${order.city}, ${order.barangay}`;
+                            document.getElementById("delivery-date").textContent = `Delivery Date: ${order.delivery_date}`;
+                            document.getElementById("order-receiver").textContent = `Receiver: ${order.order_receiver}`;
+
+                            // Display order items if available
+                            const orderItemsContainer = document.getElementById("order-items");
+                            order.order_items.forEach(item => {
+                                const itemElement = document.createElement("div");
+                                itemElement.classList.add("order-item");
+
+                                itemElement.innerHTML = `
+                                    <p>Product: ${item.product_name}</p>
+                                    <p>Quantity: ${item.quantity}</p>
+                                    <p>Unit Price: ${item.unit_price}</p>
+                                    <p>Total Price: ${item.total_price}</p>
+                                `;
+                                orderItemsContainer.appendChild(itemElement);
+                            });
+                        } else {
+                            alert('Error fetching order details');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching order details:', error);
+                        alert('Failed to fetch order details');
+                    });
+            } else {
+                alert('No order ID found');
+            }
+        });
+    </script>
+</body>
+</html>
