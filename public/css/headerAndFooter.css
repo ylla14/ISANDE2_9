@@ -211,7 +211,7 @@ nav.sticky .hamburger {
     color: #fff; /* Text color for better visibility on background */
     padding: 20px 0; /* Add some padding */
     margin-top: 10%;
-    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1); */
     padding: 40px 80px;
 }
 
