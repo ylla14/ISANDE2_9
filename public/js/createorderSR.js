@@ -93,6 +93,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const orderItemsContainer = document.getElementById("order-items");
     const addItemButton = document.querySelector(".add-item");
 
+    // Function to delete an order item
+    function deleteOrderItem(button) {
+        const itemCard = button.closest(".item-card");
+        if (itemCard) {
+            itemCard.remove();
+        }
+    }
+
+    // Add this function to global scope to make it accessible from inline HTML
+    window.deleteOrderItem = deleteOrderItem;
+
+
     addItemButton.addEventListener("click", function () {
 
         // Create the new item card
@@ -127,6 +139,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalPriceLabel = document.createElement("label");
         totalPriceLabel.innerHTML = 'Total Price: <input type="text" class="total-price-input" readonly />';
         itemCard.appendChild(totalPriceLabel);
+
+         // Create Delete Button
+         const deleteButton = document.createElement("button");
+         deleteButton.classList.add("delete-item");
+         deleteButton.textContent = "Delete";
+         deleteButton.onclick = function() { deleteOrderItem(deleteButton); };
+         itemCard.appendChild(deleteButton);
 
         // Add the item card to the order items container
         orderItemsContainer.appendChild(itemCard);
@@ -237,6 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const barangay = document.querySelector('.delivery-details input[placeholder="Barangay"]').value;
         const orderReceiver = document.querySelector('.delivery-details input[placeholder="Order Receiver"]').value;
         
+        const salesRepId = document.getElementById("sales-rep-code").textContent.trim(); // Ensure no extra spaces
+
+
         // Capture the order items (product, quantity, unit price, total price)
         const orderItems = [];
         const orderRows = document.querySelectorAll('.order-row');
@@ -270,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             city: city,
             barangay: barangay,
             order_receiver: orderReceiver,
+            sales_rep_id: salesRepId,
             order_items: orderItems
         };
 

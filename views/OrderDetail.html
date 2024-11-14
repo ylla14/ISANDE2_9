@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details</title>
-    <link rel="stylesheet" href="css/createorderSR.css">
+    <link rel="stylesheet" href="css/OrderDetail.css">
     <link rel="stylesheet" href="css/headerAndFooter.css">
     <script src="/js/OrderDetail.js" defer></script>
 </head>
@@ -32,70 +32,134 @@
     </nav>
     <main>
 
-    <div class="order-details-container">
-        <h2>Order Details</h2>
+    <div class="header-container">
+        <h1 class="page-title" id="order-title">ORD###</h1>
+    </div>
 
-        <!-- Display Order Information -->
-        <p><strong>Order ID:</strong> <span id="order-id"></span></p>
-        <p><strong>Customer Name:</strong> <span id="customer-name"></span></p>
-        <p><strong>Contact:</strong> <span id="customer-contact"></span></p>
-        <p><strong>Delivery Address:</strong> <span id="order-address"></span></p>
-        <p><strong>Delivery Date:</strong> <span id="delivery-date"></span></p>
-        <p><strong>Receiver:</strong> <span id="order-receiver"></span></p>
+    <div class="order-details">
+        <div class="card">
+            <h3>Sales Representative Details</h3>
+            <div class="container">
+                <table class="sales-rep-table">
+                    <thead>
+                        <tr>
+                            <th>Sales Rep #</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="sales-rep-id"></td>
+                            <td id="sales-rep-name"></td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="order-form">
+                <div class="section customer-details">
+                    <h2>Customer's Details</h2>
+                    <table class="details">
+                        <thead>
+                            <tr><th>Customer ID:</th><td id="customer-id"></td></th></tr>
+                            <tr><th>Name:</th><td id="customer-name"></td></th></tr>
+                            <tr><th>Contact Number:</th><td id="customer-contact"></td></th></tr>
+                            <tr><th>Email:</th><td id="customer-email"></td></th></tr>
+                        </thead>
+                    </table>
+                </div>
 
-        <h3>Order Items</h3>
-        <div id="order-items"></div>
+                <div class="section delivery-details">
+                    <h2>Delivery Details</h2>
+                    <table class="details">
+                        <thead>
+                            <tr><th>Delivery Date:</th><td id="delivery-date"></td></th></tr>
+                            <tr><th>City:</th><td id="delivery-city"></td></th></tr>
+                            <tr><th>Barangay:</th><td id="delivery-barangay"></td></th></tr>
+                            <tr><th>Address:</th><td id="delivery-address"></td></th></tr>
+                            <tr><th>Receiver:</th><td id="delivery-receiver"></td></th></tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
 
-        <!-- Back to Orders Button -->
-        <button onclick="window.location.href='orderSR.html'">Back to Orders</button>
+            <div class="section order-details">
+                <section class="product-section">
+                        <h2>Order Details</h2>
+                        <table border="3">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-items-table">
+                            <!-- Items will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </section>
+            </div>  
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const orderId = sessionStorage.getItem("order_id");  // Get the order_id from session storage
 
-            if (orderId) {
-                // Fetch the order details using the order ID
-                fetch(`/api/order-details/${orderId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const order = data.order;
-
-                            // Display order details
-                            document.getElementById("order-id").textContent = order.order_id;
-                            document.getElementById("customer-name").textContent = `${order.first_name} ${order.last_name}`;
-                            document.getElementById("customer-contact").textContent = `Contact: ${order.contact_number}`;
-                            document.getElementById("order-address").textContent = `Address: ${order.order_address}, ${order.city}, ${order.barangay}`;
-                            document.getElementById("delivery-date").textContent = `Delivery Date: ${order.delivery_date}`;
-                            document.getElementById("order-receiver").textContent = `Receiver: ${order.order_receiver}`;
-
-                            // Display order items if available
-                            const orderItemsContainer = document.getElementById("order-items");
-                            order.order_items.forEach(item => {
-                                const itemElement = document.createElement("div");
-                                itemElement.classList.add("order-item");
-
-                                itemElement.innerHTML = `
-                                    <p>Product: ${item.product_name}</p>
-                                    <p>Quantity: ${item.quantity}</p>
-                                    <p>Unit Price: ${item.unit_price}</p>
-                                    <p>Total Price: ${item.total_price}</p>
-                                `;
-                                orderItemsContainer.appendChild(itemElement);
-                            });
-                        } else {
-                            alert('Error fetching order details');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching order details:', error);
-                        alert('Failed to fetch order details');
-                    });
+    let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
             } else {
-                alert('No order ID found');
+                nav.classList.remove("sticky");
             }
-        });
+        }//END OF SCRIPT FOR HEADER
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('orderId'); // Get orderId from URL
+
+    if (orderId) {
+        fetchOrderDetails(orderId);
+    }
+});
+
+function fetchOrderDetails(orderId) {
+    fetch(`/api/order-details/${orderId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.order) {
+            const formattedDeliveryDate = new Date(data.order.delivery_date).toLocaleDateString();
+
+
+            document.getElementById('order-title').textContent = `ORD00${data.order.order_id}`;
+            document.getElementById('sales-rep-id').textContent = data.order.sales_rep_id;
+            document.getElementById('sales-rep-name').textContent = data.order.sales_rep_name;
+            document.getElementById('customer-id').textContent = data.order.customer_id;
+            document.getElementById('customer-name').textContent = `${data.order.customer_first_name} ${data.order.customer_last_name}`;
+            document.getElementById('customer-contact').textContent = data.order.customer_contact;
+            document.getElementById('customer-email').textContent = data.order.customer_email;
+            document.getElementById('delivery-date').textContent = formattedDeliveryDate;
+            document.getElementById('delivery-city').textContent = data.order.city;
+            document.getElementById('delivery-barangay').textContent = data.order.barangay;
+            document.getElementById('delivery-address').textContent = data.order.order_address;
+            document.getElementById('delivery-receiver').textContent = data.order.order_receiver;
+
+            const itemsTable = document.getElementById('order-items-table');
+            data.order_items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${item.product_name}</td><td>${item.quantity}</td><td>${item.unit_price}</td><td>${item.total_price}</td>`;
+                itemsTable.appendChild(row);
+            });
+        } else {
+            console.error("Order not found or invalid data:", data);
+            alert("Order not found.");
+        }
+    })
+    .catch(error => console.error('Error fetching order details:', error));
+
+}
+
+
     </script>
 </body>
 </html>

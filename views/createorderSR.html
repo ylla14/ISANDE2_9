@@ -84,21 +84,20 @@
             <div class="section order-details">
                 <h2>Order Details</h2>
                 <div id="order-items">
-                  
+
                     <div class="order-row item-card">
                         <label>Qty: <input type="number" class="qty-input" /></label>
                         <label>Product Description:
                             <select class="brand-name">
                                 <option value="">Select Brand Name</option>
-                                <!-- Options populated from brands -->
                             </select>
                             <select class="product-name">
                                 <option value="">Select Product Name</option>
-                                <!-- Options populated based on selected brand -->
                             </select>
                         </label>
                         <label>Unit Price: <input type="text" class="unit-price-input" readonly /></label>
                         <label>Total Price: <input type="text" class="total-price-input" readonly /></label>
+                        <button class="delete-item" onclick="deleteOrderItem(this)">Delete</button> <!-- New Delete Button -->
                     </div>
                     
                 </div>
