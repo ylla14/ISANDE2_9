@@ -98,6 +98,12 @@
                         <tbody id="order-items-table">
                             <!-- Items will be dynamically inserted here -->
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Overall Total Price:</td>
+                                <td id="overall-total-price" style="font-weight: bold;"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </section>
             </div>  
@@ -128,9 +134,9 @@ function fetchOrderDetails(orderId) {
     fetch(`/api/order-details/${orderId}`)
     .then(response => response.json())
     .then(data => {
+        console.log(data); // Check if data is coming as expected
         if (data && data.order) {
             const formattedDeliveryDate = new Date(data.order.delivery_date).toLocaleDateString();
-
 
             document.getElementById('order-title').textContent = `ORD00${data.order.order_id}`;
             document.getElementById('sales-rep-id').textContent = data.order.sales_rep_id;
@@ -147,19 +153,27 @@ function fetchOrderDetails(orderId) {
             document.getElementById('delivery-receiver').textContent = data.order.order_receiver;
 
             const itemsTable = document.getElementById('order-items-table');
-            data.order_items.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${item.product_name}</td><td>${item.quantity}</td><td>${item.unit_price}</td><td>${item.total_price}</td>`;
-                itemsTable.appendChild(row);
-            });
+            let totalPrice = 0; // Initialize total price
+            if (data.order_items && data.order_items.length > 0) {
+                data.order_items.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${item.product_name}</td><td>${item.quantity}</td><td>${item.unit_price}</td><td>${item.total_price}</td>`;
+                    itemsTable.appendChild(row);
+                     // Ensure total_price is treated as a number
+                     totalPrice += parseFloat(item.total_price) || 0; // Handle cases where total_price is not a valid number
+                });
+                document.getElementById('overall-total-price').textContent = totalPrice.toFixed(2); // Display the total
+            } else {
+                console.log("No order items found.");
+            }
         } else {
             console.error("Order not found or invalid data:", data);
             alert("Order not found.");
         }
     })
     .catch(error => console.error('Error fetching order details:', error));
-
 }
+
 
 
     </script>
