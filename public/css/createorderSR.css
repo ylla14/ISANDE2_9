@@ -217,7 +217,7 @@ input[type="text"], input[type="date"], input[type="number"], select {
     margin-right: 0; 
 }
 
-.add-item {
+.add-item, .delete-button {
     margin: 20px auto; 
     display: block; 
     font-size: 16px;
@@ -245,6 +245,10 @@ input[type="text"], input[type="date"], input[type="number"], select {
 
 .submit-button:hover {
     background-color: #000040; 
+}
+
+.add-item:hover, .delete-button:hover {
+    background-color: #ADD8E6; 
 }
 
 

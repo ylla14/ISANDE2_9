@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
          // Create Delete Button
          const deleteButton = document.createElement("button");
-         deleteButton.classList.add("delete-item");
+         deleteButton.classList.add("delete-button");
          deleteButton.textContent = "Delete";
          deleteButton.onclick = function() { deleteOrderItem(deleteButton); };
          itemCard.appendChild(deleteButton);

@@ -587,16 +587,11 @@ app.get('/api/order-details/:orderId', (req, res) => {
     });
 });
 
-
-
-
-
 // Function to convert MM/DD/YYYY to YYYY-MM-DD
 function convertToDateFormat(dateString) {
     const [month, day, year] = dateString.split('/');
     return `${year}-${month}-${day}`;
 }
-
 
 // Start the server
 app.listen(PORT, () => {
