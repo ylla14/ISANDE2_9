@@ -64,6 +64,7 @@
                             <tr><th>Name:</th><td id="customer-name"></td></th></tr>
                             <tr><th>Contact Number:</th><td id="customer-contact"></td></th></tr>
                             <tr><th>Email:</th><td id="customer-email"></td></th></tr>
+                            <tr><th>Payment Reference Number:</th><td id="customer-payment-ref"></td></th></tr>
                         </thead>
                     </table>
                 </div>
@@ -138,6 +139,7 @@ function fetchOrderDetails(orderId) {
             document.getElementById('customer-name').textContent = `${data.order.customer_first_name} ${data.order.customer_last_name}`;
             document.getElementById('customer-contact').textContent = data.order.customer_contact;
             document.getElementById('customer-email').textContent = data.order.customer_email;
+            document.getElementById('customer-payment-ref').textContent = data.order.payment_ref_num;
             document.getElementById('delivery-date').textContent = formattedDeliveryDate;
             document.getElementById('delivery-city').textContent = data.order.city;
             document.getElementById('delivery-barangay').textContent = data.order.barangay;
