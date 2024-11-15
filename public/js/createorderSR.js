@@ -320,3 +320,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });        
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const brandSelect = document.querySelector('.brand-name');
+    const productSelect = document.querySelector('.product-name');
+    const productCard = document.getElementById('product-card');
+
+    // Fetch products when a brand is selected
+    brandSelect.addEventListener('change', () => {
+        const supplierId = brandSelect.value;
+
+        // Clear the product dropdown
+        productSelect.innerHTML = '<option value="">Select Product Name</option>';
+
+        if (supplierId) {
+            fetch(`/api/products/${supplierId}`) // Replace with your actual API to fetch products by supplier
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.product_id;
+                        option.textContent = product.product_name;
+                        productSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+    });
+
+    // Check stock level and expiration date when a product is selected
+    productSelect.addEventListener('change', () => {
+        const productId = productSelect.value;
+
+        if (productId) {
+            fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
+                .then(response => response.json())
+                .then(product => {
+                    const stockLevel = product.current_stock_level;
+                    const expirationDate = new Date(product.expiration_date);
+                    const today = new Date();
+
+                    // Check stock level and expiration
+                    if (stockLevel <= product.reorder_level) {
+                        // Low stock: yellow color
+                        productCard.style.backgroundColor = '#ADD8E6'; 
+                    } else if ((expirationDate - today) <= (7 * 24 * 60 * 60 * 1000)) {
+                        // Near expiry: red color
+                        productCard.style.backgroundColor = '#FF7F7F';
+                    } else {
+                        // Reset to default color
+                        productCard.style.backgroundColor = '';
+                    }
+                })
+                .catch(error => console.error('Error fetching product details:', error));
+        }
+    });
+});
+

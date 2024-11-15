@@ -593,6 +593,35 @@ function convertToDateFormat(dateString) {
     return `${year}-${month}-${day}`;
 }
 
+// API endpoint to fetch product details by productId
+app.get('/api/product-details/:productId', (req, res) => {
+    const productId = req.params.productId;
+  
+    // SQL query to fetch product details from Products table
+    const query = `
+      SELECT product_id, product_name, current_stock_level, expiration_date, reorder_level
+      FROM Products
+      WHERE product_id = ?;
+    `;
+  
+    db.execute(query, [productId], (err, results) => {
+      if (err) {
+        console.error('Error fetching product details:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+  
+      // Check if product exists
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      // Return the product details
+      const product = results[0];
+      res.json(product);
+    });
+  });
+
+  
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

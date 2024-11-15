@@ -85,7 +85,7 @@
                 <h2>Order Details</h2>
                 <div id="order-items">
 
-                    <div class="order-row item-card">
+                    <div class="order-row item-card" id="product-card">
                         <label>Qty: <input type="number" class="qty-input" /></label>
                         <label>Product Description:
                             <select class="brand-name">
@@ -215,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error fetching Order ID:', error));
 
 });
-
 
 
     </script>
