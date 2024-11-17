@@ -36,6 +36,7 @@ async function loadSuppliersData() {
 
             row.addEventListener('click', () => {
                 // Navigate to the supplier details page with the supplier_id as a query parameter
+                console.log(`/supplierDetailsIM.html?supplierId=${supplier.supplier_id}`);
                 window.location.href = `/supplierDetailsIM.html?supplierId=${supplier.supplier_id}`;
             });
 
@@ -46,7 +47,6 @@ async function loadSuppliersData() {
                 <td>${supplier.contact_person}</td>
                 <td>${supplier.email_address}</td>
                 <td>${supplier.contact_details}</td>
-                <td>Order History</td> <!-- Placeholder for "Order History" column -->
             `;
             
             tbody.appendChild(row);

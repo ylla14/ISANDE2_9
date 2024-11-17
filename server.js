@@ -123,7 +123,9 @@ app.get('/api/products', (req, res) => {
         p.min_order_quantity, 
         p.lead_time, 
         p.product_image, 
-        p.description
+        p.description,
+        p.stock_status,
+        p.expiry_status
       FROM 
         Products p
       JOIN 
@@ -146,19 +148,28 @@ app.get('/api/products', (req, res) => {
         s.supplier_name, 
         s.contact_person,
         s.email_address,
-        s.contact_details
+        s.contact_details,
+        s.physical_address,
+        s.mailing_address,
+        s.business_registration_number,
+        s.contract_expiry_date,
+        s.payment_terms,
+        s.banking_details
       FROM 
         Suppliers s
     `;
-  
+
+    // Execute the query using your database connection
     db.query(query, (err, results) => {
-      if (err) {
-        res.status(500).send('Error retrieving data from database');
-        return;
-      }
-      res.json(results);
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).json({ error: 'Failed to retrieve suppliers' });
+        } else {
+            res.status(200).json(results);
+        }
     });
-  });
+});
+
 
   app.get('/api/salesorders', (req, res) => {
     const query = `
@@ -214,7 +225,9 @@ app.get('/api/products/:productId', (req, res) => {
         p.min_order_quantity, 
         p.lead_time, 
         p.product_image, 
-        p.description
+        p.description,
+        p.stock_status,
+        p.expiry_status
       FROM 
         Products p
       JOIN 

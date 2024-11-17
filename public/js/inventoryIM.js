@@ -44,39 +44,26 @@ async function loadInventoryData() {
         products.forEach(product => {
             const row = document.createElement('tr');
             
-            // Check for low stock alert
-            let alertMessage = '';
-            let alertColor = 'black'; // Default color
+            // Stock alert logic
+            let stockAlertMessage = product.stock_status || 'OK';
+            let stockAlertColor = 'green'; // Default color for OK
 
-            if (product.current_stock_level <= product.reorder_level) {
-                alertMessage = 'Low Stock';
-                alertColor = 'red'; // Set color to red for low stock
+            if (stockAlertMessage === 'Low Stock') {
+                stockAlertColor = 'red'; // Red color for low stock
             }
-  
-            // Check for nearing expiration alert if expiration date is provided
-            let expirationDisplay = '';
-            if (product.expiration_date) {
-                const expirationDate = new Date(product.expiration_date);
-                const currentDate = new Date();
-                const timeDifference = expirationDate - currentDate;
-                const daysToExpiration = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-                
-                expirationDisplay = expirationDate.toLocaleDateString(); // Format expiration date for display
 
-                if (daysToExpiration <= 30) { // Alert if expiration is within 30 days
-                    alertMessage += alertMessage ? ' | Near Expiration' : 'Near Expiration';
-                    alertColor = 'yellow'; // Set color to yellow for near expiration
-                }
+            // Expiry alert logic
+            let expiryAlertMessage = product.expiry_status || 'OK';
+            let expiryAlertColor = 'green'; // Default color for OK
+
+            if (expiryAlertMessage === 'Near Expiry') {
+                expiryAlertColor = '#f1c40f'; // Yellow color for near expiry
             }
 
             row.addEventListener('click', () => {
-                // Navigate to the supplier details page with the supplier_id as a query parameter
+                // Navigate to the supplier details page with the product_id as a query parameter
                 window.location.href = `/prodDetailsIM.html?productId=${product.product_id}`;
             });
-
-            // Set alert color based on the message
-            const finalAlertMessage = alertMessage || 'OK';
-            const finalAlertColor = alertMessage ? alertColor : 'green'; // Green if OK
 
             row.innerHTML = `
                 <td>${product.product_id}</td>
@@ -86,8 +73,9 @@ async function loadInventoryData() {
                 <td>${product.selling_price}</td>
                 <td>${product.current_stock_level}</td>
                 <td>${product.reorder_level}</td>
-                <td>${expirationDisplay}</td> <!-- Leave blank if expiration_date is null -->
-                <td style="color: ${finalAlertColor};">${finalAlertMessage}</td> <!-- Set color based on alert status -->
+                <td>${product.expiration_date ? new Date(product.expiration_date).toLocaleDateString() : ''}</td>
+                <td style="color: ${stockAlertColor};">${stockAlertMessage}</td>
+                <td style="color: ${expiryAlertColor};">${expiryAlertMessage}</td>
             `;
             
             tbody.appendChild(row);
@@ -96,6 +84,8 @@ async function loadInventoryData() {
         console.error('Error loading inventory data:', error);
     }
 }
+
+
 
 function searchInventory() {
     const searchInput = document.querySelector('.search-input').value.toLowerCase();

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Information</title>
+    <link rel="stylesheet" href="css/supplierDetailsIM.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="/js/supplierDetailsIM.js" defer></script>
+</head>
+<body>
+
+      <!-- HEADER -->
+      <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="home-link">Home</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="sales-link">Sales Orders</a></li>
+                    <li><a href="#" id="suppliers-link">Suppliers</a></li>
+                </ul> 
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- END OF HEADER -->
+
+
+    <div class="container">
+    <div class="header"> 
+        <a href="#" id="back-link">← Inventory > Details</a>
+        <h1 id="title">Product Details</h1>
+    </div>
+
+    <div class="grid-container">
+        <!-- Column 1 -->
+        <div class="row">
+            <div class="label">Supplier Name</div>
+            <div id="sup-name"></div>
+        </div>
+        <div class="row">
+            <div class="label">Contact Person</div>
+            <div id="contact-person"></div>
+        </div>
+        <div class="row">
+            <div class="label">Email Address</div>
+            <div id="contact-email"></div>
+        </div>
+        <div class="row">
+            <div class="label">Supplier ID</div>
+            <div id="sup-id"></div>
+        </div>
+        <div class="row">
+            <div class="label">Contact Details</div>
+            <div id="contact-details"></div>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="row">
+            <div class="label">Physical Address</div>
+            <div id="physical-add"></div>
+        </div>
+        <div class="row">
+            <div class="label">Mailing Address</div>
+            <div id="mailing-add"></div>
+        </div>
+        <div class="row">
+            <div class="label">Business Registration Number</div>
+            <div id="brn"></div>
+        </div>
+        <div class="row">
+            <div class="label">Payment Terms</div>
+            <div id="pay-terms"></div>
+        </div>
+        <div class="row">
+            <div class="label">Banking Details</div>
+            <div id="banking-details"></div>
+        </div>
+        <div class="row">
+            <div class="label">Contract Expiry Date</div>
+            <div id="contract-expiry">Dec 31, 2022</div>
+        </div>
+    </div>
+    <div class="button-container">
+        <a href="#" class="button">Create Purchase Order</a>
+    </div>
+    </div>
+
+    <!-- FOOTER -->
+    <section class="footer">
+        <div class="footer-logo">
+            <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
+        </div>
+        <div class="footer-text">
+            <p>&copy; 2024 PharmaTrack</p> 
+        </div>
+    </section>
+
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }
+    </script>
+
+</body>
+</html>
