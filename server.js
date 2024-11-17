@@ -433,12 +433,13 @@ app.post('/api/create-order', async (req, res) => {
         order_address, 
         city, 
         barangay, 
-        order_receiver, 
+        order_receiver,
+        sales_rep_id, 
         order_items // Array of order items
     } = req.body;
 
     // Validate input fields
-    if (!customer_code || !payment_ref_num || !delivery_date || !order_address || !city || !barangay || !order_receiver || !order_items || order_items.length === 0) {
+    if (!customer_code || !payment_ref_num || !delivery_date || !order_address || !city || !barangay || !order_receiver || !sales_rep_id || !order_items || order_items.length === 0) {
         return res.status(400).json({ success: false, error: "Missing required fields or order items" });
     }
 
@@ -491,8 +492,8 @@ app.post('/api/create-order', async (req, res) => {
                 getNewOrderIdFromDatabase().then((newOrderId) => {
                     // Insert the order into the OrdersSR table (store numeric order_id)
                     const insertOrderQuery = `
-                        INSERT INTO OrdersSR (order_id, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+                        INSERT INTO OrdersSR (order_id, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
                     db.query(insertOrderQuery, [
                         newOrderId,  // Use the numeric order ID
@@ -502,7 +503,8 @@ app.post('/api/create-order', async (req, res) => {
                         order_address, 
                         city, 
                         barangay, 
-                        order_receiver
+                        order_receiver,
+                        sales_rep_id
                     ], (insertOrderErr) => {
                         if (insertOrderErr) {
                             console.error('Error inserting order:', insertOrderErr);
@@ -570,8 +572,102 @@ app.post('/api/create-order', async (req, res) => {
     });
 });
 
+app.get('/api/order-details/:orderId', (req, res) => {
+    const orderId = req.params.orderId;
+    
+    const orderQuery = `
+        SELECT 
+            osr.order_id, 
+            osr.customer_id, 
+            osr.sales_rep_id, 
+            osr.payment_ref_num, 
+             DATE(osr.delivery_date) AS delivery_date,
+            osr.order_address, 
+            osr.city, 
+            osr.barangay, 
+            osr.order_receiver,
+            c.fname AS customer_first_name, 
+            c.lname AS customer_last_name, 
+            c.contact_num AS customer_contact, 
+            c.email AS customer_email,
+            sr.name AS sales_rep_name
+        FROM OrdersSR osr
+        LEFT JOIN Customers c ON osr.customer_id = c.customer_id
+        LEFT JOIN SalesRepresentatives sr ON osr.sales_rep_id = sr.sales_rep_id
+        WHERE osr.order_id = ?;
+    `;
+    
+    db.query(orderQuery, [orderId], (err, orderResults) => {
+        if (err) {
+            console.error('Error fetching order details:', err);
+            return res.status(500).json({ message: 'Error fetching order details' });
+        }
 
+        console.log("Order Results:", orderResults);  // Log the results here
 
+        if (orderResults.length === 0) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Get order details for products
+        const orderDetailQuery = `
+            SELECT od.product_id, p.product_name, od.quantity, od.unit_price, od.total_price
+            FROM OrderDetails od
+            JOIN Products p ON od.product_id = p.product_id
+            WHERE od.order_id = ?;
+        `;
+
+        db.query(orderDetailQuery, [orderId], (err, orderDetailResults) => {
+            if (err) {
+                console.error('Error fetching order details:', err);
+                return res.status(500).json({ message: 'Error fetching order details' });
+            }
+
+            console.log("Order Detail Results:", orderDetailResults);  // Log order items
+
+            res.json({
+                order: orderResults[0],
+                order_items: orderDetailResults
+            });
+        });
+    });
+});
+
+// Function to convert MM/DD/YYYY to YYYY-MM-DD
+function convertToDateFormat(dateString) {
+    const [month, day, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
+}
+
+// API endpoint to fetch product details by productId
+app.get('/api/product-details/:productId', (req, res) => {
+    const productId = req.params.productId;
+  
+    // SQL query to fetch product details from Products table
+    const query = `
+      SELECT product_id, product_name, current_stock_level, expiration_date, reorder_level
+      FROM Products
+      WHERE product_id = ?;
+    `;
+  
+    db.execute(query, [productId], (err, results) => {
+      if (err) {
+        console.error('Error fetching product details:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+  
+      // Check if product exists
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      // Return the product details
+      const product = results[0];
+      res.json(product);
+    });
+  });
+
+  
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

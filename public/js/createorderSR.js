@@ -93,6 +93,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const orderItemsContainer = document.getElementById("order-items");
     const addItemButton = document.querySelector(".add-item");
 
+    // Function to delete an order item
+    function deleteOrderItem(button) {
+        const itemCard = button.closest(".item-card");
+        if (itemCard) {
+            itemCard.remove();
+        }
+    }
+
+    // Add this function to global scope to make it accessible from inline HTML
+    window.deleteOrderItem = deleteOrderItem;
+
+
     addItemButton.addEventListener("click", function () {
 
         // Create the new item card
@@ -127,6 +139,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalPriceLabel = document.createElement("label");
         totalPriceLabel.innerHTML = 'Total Price: <input type="text" class="total-price-input" readonly />';
         itemCard.appendChild(totalPriceLabel);
+
+         // Create Delete Button
+         const deleteButton = document.createElement("button");
+         deleteButton.classList.add("delete-button");
+         deleteButton.textContent = "Delete";
+         deleteButton.onclick = function() { deleteOrderItem(deleteButton); };
+         itemCard.appendChild(deleteButton);
 
         // Add the item card to the order items container
         orderItemsContainer.appendChild(itemCard);
@@ -237,6 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const barangay = document.querySelector('.delivery-details input[placeholder="Barangay"]').value;
         const orderReceiver = document.querySelector('.delivery-details input[placeholder="Order Receiver"]').value;
         
+        const salesRepId = document.getElementById("sales-rep-code").textContent.trim(); // Ensure no extra spaces
+
+
         // Capture the order items (product, quantity, unit price, total price)
         const orderItems = [];
         const orderRows = document.querySelectorAll('.order-row');
@@ -270,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             city: city,
             barangay: barangay,
             order_receiver: orderReceiver,
+            sales_rep_id: salesRepId,
             order_items: orderItems
         };
 
@@ -297,3 +320,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });        
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const brandSelect = document.querySelector('.brand-name');
+    const productSelect = document.querySelector('.product-name');
+    const productCard = document.getElementById('product-card');
+
+    // Fetch products when a brand is selected
+    brandSelect.addEventListener('change', () => {
+        const supplierId = brandSelect.value;
+
+        // Clear the product dropdown
+        productSelect.innerHTML = '<option value="">Select Product Name</option>';
+
+        if (supplierId) {
+            fetch(`/api/products/${supplierId}`) // Replace with your actual API to fetch products by supplier
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.product_id;
+                        option.textContent = product.product_name;
+                        productSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+    });
+
+    // Check stock level and expiration date when a product is selected
+    productSelect.addEventListener('change', () => {
+        const productId = productSelect.value;
+
+        if (productId) {
+            fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
+                .then(response => response.json())
+                .then(product => {
+                    const stockLevel = product.current_stock_level;
+                    const expirationDate = new Date(product.expiration_date);
+                    const today = new Date();
+
+                    // Check stock level and expiration
+                    if (stockLevel <= product.reorder_level) {
+                        // Low stock: yellow color
+                        productCard.style.backgroundColor = '#ADD8E6'; 
+                    } else if ((expirationDate - today) <= (7 * 24 * 60 * 60 * 1000)) {
+                        // Near expiry: red color
+                        productCard.style.backgroundColor = '#FF7F7F';
+                    } else {
+                        // Reset to default color
+                        productCard.style.backgroundColor = '';
+                    }
+                })
+                .catch(error => console.error('Error fetching product details:', error));
+        }
+    });
+});
+

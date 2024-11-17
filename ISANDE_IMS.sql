@@ -242,7 +242,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS SalesOrders;
 CREATE TABLE SalesOrders (
-  order_id VARCHAR(50) NOT NULL,
+  order_id INT,
   customer_id VARCHAR(50) DEFAULT NULL,
   sales_rep_id VARCHAR(50) DEFAULT NULL,
   payment_reference_number VARCHAR(100) DEFAULT NULL,
@@ -258,8 +258,8 @@ CREATE TABLE SalesOrders (
 LOCK TABLES SalesOrders WRITE;
 /*!40000 ALTER TABLE SalesOrders DISABLE KEYS */;
 INSERT INTO SalesOrders VALUES 
-('ORD001', 'CST001', 'SR001', 'PAY12345', '2024-09-30', '123 Main Street, Manila, NCR', 'Dr. Santos', '2024-09-25'),
-('ORD002', 'CST002', 'SR002', 'PAY67890', '2024-10-01', '456 Elm Street, Cebu, Central Visayas', 'Dr. Cruz', '2024-09-26');
+(1, 'CST001', 'SR001', 'PAY12345', '2024-09-30', '123 Main Street, Manila, NCR', 'Dr. Santos', '2024-09-25'),
+(2, 'CST002', 'SR002', 'PAY67890', '2024-10-01', '456 Elm Street, Cebu, Central Visayas', 'Dr. Cruz', '2024-09-26');
 /*!40000 ALTER TABLE SalesOrders ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -311,23 +311,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS OrderDetails;
 CREATE TABLE OrderDetails (
-  order_detail_id VARCHAR(50) NOT NULL,
-  order_id VARCHAR(50) NOT NULL,
+  order_detail_id INT AUTO_INCREMENT,
+  order_id INT,
   product_id VARCHAR(50) NOT NULL,
   quantity INT DEFAULT NULL,
   unit_price DECIMAL(10,2) DEFAULT NULL,
   total_price DECIMAL(10,2) DEFAULT NULL,
   PRIMARY KEY (order_detail_id),
-  FOREIGN KEY (order_id) REFERENCES SalesOrders(order_id),
+  FOREIGN KEY (order_id) REFERENCES OrdersSR(order_id),
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 LOCK TABLES OrderDetails WRITE;
 INSERT INTO OrderDetails VALUES
-('OD001', 'ORD001', 'AR001', 10, 250.00, 2500.00), -- 10 units of AR001 in order ORD001
-('OD002', 'ORD001', 'AR002', 5, 300.00, 1500.00),  -- 5 units of AR002 in order ORD001
-('OD003', 'ORD001', 'AR001', 3, 250.00, 750.00), -- 3 more units of AR001 in order ORD001
-('OD004', 'ORD002', 'SB003', 15, 300.00, 4500.00);
+(1, 1, 'AR001', 10, 250.00, 2500.00), -- 10 units of AR001 in order ORD001
+(2, 1, 'AR002', 5, 300.00, 1500.00),  -- 5 units of AR002 in order ORD001
+(3, 1, 'AR001', 3, 250.00, 750.00); -- 3 more units of AR001 in order ORD001
 UNLOCK TABLES;
 
 --
@@ -353,6 +352,31 @@ LOCK TABLES InventoryManager WRITE;
 INSERT INTO InventoryManager VALUES ('IM001', 'Stacey Sevilleja', '0917-123-4567', 'stacey.sevilleja@company.com', 'IM_Password1');
 /*!40000 ALTER TABLE InventoryManager ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- Table structure for OrdersSR
+DROP TABLE IF EXISTS OrdersSR;
+CREATE TABLE OrdersSR (
+  order_id INT NOT NULL AUTO_INCREMENT,
+  purchased_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  customer_id VARCHAR(50) NOT NULL,
+  payment_ref_num VARCHAR(50) DEFAULT NULL,
+  delivery_date DATE DEFAULT NULL,
+  order_address VARCHAR(100) DEFAULT NULL,
+  city VARCHAR(100) DEFAULT NULL,
+  barangay VARCHAR(100) DEFAULT NULL,
+  order_receiver VARCHAR(100) DEFAULT NULL,
+  sales_rep_id VARCHAR(50) NOT NULL,
+  PRIMARY KEY (order_id),
+  FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Example Insert
+INSERT INTO OrdersSR (
+  customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id
+) VALUES 
+('CST001', 'PAY12345', '2024-11-01', '123 Main Street', 'Manila', 'Ermita', 'Dr. Santos', 'SR001'); 
+
+
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

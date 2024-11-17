@@ -49,12 +49,20 @@ async function loadOrderSRData() {
                 <td>${order.status || 'Pending'}</td> <!-- EDIT THIS IF CREATE ORDER IS POLISHED -->
                 <td>
                     <button class="add-btn" data-id="${order.order_id}">View</button>
-                    <button class="add-btn" data-id="${order.order_id}">Delete</button>
                 </td>
             `;
             
             tbody.appendChild(row);
         });
+
+         // Add event listener for the "View" button to pass orderId
+         document.querySelectorAll('.order-list button[data-id]').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderId = this.getAttribute('data-id');
+                window.location.href = `orderDetail.html?orderId=${orderId}`; // Pass orderId in URL
+            });
+        });
+        
     } catch (error) {
         console.error('Error loading sales order data:', error);
     }

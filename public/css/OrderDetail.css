@@ -139,7 +139,7 @@ main {
     justify-content: center; 
     align-items: center; 
     margin-bottom: 20px;
-    background-color: #FFDEAD;
+    background-color: #FFA500;
     padding: 20px; 
     border-radius: 8px;
 }
@@ -217,7 +217,7 @@ input[type="text"], input[type="date"], input[type="number"], select {
     margin-right: 0; 
 }
 
-.add-item, .delete-button {
+.add-item {
     margin: 20px auto; 
     display: block; 
     font-size: 16px;
@@ -247,10 +247,6 @@ input[type="text"], input[type="date"], input[type="number"], select {
     background-color: #000040; 
 }
 
-.add-item:hover, .delete-button:hover {
-    background-color: #ADD8E6; 
-}
-
 
 .sales-rep-table {
     width: 100%; 
@@ -268,6 +264,45 @@ input[type="text"], input[type="date"], input[type="number"], select {
 .sales-rep-table th {
     background-color: #f0f0f0; 
     font-weight: 500; 
+}
+
+.customer-details {
+    padding: 20px;
+    width: 50%; 
+    max-width: 100%; 
+    box-sizing: border-box; 
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.details {
+    width: 100%;
+    table-layout: fixed; 
+    border-collapse: separate;
+    border-spacing: 10px; 
+}
+
+.details th {
+    padding: 10px;
+    text-align: justify;
+    word-wrap: break-word; 
+}
+
+.details td {
+    padding: 10px;
+    text-align: justify;
+    border: 1px solid #ccc;
+    word-wrap: break-word; /
+}
+
+.details th {
+    width: 30%; 
+}
+
+.details td {
+    background-color: #FFFFFF;
+    width: 70%;
+    margin: 0 10px;
 }
 
 
@@ -314,11 +349,33 @@ input[type="text"], input[type="date"], input[type="number"], select {
     background-color: #f9f9f9;
 }
 
-.low-stock {
-    background-color: #ADD8E6;
+
+/* Product Section Table */
+.product-section {
+    margin-top: 10px;
 }
 
-.near-expiry {
-    background-color: #FF7F7F; 
+.product-section h2 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #000058;
+    text-align: left;
 }
 
+.product-section table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.product-section th, .product-section td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.product-section th {
+    background: #000058;
+    color: #fff;
+}
