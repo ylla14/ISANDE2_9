@@ -20,3 +20,8 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "suppliersIM.html"; // Redirect to the inventory page
 });
+
+document.getElementById("back-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "inventoryIM.html"; // Redirect to the inventory page
+});

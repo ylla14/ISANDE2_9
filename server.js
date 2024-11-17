@@ -115,9 +115,15 @@ app.get('/api/products', (req, res) => {
         s.supplier_name AS brand, 
         p.product_category, 
         p.selling_price, 
-        p.current_stock_level,
+        p.current_stock_level, 
         p.reorder_level, 
-        p.expiration_date 
+        p.expiration_date, 
+        p.pack_size, 
+        p.cost_price, 
+        p.min_order_quantity, 
+        p.lead_time, 
+        p.product_image, 
+        p.description
       FROM 
         Products p
       JOIN 
@@ -190,6 +196,46 @@ app.get('/api/products', (req, res) => {
         res.json(results);
     });
 });
+
+app.get('/api/products/:productId', (req, res) => {
+    const productId = req.params.productId;
+    const query = `
+      SELECT 
+        p.product_id, 
+        p.product_name, 
+        s.supplier_name AS brand, 
+        p.product_category, 
+        p.selling_price, 
+        p.current_stock_level, 
+        p.reorder_level, 
+        p.expiration_date, 
+        p.pack_size, 
+        p.cost_price, 
+        p.min_order_quantity, 
+        p.lead_time, 
+        p.product_image, 
+        p.description
+      FROM 
+        Products p
+      JOIN 
+        Suppliers s ON p.supplier_id = s.supplier_id
+      WHERE 
+        p.product_id = ?
+    `;
+  
+    db.query(query, [productId], (err, results) => {
+      if (err) {
+        res.status(500).send('Error retrieving product data');
+        return;
+      }
+      if (results.length > 0) {
+        res.json(results[0]); // Send back the first (and ideally only) result
+      } else {
+        res.status(404).send('Product not found');
+      }
+    });
+});
+
 
 
 // used to display the info of the supplier w/ just one layout for all

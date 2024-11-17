@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="css/prodDetailsIM.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="/js/prodDetailsIM.js" defer></script>
+</head>
+<body>
+     <!-- HEADER -->
+     <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="home-link">Home</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="sales-link">Sales Orders</a></li>
+                    <li><a href="#" id="suppliers-link">Suppliers</a></li>
+                </ul> 
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- END OF HEADER -->
+
+    <div class="prod-details">
+        <div class="header"> 
+             <a href="#" id="back-link">← Inventory > Details</a>
+            <h1 id="title">Product Details</h1>
+        </div>
+
+        <div class="container">
+            <!-- Product Image Section -->
+            <div class="product-image">
+                <div>
+                    <h2>Product Image</h2>
+                    <img src="/resources/upload-sign.svg" alt="Upload Icon">
+                </div>
+            </div>
+
+            <!-- Combined Product and Inventory Details Section -->
+            <div class="details-section">
+                <!-- Product Details -->
+                <div>
+                    <h2 class="section-header">Product Details</h2>
+
+                    <div class="form-group">
+                        <label for="category">Product Category</label>
+                        <input type="text" id="category" placeholder="Enter Product Category" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input type="text" id="name" placeholder="Enter Product Name" readonly>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <input type="text" id="brand" placeholder="Enter Brand" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="pack-size">Pack Size</label>
+                            <input type="text" id="pack-size" placeholder="Enter Pack Size" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Selling Price</label>
+                            <input type="text" id="price" placeholder="Enter SRP" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiration">Expiration Date</label>
+                            <input type="text" id="expiration" placeholder="Enter mm/yyyy" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="Enter Description" readonly>
+                    </div>
+
+                <!-- Inventory Details -->
+                <div>
+                    <h2 class="section-header">Inventory Details</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stock-level">Current Stock Level</label>
+                            <input type="text" id="stock-level" placeholder="Enter Stock Level" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="reorder-level">Reorder Level</label>
+                            <input type="text" id="reorder-level" placeholder="Enter Reorder Level" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="min-order">Min Order Quantity</label>
+                            <input type="text" id="min-order" placeholder="Enter Min. Order" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="lead-time">Lead Time</label>
+                            <input type="text" id="lead-time" placeholder="Enter Lead Time" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="button-container">
+        <button class="update-button">Update</button>
+    </div>
+
+     <!-- FOOTER -->
+     <section class="footer">
+        <div class="footer-logo">
+            <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
+        </div>
+        <div class="footer-text">
+            <p>&copy; 2024 PharmaTrack</p> 
+        </div>
+    </section>
+
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }
+    </script>
+</body>
+</html>

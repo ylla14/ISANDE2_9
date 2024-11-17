@@ -69,6 +69,11 @@ async function loadInventoryData() {
                 }
             }
 
+            row.addEventListener('click', () => {
+                // Navigate to the supplier details page with the supplier_id as a query parameter
+                window.location.href = `/prodDetailsIM.html?productId=${product.product_id}`;
+            });
+
             // Set alert color based on the message
             const finalAlertMessage = alertMessage || 'OK';
             const finalAlertColor = alertMessage ? alertColor : 'green'; // Green if OK
