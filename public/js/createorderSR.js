@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newItemCard.querySelector('.total-price-input').value = '';
         newItemCard.querySelector('.brand-name').value = '';
         newItemCard.querySelector('.product-name').innerHTML = '<option value="">Select Product Name</option>';
+        newItemCard.style.backgroundColor = '';
 
         // Add the new item card to the container
         orderItemsContainer.appendChild(newItemCard);
@@ -162,18 +163,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
                     .then(response => response.json())
                     .then(product => {
-                        const stockLevel = product.current_stock_level;
-                        const expirationDate = new Date(product.expiration_date);
-                        const today = new Date();
+                        const stockStatus = product.stock_status;
+                        const expirationStatus = product.expiry_status;
     
                         // Check stock level and expiration
-                        if (stockLevel <= product.reorder_level) {
+                        if (stockStatus == "Low Stock") {
                             // Low stock: yellow color
-                            newItemCard.style.backgroundColor = '#ADD8E6'; 
-                        } else if ((expirationDate - today) <= (7 * 24 * 60 * 60 * 1000)) {
-                            // Near expiry: red color
+                            newItemCard.style.backgroundColor = '#FFEE8C'; 
+                        } 
+                        
+                        if (expirationStatus == "Near Expiry") {
+                            // Near expiry: blue color
+                            newItemCard.style.backgroundColor = '#ADD8E6';
+                        } 
+
+                        if (expirationStatus == "Near Expiry" && stockStatus == "Low Stock") {
+                            // Both: red color
                             newItemCard.style.backgroundColor = '#FF7F7F';
-                        } else {
+                        } 
+                        
+                        else {
                             // Reset to default color
                             newItemCard.style.backgroundColor = '';
                         }

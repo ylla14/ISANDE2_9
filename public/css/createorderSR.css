@@ -313,12 +313,3 @@ input[type="text"], input[type="date"], input[type="number"], select {
     margin-bottom: 10px;
     background-color: #f9f9f9;
 }
-
-.low-stock {
-    background-color: #ADD8E6;
-}
-
-.near-expiry {
-    background-color: #FF7F7F; 
-}
-

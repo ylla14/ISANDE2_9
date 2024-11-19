@@ -179,31 +179,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check stock level and expiration date when a product is selected
     productSelect.addEventListener('change', () => {
-        const productId = productSelect.value;
+            const productId = productSelect.value;
+    
+            if (productId) {
+                fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
+                    .then(response => response.json())
+                    .then(product => {
+                        const stockStatus = product.stock_status;
+                        const expirationStatus = product.expiry_status;
+    
+                        // Check stock level and expiration
+                        if (stockStatus == "Low Stock") {
+                            // Low stock: yellow color
+                            productCard.style.backgroundColor = '#FFEE8C'; 
+                        }
+                        
+                        if (expirationStatus == "Near Expiry") {
+                            // Near expiry: blue color
+                            productCard.style.backgroundColor = '#ADD8E6';
+                        } 
 
-        if (productId) {
-            fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
-                .then(response => response.json())
-                .then(product => {
-                    const stockLevel = product.current_stock_level;
-                    const expirationDate = new Date(product.expiration_date);
-                    const today = new Date();
-
-                    // Check stock level and expiration
-                    if (stockLevel <= product.reorder_level) {
-                        // Low stock: yellow color
-                        productCard.style.backgroundColor = '#ADD8E6'; 
-                    } else if ((expirationDate - today) <= (7 * 24 * 60 * 60 * 1000)) {
-                        // Near expiry: red color
-                        productCard.style.backgroundColor = '#FF7F7F';
-                    } else {
-                        // Reset to default color
-                        productCard.style.backgroundColor = '';
-                    }
-                })
-                .catch(error => console.error('Error fetching product details:', error));
-        }
-    });
+                        if (expirationStatus == "Near Expiry" && stockStatus == "Low Stock") {
+                            // Both: red color
+                            productCard.style.backgroundColor = '#FF7F7F';
+                        }
+                        
+                        else {
+                            // Reset to default color
+                            productCard.style.backgroundColor = '';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching product details:', error));
+            }
+        });
 
     // Fetch unit price when a product is selected
 
@@ -260,8 +268,25 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('generated-order-id').textContent = orderId;
         })
         .catch(error => console.error('Error fetching Order ID:', error));
-
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+            // Function to update the status
+            const paymentRefInput = document.getElementById('payment-ref-input');
+            const statusText = document.getElementById('status-text');
+
+            paymentRefInput.addEventListener('input', () => {
+                // Check if the input field has content
+                const paymentRefValue = paymentRefInput.value.trim();
+                if (paymentRefValue) {
+                    // If there's a payment reference number, set the status to "paid"
+                    statusText.textContent = "paid";
+                } else {
+                    // Otherwise, set the status to "pending"
+                    statusText.textContent = "pending";
+                }
+            });
+        });
 
 
     </script>

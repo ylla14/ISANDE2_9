@@ -357,7 +357,8 @@ app.get('/api/OrdersSR', (req, res) => {
         osr.order_id,
         osr.purchased_date,
         osr.customer_id,
-        CONCAT(c.fname, ' ', c.lname) AS customer_name 
+        CONCAT(c.fname, ' ', c.lname) AS customer_name ,
+        osr.status
     FROM 
         OrdersSR osr
     LEFT JOIN 
@@ -367,7 +368,8 @@ app.get('/api/OrdersSR', (req, res) => {
         osr.purchased_date,
         osr.customer_id,
         c.fname,
-        c.lname;
+        c.lname,
+        osr.status;
     `;
   
     db.query(query, (err, results) => {
@@ -501,9 +503,12 @@ app.post('/api/create-order', async (req, res) => {
     } = req.body;
 
     // Validate input fields
-    if (!customer_code || !payment_ref_num || !delivery_date || !order_address || !city || !barangay || !order_receiver || !sales_rep_id || !order_items || order_items.length === 0) {
+    if (!customer_code || !delivery_date || !order_address || !city || !barangay || !order_receiver || !sales_rep_id || !order_items || order_items.length === 0) {
         return res.status(400).json({ success: false, error: "Missing required fields or order items" });
     }
+
+    // Determine the status based on payment_ref_num
+    const status = payment_ref_num ? 'paid' : 'pending';
 
     // Start a transaction
     db.beginTransaction(async (err) => {
@@ -554,8 +559,8 @@ app.post('/api/create-order', async (req, res) => {
                 getNewOrderIdFromDatabase().then((newOrderId) => {
                     // Insert the order into the OrdersSR table (store numeric order_id)
                     const insertOrderQuery = `
-                        INSERT INTO OrdersSR (order_id, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                        INSERT INTO OrdersSR (order_id, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id,status)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
                     db.query(insertOrderQuery, [
                         newOrderId,  // Use the numeric order ID
@@ -566,7 +571,8 @@ app.post('/api/create-order', async (req, res) => {
                         city, 
                         barangay, 
                         order_receiver,
-                        sales_rep_id
+                        sales_rep_id, 
+                        status
                     ], (insertOrderErr) => {
                         if (insertOrderErr) {
                             console.error('Error inserting order:', insertOrderErr);
@@ -707,7 +713,7 @@ app.get('/api/product-details/:productId', (req, res) => {
   
     // SQL query to fetch product details from Products table
     const query = `
-      SELECT product_id, product_name, current_stock_level, expiration_date, reorder_level
+      SELECT product_id, product_name, current_stock_level, expiration_date, reorder_level, stock_status, expiry_status
       FROM Products
       WHERE product_id = ?;
     `;
