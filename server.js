@@ -265,9 +265,9 @@ app.get('/api/suppliers/:supplierId', (req, res) => {
     });
 });
 
- app.get('/api/suppliers/${supplierId}/products', (req, res) => {
+app.get('/api/suppliers/:supplier_id/products', (req, res) => {
     const supplierId = req.params.supplier_id;
-    console.log('Fetching products for supplier ID:', supplierId); // Log the supplier ID
+    console.log('Fetching products for supplier ID:', supplierId); 
 
     const query = `
         SELECT product_id, product_name, selling_price 
@@ -275,23 +275,20 @@ app.get('/api/suppliers/:supplierId', (req, res) => {
         WHERE supplier_id = ?
     `;
 
-    console.log('Executing query:', query, 'with parameters:', [supplierId]);
-
     db.query(query, [supplierId], (err, results) => {
         if (err) {
             console.error('Database error:', err);
             return res.status(500).json({ error: 'Error retrieving products from database' });
         }
 
-        console.log('Database results:', results); // Log the results for debugging
-
         if (results.length === 0) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res.status(404).json({ error: 'No products found for this supplier' });
         }
 
         res.json(results);
     });
-}); 
+});
+
 
 //longer ver.
 /*app.get('/api/suppliers/:supplier_id/products', (req, res) => { 

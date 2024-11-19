@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const unitPriceInput = document.querySelector('.unit-price-input');
     const qtyInput = document.querySelector('.qty-input');
     const totalPriceInput = document.querySelector('.total-price-input');
+    const productCard = document.getElementById('product-card');
 
     brandSelect.addEventListener('change', () => {
         const supplierId = brandSelect.value;
@@ -151,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (supplierId) {
             console.log(supplierId)
-            fetch(`/api/suppliers/${supplierId}/products`)
+            fetch(`http://localhost:3000/api/suppliers/${supplierId}/products`)
                 .then(response => {
                     if (!response.ok) {
                         return response.text().then(text => {
@@ -210,17 +211,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const productId = productSelect.value;
 
         if (productId) {
-            fetch(`/api/products/${brandSelect.value}`) // Call the product API again to get selling_price
-                .then(response => response.json())
+            console.log(productSelect.value);
+            fetch(`/api/products/${productSelect.value}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status} ${response.statusText}`);
+                    }
+                    return response.json();
+                })
                 .then(products => {
-                    const product = products.find(p => p.product_id === productId);
+                    const product = products.product_id === productId ? products : null;
                     if (product) {
-                        const sellingPrice = parseFloat(product.selling_price); // Convert to number
+                        const sellingPrice = parseFloat(product.selling_price);
                         if (!isNaN(sellingPrice)) {
-                            unitPriceInput.value = sellingPrice.toFixed(2); // Set unit price
-                            calculateTotalPrice(); // Calculate total price
+                            unitPriceInput.value = sellingPrice.toFixed(2);
+                            calculateTotalPrice();
                         } else {
-                            console.error('Selling price is not a valid number:', product.selling_price);
+                            console.error('Invalid selling price:', product.selling_price);
                         }
                     }
                 })

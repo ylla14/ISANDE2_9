@@ -88,70 +88,120 @@ document.querySelector('.last-name-input').addEventListener('blur', function() {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const addItemButton = document.querySelector('.add-item');
+    const orderItemsContainer = document.getElementById('order-items');
 
-document.addEventListener("DOMContentLoaded", function () {
-    const orderItemsContainer = document.getElementById("order-items");
-    const addItemButton = document.querySelector(".add-item");
-
-    // Function to delete an order item
-    function deleteOrderItem(button) {
-        const itemCard = button.closest(".item-card");
-        if (itemCard) {
-            itemCard.remove();
+        // Function to delete an order item
+        function deleteOrderItem(button) {
+            const itemCard = button.closest(".item-card");
+            if (itemCard) {
+                itemCard.remove();
+            }
         }
-    }
+    
+        // Add this function to global scope to make it accessible from inline HTML
+        window.deleteOrderItem = deleteOrderItem;
 
-    // Add this function to global scope to make it accessible from inline HTML
-    window.deleteOrderItem = deleteOrderItem;
+    addItemButton.addEventListener('click', () => {
+        // Clone the existing product card as a template
+        const newItemCard = document.getElementById('product-card').cloneNode(true);
+
+        // Clear input values in the new item card
+        newItemCard.querySelector('.qty-input').value = '';
+        newItemCard.querySelector('.unit-price-input').value = '';
+        newItemCard.querySelector('.total-price-input').value = '';
+        newItemCard.querySelector('.brand-name').value = '';
+        newItemCard.querySelector('.product-name').innerHTML = '<option value="">Select Product Name</option>';
+
+        // Add the new item card to the container
+        orderItemsContainer.appendChild(newItemCard);
+
+        // Attach event listeners to the new item card
+        const qtyInput = newItemCard.querySelector('.qty-input');
+        const unitPriceInput = newItemCard.querySelector('.unit-price-input');
+        const totalPriceInput = newItemCard.querySelector('.total-price-input');
+        const brandSelect = newItemCard.querySelector('.brand-name');
+        const productSelect = newItemCard.querySelector('.product-name');
+        const productCard = document.getElementById('product-card');
 
 
-    addItemButton.addEventListener("click", function () {
+        // Reuse existing event listeners for calculating total price
+        qtyInput.addEventListener('input', () => {
+            const quantity = parseFloat(qtyInput.value) || 0;
+            const unitPrice = parseFloat(unitPriceInput.value) || 0;
+            totalPriceInput.value = (quantity * unitPrice).toFixed(2);
+        });
 
-        // Create the new item card
-        const itemCard = document.createElement("div");
-        itemCard.classList.add("order-row", "item-card");
+        // Fetch products when a new brand is selected
+        brandSelect.addEventListener('change', () => {
+            const supplierId = brandSelect.value;
 
-        // Create Qty label and input
-        const qtyLabel = document.createElement("label");
-        qtyLabel.innerHTML = 'Qty: <input type="number" class="qty-input" />';
-        itemCard.appendChild(qtyLabel);
+            // Clear product dropdown
+            productSelect.innerHTML = '<option value="">Select Product Name</option>';
 
-        // Create Product Description with Brand and Product dropdowns
-        const descriptionLabel = document.createElement("label");
-        descriptionLabel.innerHTML = `
-            Product Description:
-            <select class="brand-name">
-                <option value="">Select Brand Name</option>
-                <!-- Brands will be populated here -->
-            </select>
-            <select class="product-name">
-                <option value="">Select Product Name</option>
-                <!-- Products will be populated here based on selected brand -->
-            </select>`;
-        itemCard.appendChild(descriptionLabel);
+            if (supplierId) {
+                fetch(`/api/suppliers/${supplierId}/products`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(product => {
+                            const option = document.createElement('option');
+                            option.value = product.product_id;
+                            option.textContent = product.product_name;
+                            productSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching products:', error));
+            }
+        });
 
-        // Create Unit Price label and input
-        const unitPriceLabel = document.createElement("label");
-        unitPriceLabel.innerHTML = 'Unit Price: <input type="text" class="unit-price-input" readonly />';
-        itemCard.appendChild(unitPriceLabel);
+        productSelect.addEventListener('change', () => {
+            const productId = productSelect.value;
+    
+            if (productId) {
+                fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
+                    .then(response => response.json())
+                    .then(product => {
+                        const stockLevel = product.current_stock_level;
+                        const expirationDate = new Date(product.expiration_date);
+                        const today = new Date();
+    
+                        // Check stock level and expiration
+                        if (stockLevel <= product.reorder_level) {
+                            // Low stock: yellow color
+                            newItemCard.style.backgroundColor = '#ADD8E6'; 
+                        } else if ((expirationDate - today) <= (7 * 24 * 60 * 60 * 1000)) {
+                            // Near expiry: red color
+                            newItemCard.style.backgroundColor = '#FF7F7F';
+                        } else {
+                            // Reset to default color
+                            newItemCard.style.backgroundColor = '';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching product details:', error));
+            }
+        });
 
-        // Create Total Price label and input
-        const totalPriceLabel = document.createElement("label");
-        totalPriceLabel.innerHTML = 'Total Price: <input type="text" class="total-price-input" readonly />';
-        itemCard.appendChild(totalPriceLabel);
+        // Fetch unit price when a new product is selected
+        productSelect.addEventListener('change', () => {
+            const productId = productSelect.value;
 
-         // Create Delete Button
-         const deleteButton = document.createElement("button");
-         deleteButton.classList.add("delete-button");
-         deleteButton.textContent = "Delete";
-         deleteButton.onclick = function() { deleteOrderItem(deleteButton); };
-         itemCard.appendChild(deleteButton);
-
-        // Add the item card to the order items container
-        orderItemsContainer.appendChild(itemCard);
+            if (productId) {
+                fetch(`/api/products/${productId}`)
+                    .then(response => response.json())
+                    .then(product => {
+                        const sellingPrice = parseFloat(product.selling_price);
+                        if (!isNaN(sellingPrice)) {
+                            unitPriceInput.value = sellingPrice.toFixed(2);
+                            const quantity = parseFloat(qtyInput.value) || 0;
+                            totalPriceInput.value = (quantity * sellingPrice).toFixed(2);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching product details:', error));
+            }
+        });
     });
 });
-
 
 
 
