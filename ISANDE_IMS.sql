@@ -196,7 +196,16 @@ INSERT INTO Products VALUES
 ('VD004', 'VERDURA', 'Anti Scalling Scalp Shampoo', 'SUP006', '200 ml', 1350.00, 1690.00, NULL, NULL, 750, 590, 650, 14, 'Ok','Ok','path/to/image_anti_scaling_scalp_shampoo.jpg'),
 ('VD005', 'VERDURA', 'Mela Pro', 'SUP006', '75 g', 990.00, 1250.00, NULL, NULL, 700, 610, 600, 14, 'Ok','Ok','path/to/image_mela_pro_75g.jpg'),
 ('VD006', 'VERDURA', 'Mela Pro', 'SUP006', '35 g', 575.00, 720.00, NULL, NULL, 650, 630, 600, 14, 'Ok','Ok','path/to/image_mela_pro_35g.jpg'),
-('VD007', 'VERDURA', 'Melagain Cream', 'SUP006', '75 g', 1250.00, 1565.00, NULL, NULL, 680, 640, 600, 14, 'Ok','Ok','path/to/image_melagain_cream.jpg');
+('VD007', 'VERDURA', 'Melagain Cream', 'SUP006', '75 g', 1250.00, 1565.00, NULL, NULL, 680, 640, 600, 14, 'Ok','Ok','path/to/image_melagain_cream.jpg'),
+('CT001', 'CITRIOL', 'Citriol Ointment', 'SUP007', '30 g', 800.00, 1000.00, NULL, NULL, 600, 560, 800, 14,'Ok','Ok', 'path/to/image_citriol_ointment.jpg'),
+('CT002', 'CITRIOL', 'Citriol Hair Gel', 'SUP007', '30 g', 450.00, 650.00, NULL, NULL, 550, 570, 600, 14,'Low Stock','Ok', 'path/to/image_citriol_hair_gel.jpg'),
+('BR001', 'BRADY SOAP BARS', 'Thioderm Skin Lightening Bar', 'SUP008', '90 gm', 175.00, 220.00, NULL, NULL, 600, 520, 550, 14, 'Ok','Ok', 'path/to/image_thioderm_skin_lightening_bar.jpg'),
+('BR002', 'BRADY SOAP BARS', 'Dermaguard Transparent Moisturizing Bar', 'SUP008', '90 gm', 175.00, 220.00, NULL, NULL, 700, 530, 600, 14,'Ok','Ok', 'path/to/image_dermaguard_transparent_moisturizing_bar.jpg'),
+('BR003', 'BRADY SOAP BARS', 'Dermaguard Skin Care Bar', 'SUP008', '90 gm', 160.00, 200.00, NULL, NULL, 650, 540, 600, 14, 'Ok','Ok','path/to/image_dermaguard_skin_care_bar.jpg'),
+('BR004', 'BRADY SOAP BARS', 'Dermaguard Bar for Oily Skin', 'SUP008', '90 gm', 160.00, 200.00, NULL, NULL, 600, 550, 550, 14, 'Ok','Ok', 'path/to/image_dermaguard_bar_for_oily_skin.jpg'),
+('BR005', 'BRADY SOAP BARS', 'Dermaguard Hygiene Bar', 'SUP008', '90 gm', 160.00, 200.00, NULL, NULL, 650, 560, 600, 14, 'Ok','Ok', 'path/to/image_dermaguard_hygiene_bar.jpg'),
+('BR006', 'BRADY SOAP BARS', 'Oatsense Oatmeal Moisturizing Bar', 'SUP008', '90 gm', 160.00, 200.00, NULL, NULL, 700, 570, 600, 14, 'Ok','Ok', 'path/to/image_oatsense_oatmeal_moisturizing_bar.jpg'),
+('BR007', 'BRADY SOAP BARS', 'Pediaguard Baby Bathing Bar', 'SUP008', '90 gm', 160.00, 200.00, NULL, NULL, 600, 580, 550, 14, 'Ok','Ok', 'path/to/image_pediaguard_baby_bathing_bar.jpg');
 /*!40000 ALTER TABLE Products ENABLE KEYS */;
 UNLOCK TABLES;
 
