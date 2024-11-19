@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (supplierId) {
             console.log(supplierId)
-            fetch(`/api/products/${supplierId}`)
+            fetch(`/api/suppliers/${supplierId}/products`)
                 .then(response => {
                     if (!response.ok) {
                         return response.text().then(text => {

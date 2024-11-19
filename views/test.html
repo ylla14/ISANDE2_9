@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Selection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    select, input[type="number"], output {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .output-field {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Product Selection</h1>
+  <div class="form-group">
+    <label for="supplier">Select Supplier:</label>
+    <select id="supplier" name="supplier">
+      <option value="">-- Select Supplier --</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="product">Select Product:</label>
+    <select id="product" name="product" disabled>
+      <option value="">-- Select Product --</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" max="100" value="1" readonly>
+  </div>
+  
+  <div class="form-group">
+    <label for="unit-price">Unit Price:</label>
+    <output id="unit-price" class="output-field">₱0.00</output>
+  </div>
+  
+  <div class="form-group">
+    <label for="total-price">Total Price:</label>
+    <output id="total-price" class="output-field">₱0.00</output>
+  </div>
+  
+  <script>
+    const supplierDropdown = document.getElementById('supplier');
+    const productDropdown = document.getElementById('product');
+    const quantityInput = document.getElementById('quantity'); // Updated to numeric input
+    const unitPriceOutput = document.getElementById('unit-price');
+    const totalPriceOutput = document.getElementById('total-price');
+  
+    console.log('Script loaded successfully.'); // Debugging: Initial script load
+  
+    // Fetch suppliers
+    fetch('/api/suppliers')
+      .then(response => {
+        console.log('Fetching suppliers...'); // Debugging: Fetching suppliers
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(suppliers => {
+        console.log('Suppliers fetched:', suppliers); // Debugging: Show fetched suppliers
+        suppliers.forEach(supplier => {
+          const option = document.createElement('option');
+          option.value = supplier.supplier_id;
+          option.textContent = supplier.supplier_name;
+          supplierDropdown.appendChild(option);
+        });
+      })
+      .catch(err => console.error('Error fetching suppliers:', err));
+  
+    // Fetch products based on selected supplier
+    supplierDropdown.addEventListener('change', () => {
+      const supplierId = supplierDropdown.value;
+      console.log('Supplier selected:', supplierId); // Debugging: Selected supplier ID
+      productDropdown.innerHTML = '<option value="">-- Select Product --</option>';
+      productDropdown.disabled = !supplierId;
+  
+      if (supplierId) {
+        fetch(`/api/suppliers/${supplierId}/products`)
+          .then(response => {
+            console.log(`Fetching products for supplier ID: ${supplierId}`); // Debugging: Fetching products
+            if (!response.ok) {
+              throw new Error(`HTTP error: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(products => {
+            console.log('Products fetched:', products); // Debugging: Show fetched products
+            products.forEach(product => {
+              const option = document.createElement('option');
+              option.value = product.product_id;
+              option.dataset.price = product.selling_price;
+              option.textContent = product.product_name;
+              productDropdown.appendChild(option);
+            });
+          })
+          .catch(err => console.error('Error fetching products:', err));
+      }
+    });
+  
+    // Update unit price and total price when product is selected
+    productDropdown.addEventListener('change', () => {
+      const selectedOption = productDropdown.options[productDropdown.selectedIndex];
+      if (selectedOption) {
+        console.log('Product selected:', selectedOption.value); // Debugging: Selected product ID
+        const unitPrice = parseFloat(selectedOption.dataset.price) || 0;
+        console.log('Unit price:', unitPrice); // Debugging: Selected product unit price
+        unitPriceOutput.textContent = `₱${unitPrice.toFixed(2)}`;
+        calculateTotalPrice();
+      } else {
+        console.warn('No product selected.'); // Debugging: Warn if no product selected
+      }
+    });
+  
+    // Update total price when quantity changes
+    quantityInput.addEventListener('input', () => {
+      const quantity = parseInt(quantityInput.value, 10) || 0; // Safeguard for invalid input
+      console.log('Quantity changed:', quantity); // Debugging: Current quantity value
+      calculateTotalPrice();
+    });
+  
+    // Calculate total price
+    function calculateTotalPrice() {
+      const selectedOption = productDropdown.options[productDropdown.selectedIndex];
+      const unitPrice = selectedOption ? parseFloat(selectedOption.dataset.price) || 0 : 0;
+      const quantity = parseInt(quantityInput.value, 10) || 0; // Safeguard for invalid input
+      const totalPrice = unitPrice * quantity;
+      console.log(`Calculating total price: Unit Price = ${unitPrice}, Quantity = ${quantity}, Total = ${totalPrice}`); // Debugging: Calculation details
+      totalPriceOutput.textContent = `₱${totalPrice.toFixed(2)}`;
+    }
+  </script>
+  
+  
+</body>
+</html>

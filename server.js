@@ -265,7 +265,7 @@ app.get('/api/suppliers/:supplierId', (req, res) => {
     });
 });
 
-app.get('/api/products/:supplier_id', (req, res) => {
+ app.get('/api/suppliers/${supplierId}/products', (req, res) => {
     const supplierId = req.params.supplier_id;
     console.log('Fetching products for supplier ID:', supplierId); // Log the supplier ID
 
@@ -291,7 +291,48 @@ app.get('/api/products/:supplier_id', (req, res) => {
 
         res.json(results);
     });
-});
+}); 
+
+//longer ver.
+/*app.get('/api/suppliers/:supplier_id/products', (req, res) => { 
+    const { supplier_id } = req.params;
+
+    const query = `
+      SELECT 
+        p.product_id, 
+        p.product_name, 
+        s.supplier_name AS brand, 
+        p.product_category, 
+        p.selling_price, 
+        p.current_stock_level, 
+        p.reorder_level, 
+        p.expiration_date, 
+        p.pack_size, 
+        p.cost_price, 
+        p.min_order_quantity, 
+        p.lead_time, 
+        p.product_image, 
+        p.description,
+        p.stock_status,
+        p.expiry_status
+      FROM 
+        Products p
+      JOIN 
+        Suppliers s ON p.supplier_id = s.supplier_id
+      WHERE 
+        p.supplier_id = ?
+    `;
+
+    db.query(query, [supplier_id], (err, results) => {
+        if (err) {
+            console.error('Error retrieving data from database:', err);
+            res.status(500).send('Error retrieving data from database');
+            return;
+        }
+        res.json(results);
+    });
+});*/
+
 
 
 

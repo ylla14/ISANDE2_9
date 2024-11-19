@@ -25,6 +25,11 @@ document.getElementById("back-link").addEventListener("click", function(event) {
     window.location.href = "suppliersIM.html"; // Redirect to the inventory page
 });
 
+document.getElementById("create-po").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "test.html"; // Redirect to the inventory page
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const supplierId = urlParams.get("supplierId");
