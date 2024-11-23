@@ -49,6 +49,7 @@ async function fetchInventoryManager(userId) {
         const manager = await response.json();
 
         // Autofill the form fields with fetched data
+        document.getElementById("company-name").value = "Brady Pharma";
         document.getElementById("company-address").value = manager.address || "Address not available";
         document.getElementById("requestor-name").value = manager.name || "Name not available";
         document.getElementById("requestor-position").value = "Inventory Manager";
@@ -60,6 +61,7 @@ async function fetchInventoryManager(userId) {
         console.error('Error fetching inventory manager info:', error);
 
         // Set default fallback values in case of an error
+        document.getElementById("company-name").value = "";
         document.getElementById("company-address").value = "Address not available";
         document.getElementById("requestor-name").value = "Name not available";
         document.getElementById("requestor-position").value = "Position not available";
