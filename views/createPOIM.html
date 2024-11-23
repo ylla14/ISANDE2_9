@@ -6,6 +6,16 @@
     <link rel="stylesheet" href="css/createPOIM.css">
     <link rel="stylesheet" href="css/headerAndFooter.css">
     <script src="/js/createPOIM.js" defer></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+    (function(){
+        emailjs.init({
+            publicKey: "mTGzRd_flL6wCKlxk",
+        });
+    })();
+    </script>
     <title>Purchase Order Request Form</title>
 </head>
 <body>
@@ -33,7 +43,6 @@
     </nav>
     <!-- END OF HEADER -->
 
-
     <div class="header"> 
         <a href="#" id="back-link">← Inventory > Details</a>
         <h1 id="title">Product Details</h1>
@@ -44,15 +53,15 @@
         <div class="form-section">
             <div class="form-group">
                 <label for="company-address">Company Address</label>
-                <input type="text" id="company-address" placeholder="Enter company address">
+                <input type="text" id="company-address">
             </div>
             <div class="form-group">
                 <label for="requestor-name">Requestor Name</label>
-                <input type="text" id="requestor-name" placeholder="Enter your name">
+                <input type="text" id="requestor-name">
             </div>
             <div class="form-group">
                 <label for="requestor-position">Requestor Position</label>
-                <input type="text" id="requestor-position" placeholder="Enter your position">
+                <input type="text" id="requestor-position">
             </div>
             <div class="form-group">
                 <label for="request-date">Date Requested</label>
@@ -66,33 +75,7 @@
 
         <div class="form-section-product-info">
             <h2>Product Information</h2>
-            <div class="product-group">
-                <!-- Product Dropdown -->
-                <div class="form-group">
-                    <label for="product">Select Product:</label>
-                    <select id="product">
-                        <option value="">-- Select Product --</option>
-                    </select>
-                </div>
-        
-                <!-- Quantity Input -->
-                <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="number" id="quantity" placeholder="Quantity" min="500" value="500">
-                </div>
-        
-                <!-- Unit Price Output -->
-                <div class="form-group">
-                    <label for="unit-price">Unit Price:</label>
-                    <input type="text" id="unit-price" placeholder="Unit Price" readonly>
-                </div>
-        
-                <!-- Total Price Output -->
-                <div class="form-group">
-                    <label for="total-price">Total Price:</label>
-                    <input type="text" id="total-price" placeholder="Total Price" readonly>
-                </div>
-            </div>
+            <!-- Product group will be dynamically inserted here -->
         </div>
 
         <!-- Add Product Button -->

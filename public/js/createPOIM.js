@@ -39,107 +39,59 @@ document.getElementById("back-link").addEventListener("click", function (event) 
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Retrieve the supplierId from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const supplierId = urlParams.get("supplierId");
-    console.log("Supplier ID:", supplierId);
+    const supplierId = new URLSearchParams(window.location.search).get("supplierId");
+    if (!supplierId) return console.warn("No supplier ID found in the URL.");
 
-    const productDropdown = document.getElementById("product");
-    const quantityInput = document.getElementById("quantity");
-    const unitPriceInput = document.getElementById("unit-price");
-    const totalPriceInput = document.getElementById("total-price");
+    const productInfoContainer = document.querySelector(".form-section-product-info");
+    const sendBtn = document.querySelector(".send-btn");
+    const addProductBtn = document.getElementById("add-product");
 
-    // Ensure the supplierId is present
-    if (supplierId) {
+    const fetchProducts = async () => {
         try {
-            // Fetch supplier details (optional, for display purposes)
-            const supplierResponse = await fetch(`/api/suppliers/${supplierId}`);
-            const supplier = await supplierResponse.json();
-
-            if (supplier) {
-                console.log("Supplier details fetched:", supplier);
-                // You can display supplier details here if needed
-                // Example: document.getElementById("supplier-name").textContent = supplier.supplier_name;
-            }
-
-            // Fetch and populate products based on the supplier
-            const productResponse = await fetch(`/api/suppliers/${supplierId}/products`);
-            const products = await productResponse.json();
-
-            if (products && Array.isArray(products)) {
-                console.log("Products fetched:", products);
-            
-                // Populate the product dropdown
-                productDropdown.innerHTML = '<option value="">-- Select Product --</option>';
-                products.forEach(product => {
-                    const option = document.createElement("option");
-                    
-                    // Use Category - Name format for the dropdown
-                    option.value = product.product_id;
-                    option.dataset.price = product.selling_price;
-                    option.textContent = `${product.product_category} - ${product.product_name}`; // Include category in display
-                    
-                    productDropdown.appendChild(option);
-                });
-                productDropdown.disabled = false;
-            
-            } else {
-                console.warn("No products found for the supplier.");
-            }
+            const response = await fetch(`/api/suppliers/${supplierId}/products`);
+            return response.json();
         } catch (error) {
-            console.error("Error fetching supplier or product details:", error);
+            console.error("Error fetching products:", error);
         }
-    } else {
-        console.warn("No supplierId provided in the URL.");
-    }
+    };
 
-    // Event Listener: Update unit price and total price when a product is selected
-    productDropdown.addEventListener("change", () => {
-        const selectedOption = productDropdown.options[productDropdown.selectedIndex];
-        if (selectedOption) {
-            const unitPrice = parseFloat(selectedOption.dataset.price) || 0;
-            console.log("Selected product price:", unitPrice);
+    const populateProductDropdown = async (productDropdown) => {
+        const products = await fetchProducts();
+        if (products) {
+            productDropdown.innerHTML = '<option value="">-- Select Product --</option>';
+            products.forEach(({ product_id, selling_price, product_category, product_name }) => {
+                const option = document.createElement("option");
+                option.value = product_id;
+                option.dataset.price = selling_price;
+                option.textContent = `${product_category} - ${product_name}`;
+                productDropdown.appendChild(option);
+            });
+        }
+    };
+
+    const setupProductEventListeners = (productDropdown, quantityInput, unitPriceInput, totalPriceInput) => {
+        productDropdown.addEventListener("change", () => {
+            const unitPrice = parseFloat(productDropdown.selectedOptions[0]?.dataset.price) || 0;
             unitPriceInput.value = `₱${unitPrice.toFixed(2)}`;
             calculateTotalPrice();
-        } else {
-            unitPriceInput.value = "";
-            totalPriceInput.value = "";
+        });
+
+        quantityInput.addEventListener("input", calculateTotalPrice);
+
+        function calculateTotalPrice() {
+            const unitPrice = parseFloat(unitPriceInput.value.replace(/₱/, "")) || 0;
+            const quantity = parseInt(quantityInput.value, 10) || 0;
+            totalPriceInput.value = `₱${(unitPrice * quantity).toFixed(2)}`;
         }
-    });
+    };
 
-    // Event Listener: Update total price when quantity changes
-    quantityInput.addEventListener("input", () => {
-        calculateTotalPrice();
-    });
-
-    // Function: Calculate the total price
-    function calculateTotalPrice() {
-        const selectedOption = productDropdown.options[productDropdown.selectedIndex];
-        const unitPrice = selectedOption ? parseFloat(selectedOption.dataset.price) || 0 : 0;
-        const quantity = parseInt(quantityInput.value, 10) || 0;
-        const totalPrice = unitPrice * quantity;
-
-        console.log(`Calculating total: Unit Price = ${unitPrice}, Quantity = ${quantity}, Total = ${totalPrice}`);
-        totalPriceInput.value = `₱${totalPrice.toFixed(2)}`;
-    }
-
-
-    const addProductBtn = document.getElementById("add-product");
-    const productInfoContainer = document.querySelector(".form-section-product-info");
-
-    // Add event listener for Add Product button
-    addProductBtn.addEventListener("click", () => {
-        // Create a new product info group
+    const createProductGroup = async () => {
         const productGroup = document.createElement("div");
         productGroup.classList.add("product-group");
-
-        // Add the necessary fields for the new product
         productGroup.innerHTML = `
             <div class="form-group">
                 <label for="product">Select Product:</label>
-                <select class="product-dropdown">
-                    <option value="">-- Select Product --</option>
-                </select>
+                <select class="product-dropdown"><option value="">-- Select Product --</option></select>
             </div>
             <div class="form-group">
                 <label for="quantity">Quantity:</label>
@@ -154,80 +106,88 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <input type="text" class="total-price-output" placeholder="Total Price" readonly>
             </div>
         `;
-
-        // Append the new product group to the product info container
         productInfoContainer.appendChild(productGroup);
 
-        // Populate the product dropdown for this new product group
-        const productDropdown = productGroup.querySelector(".product-dropdown");
-        populateProductDropdown(productDropdown);
+        const newProductDropdown = productGroup.querySelector(".product-dropdown");
+        await populateProductDropdown(newProductDropdown);
 
-        // Add event listeners for this new product group
-        setupProductEventListeners(productGroup);
-    });
+        setupProductEventListeners(newProductDropdown, productGroup.querySelector(".quantity-input"), 
+                                   productGroup.querySelector(".unit-price-output"), productGroup.querySelector(".total-price-output"));
+    };
 
+    // Initial Product Group Creation
+    await createProductGroup();
+
+    // Add Product Button Click Handler
+    addProductBtn.addEventListener("click", createProductGroup);
+
+    // Send Button Click Handler
+    sendBtn.addEventListener("click", async () => {
+        const companyAddress = document.getElementById("company-address").value;
+        const requestorName = document.getElementById("requestor-name").value;
+        const requestorPosition = document.getElementById("requestor-position").value;
+        const requestDate = document.getElementById("request-date").value;
+        const requiredDate = document.getElementById("required-date").value;
+    
+        const productRows = Array.from(document.querySelectorAll(".product-group")).map(group => {
+            const productDropdown = group.querySelector(".product-dropdown");
+            const quantityInput = group.querySelector(".quantity-input");
+            const unitPriceInput = group.querySelector(".unit-price-output");
+            const totalPriceInput = group.querySelector(".total-price-output");
+    
+            const selectedProduct = productDropdown.selectedOptions[0];
+            if (selectedProduct) {
+                return {
+                    productName: selectedProduct.textContent,
+                    productPrice: unitPriceInput.value,
+                    quantity: quantityInput.value,
+                    totalPrice: totalPriceInput.value
+                };
+            }
+        }).filter(Boolean);
+    
+        // Generate rows for each product in the order
+        const orderDetails = productRows.map(row => `
+            <tr>
+                <td>${row.productName}</td>
+                <td>${row.productPrice}</td>
+                <td>${row.quantity}</td>
+                <td>${row.totalPrice}</td>
+            </tr>
+        `).join("");  // Join all rows into a single string
+    
+        const emailParams = {
+            company_address: companyAddress,
+            from_name: requestorName,
+            requestor_position: requestorPosition,
+            request_date: requestDate,
+            required_date: requiredDate,
+            order_details: `
+                <h3>Order Details</h3>
+                <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Unit Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orderDetails} <!-- Insert all product rows here -->
+                    </tbody>
+                </table>
+            `
+        };
         
-
-    // Function to populate the product dropdown
-    async function populateProductDropdown(productDropdown) {
+    
         try {
-            const supplierId = new URLSearchParams(window.location.search).get("supplierId");
-            if (!supplierId) {
-                console.error("Supplier ID not found.");
-                return;
-            }
-
-            const response = await fetch(`/api/suppliers/${supplierId}/products`);
-            const products = await response.json();
-
-            if (products && Array.isArray(products)) {
-                console.log("Products fetched:", products);
-
-                // Populate the product dropdown
-                productDropdown.innerHTML = '<option value="">-- Select Product --</option>';
-                products.forEach(product => {
-                    const option = document.createElement("option");
-                    option.value = product.product_id;
-                    option.dataset.price = product.selling_price;
-                    option.textContent = `${product.product_category} - ${product.product_name}`;
-                    productDropdown.appendChild(option);
-                });
-            }
+            const response = await emailjs.send('service_skc39jp', 'template_ghl25dg', emailParams, 'mTGzRd_flL6wCKlxk');
+            console.log('Email sent successfully:', response);
+            alert('Purchase Order sent successfully!');
         } catch (error) {
-            console.error("Error fetching products:", error);
+            console.error('Error sending email:', error);
+            alert('Failed to send Purchase Order. Please try again.');
         }
-    }
-
-
-    function setupProductEventListeners(productGroup) {
-        const productDropdown = productGroup.querySelector(".product-dropdown");
-        const quantityInput = productGroup.querySelector(".quantity-input");
-        const unitPriceOutput = productGroup.querySelector(".unit-price-output");
-        const totalPriceOutput = productGroup.querySelector(".total-price-output");
-
-        // Update unit price and total price when product is selected
-        productDropdown.addEventListener("change", () => {
-            const selectedOption = productDropdown.options[productDropdown.selectedIndex];
-            if (selectedOption) {
-                const unitPrice = parseFloat(selectedOption.dataset.price) || 0;
-                unitPriceOutput.value = unitPrice.toFixed(2);
-                calculateTotalPrice();
-            }
-        });
-
-        // Update total price when quantity changes
-        quantityInput.addEventListener("input", () => {
-            calculateTotalPrice();
-        });
-
-        // Function to calculate total price
-        function calculateTotalPrice() {
-            const unitPrice = parseFloat(unitPriceOutput.value) || 0;
-            const quantity = parseInt(quantityInput.value, 10) || 0;
-            const totalPrice = unitPrice * quantity;
-            totalPriceOutput.value = totalPrice.toFixed(2);
-        }
-    }
-
-
+    });
 });

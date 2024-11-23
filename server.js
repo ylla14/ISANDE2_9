@@ -172,6 +172,35 @@ app.get('/api/products', (req, res) => {
     });
 });
 
+app.get('/api/inventory-manager/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const query = `
+      SELECT 
+        inventory_manager_id, 
+        name, 
+        contact_info, 
+        email, 
+        address,
+        CURRENT_DATE() AS order_date
+      FROM 
+        InventoryManager
+      WHERE
+        inventory_manager_id = ?
+    `;
+    
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving data from database');
+            return;
+        }
+        if (results.length === 0) {
+            res.status(404).json({ error: 'Inventory manager not found' });
+            return;
+        }
+        res.json(results[0]); // Send only the first result
+    });
+});
+
 
   app.get('/api/salesorders', (req, res) => {
     const query = `
@@ -737,108 +766,8 @@ app.get('/api/product-details/:productId', (req, res) => {
     });
   });
 
-
-app.post('/api/send-po', async (req, res) => {
-    const { supplierId, orderDetails } = req.body;
-
-    if (!supplierId || !orderDetails || !Array.isArray(orderDetails)) {
-        return res.status(400).json({ error: 'Invalid request data' });
-    }
-
-    try {
-        // Query to get the supplier's email based on the supplierId
-        const supplierQuery = `
-            SELECT 
-                supplier_name, 
-                email_address
-            FROM Suppliers
-            WHERE supplier_id = ?
-        `;
-
-        db.query(supplierQuery, [supplierId], async (err, results) => {
-            if (err) {
-                console.error('Error fetching supplier details:', err);
-                return res.status(500).json({ error: 'Failed to fetch supplier details' });
-            }
-
-            if (!results.length) {
-                return res.status(404).json({ error: 'Supplier not found' });
-            }
-
-            const supplier = results[0];
-            const supplierEmail = supplier.email_address;
-            const supplierName = supplier.supplier_name;
-
-            // Construct the email content
-            const orderTableRows = orderDetails.map(
-                (order) => `
-                <tr>
-                    <td>${order.productName}</td>
-                    <td>${order.category}</td>
-                    <td>${order.quantity}</td>
-                    <td>${order.unitPrice}</td>
-                    <td>${order.totalPrice}</td>
-                </tr>`
-            ).join('');
-
-            const emailBody = `
-                <h1>Purchase Order Request</h1>
-                <p>Dear ${supplierName},</p>
-                <p>Please find the purchase order details below:</p>
-                <table border="1" cellspacing="0" cellpadding="5">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Total Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${orderTableRows}
-                    </tbody>
-                </table>
-                <p>Thank you,</p>
-                <p>Your Company</p>
-            `;
-
-            // Nodemailer transport configuration
-            const transporter = nodemailer.createTransport({
-                service: 'Gmail', // or your preferred email service
-                auth: {
-                    user: 'salgadoallyssa@gmail.com',
-                    pass: 'eunchaePretty_214',
-                },
-            });
-
-            // Email options
-            const mailOptions = {
-                from: 'salgadoallyssa@gmail.com',
-                to: supplierEmail,
-                subject: `Purchase Order Request from Your Company`,
-                html: emailBody,
-            };
-
-            // Send the email
-            try {
-                await transporter.sendMail(mailOptions);
-                res.status(200).json({ message: 'Purchase order sent successfully.' });
-            } catch (emailError) {
-                console.error('Error sending email:', emailError);
-                res.status(500).json({ error: 'Failed to send the email.' });
-            }
-        });
-    } catch (error) {
-        console.error('Unexpected error:', error);
-        res.status(500).json({ error: 'An unexpected error occurred.' });
-    }
-});
-
-
   
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
