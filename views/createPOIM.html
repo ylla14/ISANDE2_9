@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/createPOIM.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="/js/createPOIM.js" defer></script>
+    <title>Purchase Order Request Form</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="home-link">Home</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="sales-link">Sales Orders</a></li>
+                    <li><a href="#" id="suppliers-link">Suppliers</a></li>
+                </ul> 
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- END OF HEADER -->
+
+
+    <div class="header"> 
+        <a href="#" id="back-link">← Inventory > Details</a>
+        <h1 id="title">Product Details</h1>
+    </div>
+
+    <div class="container"> 
+        <!-- Requestor and Company Information -->
+        <div class="form-section">
+            <div class="form-group">
+                <label for="company-address">Company Address</label>
+                <input type="text" id="company-address" placeholder="Enter company address">
+            </div>
+            <div class="form-group">
+                <label for="requestor-name">Requestor Name</label>
+                <input type="text" id="requestor-name" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="requestor-position">Requestor Position</label>
+                <input type="text" id="requestor-position" placeholder="Enter your position">
+            </div>
+            <div class="form-group">
+                <label for="request-date">Date Requested</label>
+                <input type="date" id="request-date">
+            </div>
+            <div class="form-group">
+                <label for="required-date">Date Required</label>
+                <input type="date" id="required-date">
+            </div>
+        </div>
+
+        <div class="form-section-product-info">
+            <h2>Product Information</h2>
+            <div class="product-group">
+                <!-- Product Dropdown -->
+                <div class="form-group">
+                    <label for="product">Select Product:</label>
+                    <select id="product">
+                        <option value="">-- Select Product --</option>
+                    </select>
+                </div>
+        
+                <!-- Quantity Input -->
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" placeholder="Quantity" min="500" value="500">
+                </div>
+        
+                <!-- Unit Price Output -->
+                <div class="form-group">
+                    <label for="unit-price">Unit Price:</label>
+                    <input type="text" id="unit-price" placeholder="Unit Price" readonly>
+                </div>
+        
+                <!-- Total Price Output -->
+                <div class="form-group">
+                    <label for="total-price">Total Price:</label>
+                    <input type="text" id="total-price" placeholder="Total Price" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Product Button -->
+        <div class="add-product-container">
+            <button class="add-product-btn" id="add-product">+ Add Product</button>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="send-btn">Send Purchase Order to Gmail</button>
+    </div>
+
+    <!-- FOOTER -->
+    <section class="footer">
+        <div class="footer-logo">
+            <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
+        </div>
+        <div class="footer-text">
+            <p>&copy; 2024 PharmaTrack</p> 
+        </div>
+    </section>
+
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }
+    </script>
+
+</body>
+</html>

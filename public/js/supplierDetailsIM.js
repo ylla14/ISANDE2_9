@@ -25,9 +25,21 @@ document.getElementById("back-link").addEventListener("click", function(event) {
     window.location.href = "suppliersIM.html"; // Redirect to the inventory page
 });
 
-document.getElementById("create-po").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "test.html"; // Redirect to the inventory page
+document.getElementById("create-po").addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent default action of the link
+
+    // Retrieve the supplier ID from the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const supplierId = urlParams.get("supplierId");
+
+    if (supplierId) {
+        // Redirect to the createPOIM page with the supplier ID as a query parameter
+        console.log(`Redirecting to createPOIM.html with supplierId=${supplierId}`);
+        window.location.href = `createPOIM.html?supplierId=${supplierId}`;
+    } else {
+        console.warn("Supplier ID is missing. Cannot proceed to create PO.");
+        alert("No supplier selected. Please select a supplier first.");
+    }
 });
 
 document.addEventListener("DOMContentLoaded", async () => {

@@ -3,8 +3,10 @@ const path = require('path');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const app = express();
+const nodemailer = require("nodemailer");
 const PORT =  3000;
 
+app.use(express.json()); // For parsing JSON bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public'))); // For CSS, JS, and resource
@@ -270,7 +272,7 @@ app.get('/api/suppliers/:supplier_id/products', (req, res) => {
     console.log('Fetching products for supplier ID:', supplierId); 
 
     const query = `
-        SELECT product_id, product_name, selling_price 
+        SELECT product_id, product_category, product_name, selling_price 
         FROM Products 
         WHERE supplier_id = ?
     `;
@@ -734,6 +736,105 @@ app.get('/api/product-details/:productId', (req, res) => {
       res.json(product);
     });
   });
+
+
+app.post('/api/send-po', async (req, res) => {
+    const { supplierId, orderDetails } = req.body;
+
+    if (!supplierId || !orderDetails || !Array.isArray(orderDetails)) {
+        return res.status(400).json({ error: 'Invalid request data' });
+    }
+
+    try {
+        // Query to get the supplier's email based on the supplierId
+        const supplierQuery = `
+            SELECT 
+                supplier_name, 
+                email_address
+            FROM Suppliers
+            WHERE supplier_id = ?
+        `;
+
+        db.query(supplierQuery, [supplierId], async (err, results) => {
+            if (err) {
+                console.error('Error fetching supplier details:', err);
+                return res.status(500).json({ error: 'Failed to fetch supplier details' });
+            }
+
+            if (!results.length) {
+                return res.status(404).json({ error: 'Supplier not found' });
+            }
+
+            const supplier = results[0];
+            const supplierEmail = supplier.email_address;
+            const supplierName = supplier.supplier_name;
+
+            // Construct the email content
+            const orderTableRows = orderDetails.map(
+                (order) => `
+                <tr>
+                    <td>${order.productName}</td>
+                    <td>${order.category}</td>
+                    <td>${order.quantity}</td>
+                    <td>${order.unitPrice}</td>
+                    <td>${order.totalPrice}</td>
+                </tr>`
+            ).join('');
+
+            const emailBody = `
+                <h1>Purchase Order Request</h1>
+                <p>Dear ${supplierName},</p>
+                <p>Please find the purchase order details below:</p>
+                <table border="1" cellspacing="0" cellpadding="5">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orderTableRows}
+                    </tbody>
+                </table>
+                <p>Thank you,</p>
+                <p>Your Company</p>
+            `;
+
+            // Nodemailer transport configuration
+            const transporter = nodemailer.createTransport({
+                service: 'Gmail', // or your preferred email service
+                auth: {
+                    user: 'salgadoallyssa@gmail.com',
+                    pass: 'eunchaePretty_214',
+                },
+            });
+
+            // Email options
+            const mailOptions = {
+                from: 'salgadoallyssa@gmail.com',
+                to: supplierEmail,
+                subject: `Purchase Order Request from Your Company`,
+                html: emailBody,
+            };
+
+            // Send the email
+            try {
+                await transporter.sendMail(mailOptions);
+                res.status(200).json({ message: 'Purchase order sent successfully.' });
+            } catch (emailError) {
+                console.error('Error sending email:', emailError);
+                res.status(500).json({ error: 'Failed to send the email.' });
+            }
+        });
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        res.status(500).json({ error: 'An unexpected error occurred.' });
+    }
+});
+
 
   
 // Start the server
