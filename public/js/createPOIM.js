@@ -37,6 +37,46 @@ document.getElementById("back-link").addEventListener("click", function (event) 
     }
 });
 
+async function fetchInventoryManager(userId) {
+    try {
+        const response = await fetch(`/api/inventory-manager/${userId}`);
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('Inventory manager not found');
+            }
+            throw new Error('Network response was not ok');
+        }
+        const manager = await response.json();
+
+        // Autofill the form fields with fetched data
+        document.getElementById("company-address").value = manager.address || "Address not available";
+        document.getElementById("requestor-name").value = manager.name || "Name not available";
+        document.getElementById("requestor-position").value = "Inventory Manager";
+
+        // Autofill the request date with the current date
+        const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        document.getElementById("request-date").value = currentDate;
+    } catch (error) {
+        console.error('Error fetching inventory manager info:', error);
+
+        // Set default fallback values in case of an error
+        document.getElementById("company-address").value = "Address not available";
+        document.getElementById("requestor-name").value = "Name not available";
+        document.getElementById("requestor-position").value = "Position not available";
+        document.getElementById("request-date").value = ""; // Clear the request date
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
+    if (userId) {
+        fetchInventoryManager(userId); // Fetch inventory manager info using stored userId
+    } else {
+        console.error("User ID not found in session storage.");
+    }
+});
+
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     const supplierId = new URLSearchParams(window.location.search).get("supplierId");
