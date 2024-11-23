@@ -105,7 +105,7 @@ body {
 .add-product-btn:hover {
     background-color: #0056b3;
 }
-.send-po-btn {
+.send-btn {
     margin-top: 20px;
     width: 100%;
     padding: 12px;
@@ -117,6 +117,6 @@ body {
     cursor: pointer;
 }
 
-.send-po-btn:hover {
+.send-btn:hover {
     background-color: #218838;
 }
