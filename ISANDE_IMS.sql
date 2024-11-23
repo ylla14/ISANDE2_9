@@ -359,6 +359,7 @@ CREATE TABLE InventoryManager (
   name VARCHAR(100) DEFAULT NULL,
   contact_info VARCHAR(150) DEFAULT NULL,
   email VARCHAR(100) DEFAULT NULL,
+  address VARCHAR (100) DEFAULT NULL,
   password VARCHAR(255) NOT NULL, -- New password field
   PRIMARY KEY (inventory_manager_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -367,7 +368,7 @@ CREATE TABLE InventoryManager (
 
 LOCK TABLES InventoryManager WRITE;
 /*!40000 ALTER TABLE InventoryManager DISABLE KEYS */;
-INSERT INTO InventoryManager VALUES ('IM001', 'Stacey Sevilleja', '0917-123-4567', 'stacey.sevilleja@company.com', 'IM_Password1');
+INSERT INTO InventoryManager VALUES ('IM001', 'Stacey Sevilleja', '0917-123-4567', 'stacey.sevilleja@company.com','3F, Bendel Center, 281 Epifanio de los Santos Ave, Brgy, Mandaluyong, 1550 Metro Manila', 'IM_Password1');
 /*!40000 ALTER TABLE InventoryManager ENABLE KEYS */;
 UNLOCK TABLES;
 
