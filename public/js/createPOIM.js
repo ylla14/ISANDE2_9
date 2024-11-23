@@ -178,23 +178,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             const selectedProduct = productDropdown.selectedOptions[0];
             if (selectedProduct) {
                 return {
+                    productId: selectedProduct.value,
                     productName: selectedProduct.textContent,
-                    productPrice: unitPriceInput.value,
-                    quantity: quantityInput.value,
-                    totalPrice: totalPriceInput.value
+                    unitPrice: parseFloat(unitPriceInput.value.replace(/₱/, "")),
+                    quantity: parseInt(quantityInput.value, 10),
+                    totalPrice: parseFloat(totalPriceInput.value.replace(/₱/, ""))
                 };
             }
         }).filter(Boolean);
-    
-        // Generate rows for each product in the order
-        const orderDetails = productRows.map(row => `
-            <tr>
-                <td>${row.productName}</td>
-                <td>${row.productPrice}</td>
-                <td>${row.quantity}</td>
-                <td>${row.totalPrice}</td>
-            </tr>
-        `).join("");  // Join all rows into a single string
     
         const emailParams = {
             company_address: companyAddress,
@@ -202,32 +193,48 @@ document.addEventListener("DOMContentLoaded", async () => {
             requestor_position: requestorPosition,
             request_date: requestDate,
             required_date: requiredDate,
-            order_details: `
-                <h3>Order Details</h3>
-                <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Unit Price</th>
-                            <th>Quantity</th>
-                            <th>Total Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${orderDetails} <!-- Insert all product rows here -->
-                    </tbody>
-                </table>
-            `
+            order_details: productRows.map(row => `
+                <tr>
+                    <td>${row.productName}</td>
+                    <td>${row.unitPrice}</td>
+                    <td>${row.quantity}</td>
+                    <td>${row.totalPrice}</td>
+                </tr>
+            `).join("")
         };
-        
     
         try {
-            const response = await emailjs.send('service_skc39jp', 'template_ghl25dg', emailParams, 'mTGzRd_flL6wCKlxk');
-            console.log('Email sent successfully:', response);
-            alert('Purchase Order sent successfully!');
+            // Send Email
+            await emailjs.send('service_skc39jp', 'template_ghl25dg', emailParams, 'mTGzRd_flL6wCKlxk');
+            console.log('Email sent successfully.');
+    
+            // Push to Database
+            const response = await fetch('/api/purchase-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    supplier_id: supplierId,
+                    order_date: requestDate,
+                    delivery_date: requiredDate,
+                    order_address: companyAddress,
+                    products: productRows
+                })
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Purchase order pushed to database:', data);
+                alert('Purchase Order sent and saved successfully!');
+            } else {
+                console.error('Failed to save purchase order:', await response.json());
+                alert('Failed to save Purchase Order. Please try again.');
+            }
         } catch (error) {
-            console.error('Error sending email:', error);
-            alert('Failed to send Purchase Order. Please try again.');
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
         }
     });
+    
 });

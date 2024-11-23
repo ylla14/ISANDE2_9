@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const app = express();
 const nodemailer = require("nodemailer");
+const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
 const PORT =  3000;
 
 app.use(express.json()); // For parsing JSON bodies
@@ -108,6 +109,96 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.post('/api/purchase-order', (req, res) => {
+    const { supplier_id, order_date, delivery_date, order_address, products } = req.body;
+
+    if (!supplier_id || !order_date || !products || products.length === 0) {
+        return res.status(400).json({ error: 'Missing required fields or no products provided' });
+    }
+
+    // Helper to get the next ID
+    const getNextId = (table, column, prefix, callback) => {
+        const query = `SELECT ${column} FROM ${table} ORDER BY ${column} DESC LIMIT 1`;
+        db.query(query, (err, results) => {
+            if (err) {
+                console.error(`Error fetching the highest ID from ${table}:`, err);
+                return callback(err, null);
+            }
+
+            const lastId = results[0]?.[column] || `${prefix}000`; // Default if no records exist
+            const match = lastId.match(new RegExp(`${prefix}(\\d+)$`)); // Extract numeric part
+            const nextNumber = match ? parseInt(match[1], 10) + 1 : 1;
+            const nextId = `${prefix}${String(nextNumber).padStart(3, '0')}`;
+            callback(null, nextId);
+        });
+    };
+
+    // Step 1: Generate Purchase Order ID
+    getNextId('PurchaseOrders', 'porder_id', 'PO', (err, porder_id) => {
+        if (err) return res.status(500).json({ error: 'Failed to generate Purchase Order ID' });
+
+        // Insert into PurchaseOrders
+        const purchaseOrderQuery = `
+            INSERT INTO PurchaseOrders (porder_id, supplier_id, order_date, delivery_date, order_address)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        db.query(
+            purchaseOrderQuery,
+            [porder_id, supplier_id, order_date, delivery_date, order_address],
+            (err) => {
+                if (err) {
+                    console.error('Error inserting into PurchaseOrders:', err);
+                    return res.status(500).json({ error: 'Failed to insert purchase order' });
+                }
+
+                // Step 2: Generate Order Detail IDs and Insert Details
+                const purchaseOrderDetailsQuery = `
+                    INSERT INTO PurchaseOrderDetails 
+                    (order_detail_id, porder_id, product_id, unit_price, quantity, total_price)
+                    VALUES ?
+                `;
+
+                // Helper to generate order detail IDs
+                const generateOrderDetailIds = (products, callback) => {
+                    getNextId('PurchaseOrderDetails', 'order_detail_id', 'POD', (err, baseOrderDetailId) => {
+                        if (err) return callback(err, null);
+
+                        const match = baseOrderDetailId.match(/POD(\d+)$/);
+                        let nextNumber = match ? parseInt(match[1], 10) : 1;
+
+                        const orderDetails = products.map((product) => {
+                            const orderDetailId = `POD${String(nextNumber++).padStart(3, '0')}`;
+                            return [
+                                orderDetailId, // Unique Order Detail ID
+                                porder_id,
+                                product.productId,
+                                product.unitPrice,
+                                product.quantity,
+                                product.totalPrice,
+                            ];
+                        });
+
+                        callback(null, orderDetails);
+                    });
+                };
+
+                generateOrderDetailIds(products, (err, orderDetailsValues) => {
+                    if (err) return res.status(500).json({ error: 'Failed to generate Order Detail IDs' });
+
+                    db.query(purchaseOrderDetailsQuery, [orderDetailsValues], (err) => {
+                        if (err) {
+                            console.error('Error inserting into PurchaseOrderDetails:', err);
+                            return res.status(500).json({ error: 'Failed to insert purchase order details' });
+                        }
+
+                        res.status(201).json({ message: 'Purchase order created successfully', porder_id });
+                    });
+                });
+            }
+        );
+    });
+});
+
 // Define route to get product data with supplier name
 app.get('/api/products', (req, res) => {
     const query = `
@@ -201,6 +292,102 @@ app.get('/api/inventory-manager/:userId', (req, res) => {
     });
 });
 
+
+// Endpoint to get all purchase orders with supplier names
+app.get('/api/purchase-orders', (req, res) => {
+    const query = `
+      SELECT 
+        po.porder_id, 
+        s.supplier_name, 
+        po.order_date, 
+        po.delivery_date, 
+        po.order_address
+      FROM 
+        PurchaseOrders po
+      JOIN 
+        Suppliers s ON po.supplier_id = s.supplier_id
+    `;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        res.status(500).send('Error retrieving data from the database');
+        return;
+      }
+      res.json(results);
+    });
+  });
+  
+  // Endpoint to get order details for a specific purchase order
+  app.get('/api/purchase-orders/:porder_id/details', (req, res) => {
+    const { porder_id } = req.params;
+    const query = `
+      SELECT 
+        pod.order_detail_id,
+        pod.product_id,
+        p.product_name,
+        pod.unit_price,
+        pod.quantity,
+        pod.total_price
+      FROM 
+        PurchaseOrderDetails pod
+      JOIN 
+        Products p ON pod.product_id = p.product_id
+      WHERE 
+        pod.porder_id = ?
+    `;
+  
+    db.query(query, [porder_id], (err, results) => {
+      if (err) {
+        res.status(500).send('Error retrieving data from the database');
+        return;
+      }
+      res.json(results);
+    });
+  });
+  
+// Endpoint to get recent restocks with products and delivery date
+app.get('/api/recent-restocks', (req, res) => {
+    const query = `
+      SELECT 
+        po.porder_id,
+        po.delivery_date,
+        pod.product_id,
+        p.product_name
+      FROM 
+        PurchaseOrders po
+      JOIN 
+        PurchaseOrderDetails pod ON po.porder_id = pod.porder_id
+      JOIN 
+        Products p ON pod.product_id = p.product_id
+      ORDER BY po.porder_id DESC, po.delivery_date DESC
+      LIMIT 10
+    `;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        res.status(500).send('Error retrieving restocks from the database');
+        return;
+      }
+      
+      // Group the results by restock ID
+      const groupedData = results.reduce((acc, row) => {
+        const restockId = `Restock ${row.porder_id.slice(-3)}`;
+        if (!acc[restockId]) {
+          acc[restockId] = {
+            delivery_date: row.delivery_date,
+            products: []
+          };
+        }
+        acc[restockId].products.push(`${row.product_id}: ${row.product_name}`);
+        return acc;
+      }, {});
+  
+      // Send the grouped data as JSON response
+      res.json(groupedData);
+    });
+  });
+  
+  
 
   app.get('/api/salesorders', (req, res) => {
     const query = `
