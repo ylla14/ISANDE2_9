@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+.gap{
+    height: 20vh;
+    width: 100%;
+}
+
+.restock-title {
+    margin-bottom: 20px;
+    background-color: #000058;
+    position: relative;
+    top: 100px;
+    height: 10vh;
+    display: flex; /* Enables Flexbox */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+}
+
+.restock-title h1{
+  color: #fff;
+}
+
+.header{
+    margin-bottom: 20px;
+    display: grid;
+    justify-content: left;
+}
+
+.back-link {
+    font-size: 18px;
+    display: block;
+    text-decoration: none;
+    color: black;
+}
+
+.table-section {
+    margin: 20px auto; /* Center the table horizontally */
+    text-align: center;
+    top: 100px;
+    position: relative;
+    padding: 20px 80px;
+    flex-grow: 1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+table thead {
+    background-color: #333;
+    color: white;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+table th {
+    background-color: #000058;
+    color: white;
+    text-transform: uppercase;
+}
+
+.table-section h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #000058;
+    text-align: left;
+}
+
+.button-section {
+    text-align: center;
+    margin-top: 30px; /* Ensure there’s space between the table and buttons */
+}
+
+.button-section button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#confirm-button {
+    background-color: #000058; /* Dark blue */
+    color: white;
+}
+
+#download-button {
+    background-color: #007BFF; /* Light blue */
+    color: white;
+    margin-left: 10px; /* Spacing between buttons */
+}
+
+/* Hover Effects */
+#confirm-button:hover {
+    background-color: #333399; /* Slightly lighter blue */
+    transform: scale(1.05);
+}
+
+#download-button:hover {
+    background-color: #0056b3; /* Darker shade of blue */
+    transform: scale(1.05);
+}
+
+/* Focus Effects */
+#confirm-button:focus, #download-button:focus {
+    outline: 2px solid #FFA500; /* Add an orange outline for focus */
+    outline-offset: 3px;
+}

@@ -302,6 +302,7 @@ app.get('/api/purchase-orders', (req, res) => {
         po.order_date, 
         po.delivery_date, 
         po.order_address
+        po.status
       FROM 
         PurchaseOrders po
       JOIN 
@@ -319,20 +320,24 @@ app.get('/api/purchase-orders', (req, res) => {
   
   // Endpoint to get order details for a specific purchase order
   app.get('/api/purchase-orders/:porder_id/details', (req, res) => {
-    const { porder_id } = req.params;
+    const porder_id = req.params.porder_id;
     const query = `
-      SELECT 
+    SELECT 
         pod.order_detail_id,
         pod.product_id,
         p.product_name,
+        p.product_category AS category,
         pod.unit_price,
         pod.quantity,
-        pod.total_price
-      FROM 
+        pod.total_price,
+        s.supplier_name AS brand
+    FROM 
         PurchaseOrderDetails pod
-      JOIN 
+    JOIN 
         Products p ON pod.product_id = p.product_id
-      WHERE 
+    JOIN
+        Suppliers s ON p.supplier_id = s.supplier_id
+    WHERE 
         pod.porder_id = ?
     `;
   
@@ -374,6 +379,7 @@ app.get('/api/recent-restocks', (req, res) => {
         const restockId = `Restock ${row.porder_id.slice(-3)}`;
         if (!acc[restockId]) {
           acc[restockId] = {
+            porder_id: row.porder_id,
             delivery_date: row.delivery_date,
             products: []
           };
@@ -386,45 +392,138 @@ app.get('/api/recent-restocks', (req, res) => {
       res.json(groupedData);
     });
   });
-  
-  
 
-  app.get('/api/salesorders', (req, res) => {
-    const query = `
-    SELECT 
-        so.order_id,
-        so.customer_id,
-        so.sales_rep_id,
-        so.payment_reference_number,
-        so.delivery_date,
-        so.order_address,
-        so.order_receiver,
-        so.order_date,
-        COUNT(od.order_detail_id) AS total_products,
-        SUM(od.total_price) AS total_order_value
-    FROM 
-        SalesOrders so
-    LEFT JOIN 
-        OrderDetails od ON so.order_id = od.order_id
-    GROUP BY 
-        so.order_id, 
-        so.customer_id, 
-        so.sales_rep_id, 
-        so.payment_reference_number,
-        so.delivery_date, 
-        so.order_address, 
-        so.order_receiver, 
-        so.order_date
-    `;
-  
-    db.query(query, (err, results) => {
+// Endpoint to update purchase order status to 'confirmed'
+app.post('/api/confirm-order', (req, res) => {
+    const { porderId } = req.body;
+
+    // Update purchase order status to 'confirmed'
+    const query = `UPDATE PurchaseOrders SET status = 'confirmed' WHERE porder_id = ?`;
+
+    db.query(query, [porderId], (err, result) => {
         if (err) {
-            res.status(500).send('Error retrieving data from database');
-            return;
+            res.status(500).send('Error updating purchase order status');
+        } else {
+            res.status(200).send('Purchase order confirmed');
         }
-        res.json(results);
     });
 });
+
+// Endpoint to get the status of a purchase order
+app.get('/api/purchase-orders/:porder_id/status', (req, res) => {
+    const porder_id = req.params.porder_id;
+    const query = `
+        SELECT status
+        FROM PurchaseOrders
+        WHERE porder_id = ?
+    `;
+    
+    db.query(query, [porder_id], (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving order status');
+            return;
+        }
+        if (results.length > 0) {
+            res.json({ status: results[0].status });
+        } else {
+            res.status(404).send('Purchase order not found');
+        }
+    });
+});
+
+
+  
+// Endpoint to update stock in the Products table and update stock status
+app.post('/api/update-stock', (req, res) => {
+    const { porderId, products } = req.body;
+
+    // Loop through each product in the request and update stock levels
+    const updateQueries = products.map(product => {
+        const { productId, quantity } = product;
+
+        // Update query to add quantity to the current stock level
+        return `
+            UPDATE Products
+            SET current_stock_level = current_stock_level + ?
+            WHERE product_id = ?
+        `;
+    });
+
+    // Perform the queries in sequence
+    db.beginTransaction(err => {
+        if (err) {
+            res.status(500).send('Error starting transaction');
+            return;
+        }
+
+        const promises = updateQueries.map((query, index) => {
+            return new Promise((resolve, reject) => {
+                db.query(query, [products[index].quantity, products[index].productId], (err, result) => {
+                    if (err) {
+                        db.rollback(() => {
+                            reject(err);
+                        });
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        });
+
+        // After updating stock, update stock status for each product
+        const statusUpdateQueries = products.map(product => {
+            const { productId } = product;
+            return `
+                UPDATE Products
+                SET stock_status = 
+                    CASE 
+                        WHEN current_stock_level <= reorder_level THEN 'Low Stock'
+                        ELSE 'Ok'
+                    END
+                WHERE product_id = ?
+            `;
+        });
+
+        // Execute all update queries and commit the transaction
+        Promise.all(promises)
+            .then(() => {
+                // Execute the status update queries
+                const statusPromises = statusUpdateQueries.map((query, index) => {
+                    return new Promise((resolve, reject) => {
+                        db.query(query, [products[index].productId], (err, result) => {
+                            if (err) reject(err);
+                            else resolve(result);
+                        });
+                    });
+                });
+
+                // Wait for both stock and status updates to finish
+                Promise.all(statusPromises)
+                    .then(() => {
+                        db.commit(err => {
+                            if (err) {
+                                db.rollback(() => {
+                                    res.status(500).send('Error committing transaction');
+                                });
+                            } else {
+                                res.status(200).send('Stock and status updated successfully');
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        db.rollback(() => {
+                            res.status(500).send('Error updating stock status: ' + error.message);
+                        });
+                    });
+            })
+            .catch(error => {
+                db.rollback(() => {
+                    res.status(500).send('Error updating stock: ' + error.message);
+                });
+            });
+    });
+});
+
 
 app.get('/api/products/:productId', (req, res) => {
     const productId = req.params.productId;
@@ -600,6 +699,53 @@ app.get('/api/OrdersSR', (req, res) => {
     });    
 });
 
+app.get('/api/salesorders', (req, res) => {
+    const query = `
+    SELECT
+        CONCAT('ORD', LPAD(osr.order_id, 3, '0')) AS order_code,
+        osr.order_id,
+        osr.purchased_date,
+        osr.customer_id,
+        CONCAT(c.fname, ' ', c.lname) AS customer_name,
+        osr.sales_rep_id,
+        osr.payment_ref_num AS payment_reference_number,
+        osr.delivery_date,
+        CONCAT(osr.order_address, ', ', osr.city, ', ', osr.barangay) AS full_address,
+        osr.order_receiver,
+        osr.status,
+        COUNT(od.order_detail_id) AS total_products,
+        SUM(od.total_price) AS total_order_value
+    FROM 
+        OrdersSR osr
+    LEFT JOIN 
+        Customers c ON osr.customer_id = c.customer_id
+    LEFT JOIN 
+        OrderDetails od ON osr.order_id = od.order_id
+    GROUP BY 
+        osr.order_id,
+        osr.purchased_date,
+        osr.customer_id,
+        c.fname,
+        c.lname,
+        osr.sales_rep_id,
+        osr.payment_ref_num,
+        osr.delivery_date,
+        osr.order_address,
+        osr.city,
+        osr.barangay,
+        osr.order_receiver,
+        osr.status;
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error retrieving data from OrdersSR:', err);
+            res.status(500).send('Error retrieving data from database');
+            return;
+        }
+        res.json(results);
+    });
+});
 
 
 app.get('/api/customers/:lastName', (req, res) => {

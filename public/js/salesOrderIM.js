@@ -27,22 +27,32 @@ async function loadSalesOrderData() {
     try {
         const response = await fetch('/api/salesorders');
         const salesorders = await response.json(); // Use a plural variable name for clarity
+        console.log('Fetched orders:', salesorders); // Check what data is received
 
         const tbody = document.querySelector('.salesorders-list table tbody'); // Targeting tbody within the table
         tbody.innerHTML = ''; // Clear any existing rows
+        
 
         salesorders.forEach(salesorder => { // Iterating over each sales order
             const row = document.createElement('tr');
+            
 
             // Convert dates for the current sales order
-            const orderDate = new Date(salesorder.order_date);
+            const orderDate = new Date(salesorder.purchased_date); // Use the correct date field
             const deliveryDate = new Date(salesorder.delivery_date);
             
             const orderDateDisplay = orderDate.toLocaleDateString();
             const deliveryDateDisplay = deliveryDate.toLocaleDateString();
+            
+
+            row.addEventListener('click', () => {
+                console.log(salesorder);  // This will show the structure of `salesorder`
+                window.location.href = `orderDetail.html?orderId=${salesorder.order_id}`; // Adjust to correct key name
+            });
+            
 
             row.innerHTML = `
-                <td>${salesorder.order_id}</td>
+                <td>${salesorder.order_code}</td>
                 <td>${salesorder.customer_id}</td>
                 <td>${orderDateDisplay}</td>
                 <td>${deliveryDateDisplay}</td> <!-- Use salesorder instead of supplier -->
@@ -51,6 +61,7 @@ async function loadSalesOrderData() {
             
             tbody.appendChild(row);
         });
+        
     } catch (error) {
         console.error('Error loading sales order data:', error);
     }

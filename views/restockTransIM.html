@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/restockTransIM.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="js/restockTransIM.js" defer></script>
+    <title>Purchase Order Request Form</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="home-link">Home</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="sales-link">Sales Orders</a></li>
+                    <li><a href="#" id="suppliers-link">Suppliers</a></li>
+                </ul> 
+            </div>
+            <div class="profile">
+                <a href="#">
+                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- END OF HEADER -->
+
+    <div class="restock-title"> 
+        <h1 id="title">Restock Transaction Summary</h1>
+    </div>
+    <div class="table-section">
+        <div class="header"> 
+            <a href="#" id="back-link">← Restock Transaction Summary</a>
+            <h1 id="title">Restock ###</h1>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Category</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- contents -->
+            </tbody>
+        </table>
+    
+        <!-- BUTTON SECTION (now directly below the table) -->
+        <div class="button-section">
+            <button id="confirm-button">Confirm</button>
+            <button id="download-button">Download</button>
+        </div>
+    </div>
+    
+
+    <!-- FOOTER -->
+    <section class="gap"></section>
+    <div>
+        <section class="footer">
+            <div class="footer-logo">
+                <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
+            </div>
+            <div class="footer-text">
+                <p>&copy; 2024 PharmaTrack</p> 
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }
+
+        // Add event listeners for the buttons
+        document.getElementById("confirm-button").addEventListener("click", function() {
+            alert("Confirmed!");
+        });
+
+        document.getElementById("download-button").addEventListener("click", function() {
+            alert("Downloading file...");
+            // Add download functionality here
+        });
+    </script>
+</body>
+</html>

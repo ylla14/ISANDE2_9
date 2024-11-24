@@ -221,7 +221,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     order_date: requestDate,
                     delivery_date: requiredDate,
                     order_address: companyAddress,
-                    products: productRows
+                    products: productRows,
+                    status: 'Pending' // Add status field
                 })
             });
     
@@ -237,6 +238,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error('Error:', error);
             alert('An error occurred. Please try again.');
         }
-    });
+    });    
     
 });

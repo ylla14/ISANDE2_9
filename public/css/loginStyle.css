@@ -40,10 +40,6 @@ body {
   backface-visibility: hidden;
 }
 
-/* .container #flip:checked ~ .cover {
-  transform: rotateY(-180deg);
-} */
-
 .container .cover .front {
   position: absolute;
   top: 0;
@@ -82,19 +78,19 @@ body {
 
 .cover .text .text-1 {
   z-index: 20;
-  font-size: 26px;
+  font-size: 35px;
   font-weight: 600;
   color: #fff;
   text-align: center;
 }
 
 .cover .text .text-2 {
-    z-index: 20;
-    font-size: 16px;
-    font-weight: 300;
-    color: #fff;
-    text-align: center;
-  }
+  z-index: 20;
+  font-size: 16px;
+  font-weight: 300;
+  color: #fff;
+  text-align: center;
+}
 
 .container .forms {
   height: 100%;
@@ -163,6 +159,22 @@ body {
   position: absolute;
   color: #000058;
   font-size: 17px;
+}
+
+/* Show/Hide Password Eye Icon */
+.input-box .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.input-box .toggle-password:hover {
+  color: #333;
 }
 
 .forms .form-content .button {

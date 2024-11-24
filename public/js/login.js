@@ -44,6 +44,7 @@ function handleLogin(event) {
         loginMessage.textContent = "An error occurred. Please try again.";
         loginMessage.style.color = "red";
     });
+    
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -54,4 +55,16 @@ document.addEventListener("DOMContentLoaded", function() {
     } else {
       console.error("Login button not found in the document.");
     }
+});
+
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+
+togglePassword.addEventListener("click", function () {
+    // Toggle the type attribute
+    const type = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type = type;
+
+    // Toggle the icon class
+    this.classList.toggle("fa-eye-slash");
 });
