@@ -79,21 +79,28 @@ CREATE TRIGGER update_prod_status
 BEFORE INSERT ON Products
 FOR EACH ROW
 BEGIN
-    IF New.current_stock_level < NEW.reorder_level THEN
-        SET New.stock_status = 'Low Stock';
-    ELSEIF DATEDIFF(New.expiration_date, CURDATE()) <= 30 THEN
-        SET New.expiry_status = 'Near Expiry';
+    -- Update stock status before the insert
+    IF NEW.current_stock_level <= NEW.reorder_level THEN
+        SET NEW.stock_status = 'Low Stock';
     ELSE
-        SET New.stock_status = 'Ok', 
-			New.expiry_status = 'Ok';
+        SET NEW.stock_status = 'Ok';
+    END IF;
+
+    -- Update expiry status before the insert
+    IF DATEDIFF(NEW.expiration_date, CURDATE()) <= 30 THEN
+        SET NEW.expiry_status = 'Near Expiry';
+    ELSE
+        SET NEW.expiry_status = 'Ok';
     END IF;
 END$$
 DELIMITER ;
 
+
+
 -- Inserting into Products table
 /*!40000 ALTER TABLE Products DISABLE KEYS */;
 INSERT INTO Products VALUES
-('AR001', 'LENS', 'PMMA Lenses Single/Three piece', 'SUP001', '1 pc', 550.00, 700.00, '2026-12-31', 'PMMA lenses for vision correction', 620, 500, 600, 14, 'Ok', 'Ok', 'path/to/image3.jpg'),
+('AR001', 'LENS', 'PMMA Lenses Single/Three piece', 'SUP001', '1 pc', 550.00, 700.00, '2026-12-31', 'PMMA lenses for vision correction', 400, 500, 600, 14, 'Ok', 'Ok', 'path/to/image3.jpg'),
 ('AR002', 'LENS', 'PMMA Lenses Single - AC', 'SUP001', '1 pc', 750.00, 1000.00, '2024-11-30', 'Single-piece PMMA lenses', 650, 650, 600, 14, 'Low Stock', 'Ok', 'path/to/image4.jpg'),
 ('AR003', 'LENS', 'Scleral Fixation Lens', 'SUP001', '1 pc', 1600.00, 2000.00, '2026-12-31', 'Scleral fixation lens for special eye conditions', 700, 650, 600, 14, 'Ok', 'Ok','path/to/image5.jpg'),
 ('AR004', 'LENS', 'Aurovue EV Hydrophobic Preloaded IOL', 'SUP001', '1 pc', 3500.00, 4375.00, '2026-12-31', 'Hydrophobic foldable acrylic IOL', 800, 500, 600, 14, 'Ok', 'Ok','path/to/image6.jpg'),
@@ -290,8 +297,9 @@ CREATE TABLE PurchaseOrders (
   porder_id VARCHAR(50) NOT NULL,
   supplier_id VARCHAR(50) NOT NULL,
   order_date DATE DEFAULT NULL,
-  delivery_date DATE DEFAULT NULL,
+  delivery_date DATE NULL,
   order_address TEXT DEFAULT NULL,
+  status ENUM('pending', 'confirmed') DEFAULT 'pending',
   PRIMARY KEY (porder_id),
   FOREIGN KEY (supplier_id) REFERENCES Suppliers(supplier_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -315,8 +323,8 @@ LOCK TABLES PurchaseOrders WRITE, PurchaseOrderDetails WRITE;
 /*!40000 ALTER TABLE PurchaseOrders DISABLE KEYS */;
 
 INSERT INTO PurchaseOrders VALUES 
-('PO001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila'),
-('PO002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu');
+('PO001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila', 'pending'),
+('PO002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu','pending');
 /*!40000 ALTER TABLE PurchaseOrders ENABLE KEYS */;
 
 INSERT INTO PurchaseOrderDetails VALUES
@@ -392,9 +400,12 @@ CREATE TABLE OrdersSR (
 
 -- Example Insert
 INSERT INTO OrdersSR (
-  customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id
+  customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id, status
 ) VALUES 
-('CST001', 'PAY12345', '2024-11-01', '123 Main Street', 'Manila', 'Ermita', 'Dr. Santos', 'SR001'); 
+('CST001', 'PAY678901', '2024-11-01', '123 Main Street', 'Manila', 'Ermita', 'Dr. Santos', 'SR001', 'paid'),
+('CST002', '', '2024-12-01', '789 Balintawak Street', 'Quezon City', 'Loyola', 'John Reyes', 'SR003', 'pending'),
+('CST003', 'PAY123456', '2024-11-28', '202 Greenhills', 'San Juan', 'Greenhills', 'Kevin Tan', 'SR005', 'paid'),
+('CST004', '', '2024-12-05', '101 Quezon Avenue', 'Makati', 'Bel-Air', 'Maria Cruz', 'SR004', 'pending');
 
 
 
