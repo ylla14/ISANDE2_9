@@ -713,6 +713,7 @@ app.get('/api/salesorders', (req, res) => {
         CONCAT(osr.order_address, ', ', osr.city, ', ', osr.barangay) AS full_address,
         osr.order_receiver,
         osr.status,
+        osr.inventory_status, -- New column for inventory status
         COUNT(od.order_detail_id) AS total_products,
         SUM(od.total_price) AS total_order_value
     FROM 
@@ -734,7 +735,8 @@ app.get('/api/salesorders', (req, res) => {
         osr.city,
         osr.barangay,
         osr.order_receiver,
-        osr.status;
+        osr.status,
+        osr.inventory_status;
     `;
 
     db.query(query, (err, results) => {
@@ -1064,6 +1066,108 @@ app.get('/api/order-details/:orderId', (req, res) => {
         });
     });
 });
+
+app.get('/api/so-details/:orderId', (req, res) => {
+    const orderId = req.params.orderId;
+    
+    const orderQuery = `
+        SELECT 
+            osr.order_id, 
+            osr.customer_id, 
+            osr.sales_rep_id, 
+            osr.payment_ref_num, 
+            DATE(osr.delivery_date) AS delivery_date,
+            osr.order_address, 
+            osr.city, 
+            osr.barangay, 
+            osr.order_receiver,
+            osr.inventory_status, -- Include inventory_status
+            c.fname AS customer_first_name, 
+            c.lname AS customer_last_name, 
+            c.contact_num AS customer_contact, 
+            c.email AS customer_email,
+            sr.name AS sales_rep_name
+        FROM OrdersSR osr
+        LEFT JOIN Customers c ON osr.customer_id = c.customer_id
+        LEFT JOIN SalesRepresentatives sr ON osr.sales_rep_id = sr.sales_rep_id
+        WHERE osr.order_id = ?;
+    `;
+    
+    db.query(orderQuery, [orderId], (err, orderResults) => {
+        if (err) {
+            console.error('Error fetching order details:', err);
+            return res.status(500).json({ message: 'Error fetching order details' });
+        }
+
+        console.log("Order Results:", orderResults);  // Log the results here
+
+        if (orderResults.length === 0) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Get order details for products
+        const orderDetailQuery = `
+            SELECT od.product_id, p.product_name, od.quantity, od.unit_price, od.total_price
+            FROM OrderDetails od
+            JOIN Products p ON od.product_id = p.product_id
+            WHERE od.order_id = ?;
+        `;
+
+        db.query(orderDetailQuery, [orderId], (err, orderDetailResults) => {
+            if (err) {
+                console.error('Error fetching order details:', err);
+                return res.status(500).json({ message: 'Error fetching order details' });
+            }
+
+            console.log("Order Detail Results:", orderDetailResults);  // Log order items
+
+            res.json({
+                order: orderResults[0],
+                order_items: orderDetailResults
+            });
+        });
+    });
+});
+
+app.post('/api/confirm-order/:orderId', (req, res) => {
+    const orderId = req.params.orderId;
+
+    const updateOrderQuery = `
+        UPDATE OrdersSR
+        SET inventory_status = 'confirmed'
+        WHERE order_id = ? AND inventory_status = 'pending';
+    `;
+
+    db.query(updateOrderQuery, [orderId], (err, result) => {
+        if (err) {
+            console.error('Error updating inventory status:', err);
+            return res.status(500).json({ success: false, message: 'Failed to update order status' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(400).json({ success: false, message: 'Order is already confirmed or does not exist' });
+        }
+
+        // Deduct inventory for all items in the order
+        const updateInventoryQuery = `
+            UPDATE Products p
+            JOIN OrderDetails od ON p.product_id = od.product_id
+            SET p.current_stock_level = p.current_stock_level - od.quantity
+            WHERE od.order_id = ?;
+        `;
+
+        db.query(updateInventoryQuery, [orderId], (err, result) => {
+            if (err) {
+                console.error('Error updating inventory:', err);
+                return res.status(500).json({ success: false, message: 'Failed to update inventory' });
+            }
+
+            res.json({ success: true });
+        });
+    });
+});
+
+
 
 // Function to convert MM/DD/YYYY to YYYY-MM-DD
 function convertToDateFormat(dateString) {

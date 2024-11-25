@@ -31,37 +31,35 @@ async function loadSalesOrderData() {
 
         const tbody = document.querySelector('.salesorders-list table tbody'); // Targeting tbody within the table
         tbody.innerHTML = ''; // Clear any existing rows
-        
 
-        salesorders.forEach(salesorder => { // Iterating over each sales order
+        // Filter sales orders to only include those with "paid" status
+        const paidOrders = salesorders.filter(order => order.status === 'paid');
+
+        paidOrders.forEach(salesorder => { // Iterating over each sales order
             const row = document.createElement('tr');
-            
 
             // Convert dates for the current sales order
             const orderDate = new Date(salesorder.purchased_date); // Use the correct date field
             const deliveryDate = new Date(salesorder.delivery_date);
-            
+
             const orderDateDisplay = orderDate.toLocaleDateString();
             const deliveryDateDisplay = deliveryDate.toLocaleDateString();
-            
 
             row.addEventListener('click', () => {
-                console.log(salesorder);  // This will show the structure of `salesorder`
-                window.location.href = `orderDetail.html?orderId=${salesorder.order_id}`; // Adjust to correct key name
+                console.log(salesorder); // This will show the structure of `salesorder`
+                window.location.href = `OrderDetailIM.html?orderId=${salesorder.order_id}`; // Adjust to correct key name
             });
-            
 
             row.innerHTML = `
                 <td>${salesorder.order_code}</td>
                 <td>${salesorder.customer_id}</td>
                 <td>${orderDateDisplay}</td>
-                <td>${deliveryDateDisplay}</td> <!-- Use salesorder instead of supplier -->
+                <td>${deliveryDateDisplay}</td>
                 <td>${salesorder.total_order_value}</td>
             `;
-            
+
             tbody.appendChild(row);
         });
-        
     } catch (error) {
         console.error('Error loading sales order data:', error);
     }
@@ -70,7 +68,7 @@ async function loadSalesOrderData() {
 function searchSalesOrder() {
     const searchInput = document.querySelector('.search-input').value.toLowerCase();
     const rows = document.querySelectorAll('.salesorders-list tbody tr');
-    
+
     rows.forEach(row => {
         const rowText = Array.from(row.children) // Get all cells in the row
             .map(cell => cell.textContent.toLowerCase()) // Convert text content to lowercase
@@ -84,7 +82,6 @@ function searchSalesOrder() {
         }
     });
 }
-
 
 // Call the function to load data when the page loads
 window.onload = loadSalesOrderData;
