@@ -394,18 +394,19 @@ CREATE TABLE OrdersSR (
   order_receiver VARCHAR(100) DEFAULT NULL,
   sales_rep_id VARCHAR(50) NOT NULL,
   status VARCHAR(10) DEFAULT 'pending',
+  inventory_status VARCHAR(10) DEFAULT 'pending',
   PRIMARY KEY (order_id),
   FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Example Insert
 INSERT INTO OrdersSR (
-  customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id, status
+  customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id, status, inventory_status
 ) VALUES 
-('CST001', 'PAY678901', '2024-11-01', '123 Main Street', 'Manila', 'Ermita', 'Dr. Santos', 'SR001', 'paid'),
-('CST002', '', '2024-12-01', '789 Balintawak Street', 'Quezon City', 'Loyola', 'John Reyes', 'SR003', 'pending'),
-('CST003', 'PAY123456', '2024-11-28', '202 Greenhills', 'San Juan', 'Greenhills', 'Kevin Tan', 'SR005', 'paid'),
-('CST004', '', '2024-12-05', '101 Quezon Avenue', 'Makati', 'Bel-Air', 'Maria Cruz', 'SR004', 'pending');
+('CST001', 'PAY678901', '2024-11-01', '123 Main Street', 'Manila', 'Ermita', 'Dr. Santos', 'SR001', 'paid', 'pending'),
+('CST002', '', '2024-12-01', '789 Balintawak Street', 'Quezon City', 'Loyola', 'John Reyes', 'SR003', 'pending', 'pending'),
+('CST003', 'PAY123456', '2024-11-28', '202 Greenhills', 'San Juan', 'Greenhills', 'Kevin Tan', 'SR005', 'paid', 'pending'),
+('CST004', '', '2024-12-05', '101 Quezon Avenue', 'Makati', 'Bel-Air', 'Maria Cruz', 'SR004', 'pending', 'pending');
 
 
 
