@@ -215,12 +215,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    const purchasedDateInput = document.getElementById('purchased-date');
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    purchasedDateInput.value = today;
+
     // Fetch the Order ID and populate the customer and order details
     const form = document.querySelector('.order-form');
     const submitButton = document.querySelector('.submit-button');
     
     submitButton.addEventListener('click', () => {
         // Get the values from the form
+        const purchasedDate = purchasedDateInput.value;
+        
         const customerCode = document.querySelector('.customer-code-input').value;
         const firstName = document.querySelector('.first-name-input').value;
         const lastName = document.querySelector('.last-name-input').value;
@@ -259,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create the order payload
         const orderData = {
+            purchased_date: purchasedDate,
             customer_code: customerCode,
             first_name: firstName,
             last_name: lastName,

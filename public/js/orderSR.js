@@ -41,26 +41,21 @@ async function loadOrderSRData() {
             const orderDate = new Date(order.purchased_date); // Use the correct date field
             const orderDateDisplay = orderDate.toLocaleDateString();
 
+            row.addEventListener('click', () => {
+                // Navigate to the supplier details page with the supplier_id as a query parameter
+                console.log(`/orderDetail.html?orderId=${order.order_id}`);
+                window.location.href = `orderDetail.html?orderId=${order.order_id}`;
+            });
+
             row.innerHTML = `
                 <td>${order.order_code}</td>
                 <td>${orderDateDisplay}</td>
                 <td>${order.customer_id}</td>
                 <td>${order.customer_name}</td>
                 <td>${order.status}</td>
-                <td>
-                    <button class="add-btn" data-id="${order.order_id}">View</button>
-                </td>
             `;
             
             tbody.appendChild(row);
-        });
-
-         // Add event listener for the "View" button to pass orderId
-         document.querySelectorAll('.order-list button[data-id]').forEach(button => {
-            button.addEventListener('click', function() {
-                const orderId = this.getAttribute('data-id');
-                window.location.href = `orderDetail.html?orderId=${orderId}`; // Pass orderId in URL
-            });
         });
         
     } catch (error) {
@@ -70,20 +65,19 @@ async function loadOrderSRData() {
 
 
 
-function searchInventory() {
+function searchOrders() {
     const searchInput = document.querySelector('.search-input').value.toLowerCase();
-    const rows = document.querySelectorAll('.inventory-list tbody tr');
+    const rows = document.querySelectorAll('.order-list tbody tr');
     
     rows.forEach(row => {
-        const rowText = Array.from(row.children) // Get all cells in the row
-            .map(cell => cell.textContent.toLowerCase()) // Convert text content to lowercase
-            .join(' '); // Join all cell content to make searchable string
+        const rowText = Array.from(row.children)
+            .map(cell => cell.textContent.toLowerCase())
+            .join(' ');
 
-        // Check if the search input is included in the row text
         if (rowText.includes(searchInput)) {
-            row.style.display = ''; // Show row if it matches
+            row.style.display = ''; 
         } else {
-            row.style.display = 'none'; // Hide row if it doesn't match
+            row.style.display = 'none';
         }
     });
 }

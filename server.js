@@ -857,6 +857,7 @@ app.get('/api/generate-order-id', async (req, res) => {
 // Route to create an order
 app.post('/api/create-order', async (req, res) => {
     const {
+        purchased_date,
         customer_code, 
         payment_ref_num, 
         delivery_date, 
@@ -925,11 +926,12 @@ app.post('/api/create-order', async (req, res) => {
                 getNewOrderIdFromDatabase().then((newOrderId) => {
                     // Insert the order into the OrdersSR table (store numeric order_id)
                     const insertOrderQuery = `
-                        INSERT INTO OrdersSR (order_id, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id,status)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                        INSERT INTO OrdersSR (order_id, purchased_date, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id,status)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
                     db.query(insertOrderQuery, [
                         newOrderId,  // Use the numeric order ID
+                        purchased_date,
                         customer_code, 
                         payment_ref_num, 
                         delivery_date, 
@@ -1015,7 +1017,8 @@ app.get('/api/order-details/:orderId', (req, res) => {
             osr.customer_id, 
             osr.sales_rep_id, 
             osr.payment_ref_num, 
-             DATE(osr.delivery_date) AS delivery_date,
+            DATE(osr.purchased_date) AS purchased_date,
+            DATE(osr.delivery_date) AS delivery_date,
             osr.order_address, 
             osr.city, 
             osr.barangay, 
@@ -1024,7 +1027,8 @@ app.get('/api/order-details/:orderId', (req, res) => {
             c.lname AS customer_last_name, 
             c.contact_num AS customer_contact, 
             c.email AS customer_email,
-            sr.name AS sales_rep_name
+            sr.name AS sales_rep_name,
+            sr.contact_info AS sales_rep_contactinfo
         FROM OrdersSR osr
         LEFT JOIN Customers c ON osr.customer_id = c.customer_id
         LEFT JOIN SalesRepresentatives sr ON osr.sales_rep_id = sr.sales_rep_id
@@ -1086,7 +1090,7 @@ app.get('/api/so-details/:orderId', (req, res) => {
             c.lname AS customer_last_name, 
             c.contact_num AS customer_contact, 
             c.email AS customer_email,
-            sr.name AS sales_rep_name
+            sr.name AS sales_rep_name,
         FROM OrdersSR osr
         LEFT JOIN Customers c ON osr.customer_id = c.customer_id
         LEFT JOIN SalesRepresentatives sr ON osr.sales_rep_id = sr.sales_rep_id

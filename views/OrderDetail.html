@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="css/OrderDetail.css">
     <link rel="stylesheet" href="css/headerAndFooter.css">
     <script src="/js/OrderDetail.js" defer></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+    (function(){
+        emailjs.init({
+            publicKey: "gcE-7vYnfBRf-FJWU",
+        });
+    })();
+    </script>
+
 </head>
 <body>
     <nav>
@@ -31,12 +42,13 @@
         </div>
     </nav>
     <main>
-
-    <div class="header-container">
-        <h1 class="page-title" id="order-title">ORD###</h1>
-    </div>
+        
+    <a href="#" id="back-link">← Orders</a>
 
     <div class="order-details">
+        <div class="header-container">
+            <h1 class="page-title" id="order-title">ORD###</h1>
+        </div>
         <div class="card">
             <h3>Sales Representative Details</h3>
             <div class="container">
@@ -45,12 +57,14 @@
                         <tr>
                             <th>Sales Rep #</th>
                             <th>Name</th>
+                            <th>Contact Info</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td id="sales-rep-id"></td>
                             <td id="sales-rep-name"></td> 
+                            <td id="sales-rep-contactinfo"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -73,6 +87,7 @@
                     <h2>Delivery Details</h2>
                     <table class="details">
                         <thead>
+                            <tr><th>Purchased Date:</th><td id="purchased-date"></td></th></tr>
                             <tr><th>Delivery Date:</th><td id="delivery-date"></td></th></tr>
                             <tr><th>City:</th><td id="delivery-city"></td></th></tr>
                             <tr><th>Barangay:</th><td id="delivery-barangay"></td></th></tr>
@@ -107,6 +122,8 @@
                     </table>
                 </section>
             </div>  
+            <button onclick="SendInvoice()" id="send-invoice-btn" class="submit-button">Send Invoice</button>
+
     </div>
 
     <script>
@@ -137,15 +154,18 @@ function fetchOrderDetails(orderId) {
         console.log(data); // Check if data is coming as expected
         if (data && data.order) {
             const formattedDeliveryDate = new Date(data.order.delivery_date).toLocaleDateString();
+            const formattedPurchasedDate = new Date(data.order.purchased_date).toLocaleDateString();
 
             document.getElementById('order-title').textContent = `ORD00${data.order.order_id}`;
             document.getElementById('sales-rep-id').textContent = data.order.sales_rep_id;
             document.getElementById('sales-rep-name').textContent = data.order.sales_rep_name;
+            document.getElementById('sales-rep-contactinfo').textContent = data.order.sales_rep_contactinfo;
             document.getElementById('customer-id').textContent = data.order.customer_id;
             document.getElementById('customer-name').textContent = `${data.order.customer_first_name} ${data.order.customer_last_name}`;
             document.getElementById('customer-contact').textContent = data.order.customer_contact;
             document.getElementById('customer-email').textContent = data.order.customer_email;
             document.getElementById('customer-payment-ref').textContent = data.order.payment_ref_num;
+            document.getElementById('purchased-date').textContent = formattedPurchasedDate;
             document.getElementById('delivery-date').textContent = formattedDeliveryDate;
             document.getElementById('delivery-city').textContent = data.order.city;
             document.getElementById('delivery-barangay').textContent = data.order.barangay;
@@ -165,6 +185,11 @@ function fetchOrderDetails(orderId) {
                 document.getElementById('overall-total-price').textContent = totalPrice.toFixed(2); // Display the total
             } else {
                 console.log("No order items found.");
+            }
+            // Check if the payment reference number exists and is not empty
+            if (data.order.payment_ref_num && data.order.payment_ref_num.trim() !== '') {
+                const headerContainer = document.querySelector('.header-container');
+                headerContainer.style.backgroundColor = '#AFE1AF';
             }
         } else {
             console.error("Order not found or invalid data:", data);
