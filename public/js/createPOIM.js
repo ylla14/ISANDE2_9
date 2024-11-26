@@ -81,55 +81,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Extract supplierId from URL parameters
     const supplierId = new URLSearchParams(window.location.search).get("supplierId");
     if (!supplierId) return console.warn("No supplier ID found in the URL.");
 
+    // Get references to key DOM elements
     const productInfoContainer = document.querySelector(".form-section-product-info");
     const sendBtn = document.querySelector(".send-btn");
     const addProductBtn = document.getElementById("add-product");
 
+    // Function to fetch products from the server
     const fetchProducts = async () => {
         try {
             const response = await fetch(`/api/suppliers/${supplierId}/products`);
-            return response.json();
+            return response.json();  // Return the list of products in JSON format
         } catch (error) {
             console.error("Error fetching products:", error);
         }
     };
 
+    // Function to populate the product dropdown with product data
     const populateProductDropdown = async (productDropdown) => {
-        const products = await fetchProducts();
+        const products = await fetchProducts();  // Fetch product data
         if (products) {
+            // Clear previous options and add a default option
             productDropdown.innerHTML = '<option value="">-- Select Product --</option>';
+            // Loop through the fetched products and add them to the dropdown
             products.forEach(({ product_id, selling_price, product_category, product_name }) => {
                 const option = document.createElement("option");
-                option.value = product_id;
-                option.dataset.price = selling_price;
-                option.textContent = `${product_category} - ${product_name}`;
+                option.value = product_id;  // Product ID as the value
+                option.dataset.price = selling_price;  // Store price in data attribute
+                option.textContent = `${product_category} - ${product_name}`;  // Display category and name
                 productDropdown.appendChild(option);
             });
         }
     };
 
+    // Function to set up event listeners for product dropdown, quantity, and pricing inputs
     const setupProductEventListeners = (productDropdown, quantityInput, unitPriceInput, totalPriceInput) => {
+        // When product is selected, update unit price and calculate total price
         productDropdown.addEventListener("change", () => {
             const unitPrice = parseFloat(productDropdown.selectedOptions[0]?.dataset.price) || 0;
-            unitPriceInput.value = `₱${unitPrice.toFixed(2)}`;
-            calculateTotalPrice();
+            unitPriceInput.value = `₱${unitPrice.toFixed(2)}`;  // Set unit price formatted as currency
+            calculateTotalPrice();  // Recalculate total price
         });
 
+        // When quantity is changed, recalculate total price
         quantityInput.addEventListener("input", calculateTotalPrice);
 
+        // Function to calculate total price based on unit price and quantity
         function calculateTotalPrice() {
             const unitPrice = parseFloat(unitPriceInput.value.replace(/₱/, "")) || 0;
             const quantity = parseInt(quantityInput.value, 10) || 0;
-            totalPriceInput.value = `₱${(unitPrice * quantity).toFixed(2)}`;
+            totalPriceInput.value = `₱${(unitPrice * quantity).toFixed(2)}`;  // Set total price formatted as currency
         }
     };
 
+    // Function to create a new product input group (dropdown, quantity, price, etc.)
     const createProductGroup = async () => {
-        const productGroup = document.createElement("div");
-        productGroup.classList.add("product-group");
+        const productGroup = document.createElement("div");  // Create a new div to hold the product group
+        productGroup.classList.add("product-group");  // Add a class for styling
+
+        // HTML structure for the product group (dropdown, quantity input, price output)
         productGroup.innerHTML = `
             <div class="form-group">
                 <label for="product">Select Product:</label>
@@ -147,48 +160,63 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <label for="total-price">Total Price:</label>
                 <input type="text" class="total-price-output" placeholder="Total Price" readonly>
             </div>
+            <button class="remove-product-btn">Remove Product</button> <!-- Add a remove button -->
         `;
-        productInfoContainer.appendChild(productGroup);
+        productInfoContainer.appendChild(productGroup);  // Append the new product group to the container
 
         const newProductDropdown = productGroup.querySelector(".product-dropdown");
-        await populateProductDropdown(newProductDropdown);
+        await populateProductDropdown(newProductDropdown);  // Populate the product dropdown
 
-        setupProductEventListeners(newProductDropdown, productGroup.querySelector(".quantity-input"), 
-                                   productGroup.querySelector(".unit-price-output"), productGroup.querySelector(".total-price-output"));
+        // Set up event listeners for the new product group
+        setupProductEventListeners(
+            newProductDropdown,
+            productGroup.querySelector(".quantity-input"),
+            productGroup.querySelector(".unit-price-output"),
+            productGroup.querySelector(".total-price-output")
+        );
+
+        // Add event listener to the "Remove Product" button
+        const removeButton = productGroup.querySelector(".remove-product-btn");
+        removeButton.addEventListener("click", () => {
+            productGroup.remove();  // Remove the product group when clicked
+        });
     };
 
-    // Initial Product Group Creation
+    // Create the initial product group when the page loads
     await createProductGroup();
 
-    // Add Product Button Click Handler
+    // Event listener to handle the "Add Product" button click
     addProductBtn.addEventListener("click", createProductGroup);
 
-    // Send Button Click Handler
+    // Event listener to handle the "Send" button click for submitting the purchase order
     sendBtn.addEventListener("click", async () => {
+        // Collect input values from the form
         const companyAddress = document.getElementById("company-address").value;
         const requestorName = document.getElementById("requestor-name").value;
         const requestorPosition = document.getElementById("requestor-position").value;
         const requestDate = document.getElementById("request-date").value;
         const requiredDate = document.getElementById("required-date").value;
-    
+
+        // Collect product rows data (product details from each product group)
         const productRows = Array.from(document.querySelectorAll(".product-group")).map(group => {
             const productDropdown = group.querySelector(".product-dropdown");
             const quantityInput = group.querySelector(".quantity-input");
             const unitPriceInput = group.querySelector(".unit-price-output");
             const totalPriceInput = group.querySelector(".total-price-output");
-    
+
             const selectedProduct = productDropdown.selectedOptions[0];
             if (selectedProduct) {
                 return {
-                    productId: selectedProduct.value,
-                    productName: selectedProduct.textContent,
-                    unitPrice: parseFloat(unitPriceInput.value.replace(/₱/, "")),
-                    quantity: parseInt(quantityInput.value, 10),
-                    totalPrice: parseFloat(totalPriceInput.value.replace(/₱/, ""))
+                    productId: selectedProduct.value,  // Product ID
+                    productName: selectedProduct.textContent,  // Product name
+                    unitPrice: parseFloat(unitPriceInput.value.replace(/₱/, "")),  // Unit price (cleaned from currency symbol)
+                    quantity: parseInt(quantityInput.value, 10),  // Quantity
+                    totalPrice: parseFloat(totalPriceInput.value.replace(/₱/, ""))  // Total price (cleaned from currency symbol)
                 };
             }
-        }).filter(Boolean);
-    
+        }).filter(Boolean);  // Filter out any undefined entries
+
+        // Email parameters for sending the purchase order details
         const emailParams = {
             company_address: companyAddress,
             from_name: requestorName,
@@ -198,19 +226,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             order_details: productRows.map(row => `
                 <tr>
                     <td>${row.productName}</td>
-                    <td>${row.unitPrice}</td>
+                    <td>₱${row.unitPrice}</td>
                     <td>${row.quantity}</td>
-                    <td>${row.totalPrice}</td>
+                    <td>₱${row.totalPrice}</td>
                 </tr>
-            `).join("")
+            `).join("")  // Join all product details as HTML table rows
         };
-    
+
         try {
-            // Send Email
+            // Send the order details via email using emailjs
             await emailjs.send('service_skc39jp', 'template_ghl25dg', emailParams, 'mTGzRd_flL6wCKlxk');
             console.log('Email sent successfully.');
-    
-            // Push to Database
+
+            // Save the purchase order in the database
             const response = await fetch('/api/purchase-order', {
                 method: 'POST',
                 headers: {
@@ -221,11 +249,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     order_date: requestDate,
                     delivery_date: requiredDate,
                     order_address: companyAddress,
-                    products: productRows,
-                    status: 'Pending' // Add status field
+                    products: productRows,  // Include the product rows data
+                    status: 'Pending'  // Set initial order status as 'Pending'
                 })
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
                 console.log('Purchase order pushed to database:', data);
@@ -238,6 +266,5 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error('Error:', error);
             alert('An error occurred. Please try again.');
         }
-    });    
-    
+    });
 });
