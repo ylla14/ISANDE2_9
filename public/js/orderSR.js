@@ -19,6 +19,11 @@ document.getElementById("customers-link").addEventListener("click", function(eve
     window.location.href = "customersSR.html"; // Redirect to the inventory page
 });
 
+document.getElementById("profile-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "profileSR.html";
+});
+
 
 // Event listener for the "Add New" button
 document.getElementById("add-new-button").addEventListener("click", function(event) {
@@ -42,7 +47,6 @@ async function loadOrderSRData() {
             const orderDateDisplay = orderDate.toLocaleDateString();
 
             row.addEventListener('click', () => {
-                // Navigate to the supplier details page with the supplier_id as a query parameter
                 console.log(`/orderDetail.html?orderId=${order.order_id}`);
                 window.location.href = `orderDetail.html?orderId=${order.order_id}`;
             });

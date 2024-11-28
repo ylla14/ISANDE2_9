@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IMS Dashboard</title>
-    <link rel="stylesheet" href="css/orderSR.css">
-    <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
-    <script src="/js/orderSR.js" defer></script>
+    <title>Sales Representative Profile</title>
+    <link rel="stylesheet" href="css/profileSR.css">
+    <script src="/js/profileSR.js" defer></script>
 </head>
 <body>
     <nav>
@@ -31,35 +30,17 @@
             </div>
         </div>
     </nav>
-
-       <!-- Order table -->
-    <div class="order-list">
-        <div class="section-header">
-            <button class="add-btn" id="add-new-button">Add New</button>
-            <div class="button-container">
-                <input type="text" class="search-input" placeholder="Search" oninput="searchOrders()" />
-                <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
-            </div>
+    <div class="profile-container">
+        <h1>Welcome, <span id="salesRepName">Sales Representative</span></h1>
+        <div class="profile-info">
+            <div>
+                <p>Sales Rep Code: <span id="sales-rep-code"></span></p>
+                <p>Sales Rep Name: <span id="sales-rep-name"></span></p>
+                <p>Contact Info: <span id="sales-rep-contact"></span></p>
+                <p>Email: <span id="sales-rep-email"></span></p>
+            </div>            
         </div>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Purchased Date</th>
-                    <th>Customer ID</th>
-                    <th>Customer Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be populated by script.js -->
-            </tbody>
-        </table>
-    </div>
-    
-    <section class="footer"></section>
-    <div class="text">
-        <h2>Brady</h2>
+        <button id="logoutButton">Log Out</button>
     </div>
 
     <!-- COPY FOR HEADER -->
@@ -73,5 +54,6 @@
             }
         }//END OF SCRIPT FOR HEADER
     </script>
+    
 </body>
 </html>

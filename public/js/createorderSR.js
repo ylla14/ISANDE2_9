@@ -17,6 +17,10 @@ document.getElementById("customers-link").addEventListener("click", function(eve
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "customersSR.html"; // Redirect to the customers page
 });
+document.getElementById("profile-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "profileSR.html";
+});
 
 document.addEventListener("DOMContentLoaded", function() {
     const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
