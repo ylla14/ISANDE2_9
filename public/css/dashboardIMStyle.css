@@ -17,11 +17,10 @@
 /*below might not be applicable to other pages*/
 
 /*rectangles row 1*/
-
 .overview {
     display: flex;
     justify-content: center; 
-    gap: 20px; /* gap btwn the rectangles */
+    gap: 20px; /* Gap between the rectangles */
     padding: 20px 80px;
     position: relative;
     top: 250px;
@@ -29,44 +28,100 @@
 
 .overview .rectangle { 
     width: 500px;
-    height: 100px;
+    height: 150px; /* Increased height to accommodate both h3 and p */
     border: 2px solid #000058; /* Border color */
     border-radius: 15px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for 3D effect */
     display: flex;
+    flex-direction: column; /* Arrange content vertically */
     justify-content: center;
     align-items: center;
     color: #000058; 
     font-size: 18px;
     font-weight: 500;
     margin: 0 10px;
+    text-align: center; /* Ensure the text is centered */
+    padding: 15px; /* Padding for better spacing inside the box */
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* graphs */
+.overview .rectangle h3 {
+    font-size: 2.5rem; /* Larger font size for the heading */
+    margin: 0;
+    color: #000058; /* Darker text for heading */
+}
 
-.graph {
+.overview .rectangle p {
+    font-size: 1rem; /* Slightly smaller text for description */
+    margin-top: 8px; /* Add space between heading and paragraph */
+    color: #666; /* Lighter color for the description text */
+}
+
+.overview .rectangle:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+/* Reports Section */
+.reports {
     display: flex;
     justify-content: center; /* Center the rectangles */
-    gap: 24px; /* gap btwn the rectangles */
+    gap: 24px; /* Gap between the rectangles */
     padding: 20px 80px;
     position: relative;
     top: 300px;
 }
 
-.graph .graphcon { /* More specific selector */
-    width: 770px;
-    height: 400px;
+.report-con {
+    width: 740px;
+    height: 200px;
     border: 2px solid #000058; /* Border color */
     border-radius: 15px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for 3D effect */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #000058; 
-    font-size: 18px;
-    font-weight: 500;
-    margin: 0 10px;
+    flex-direction: column; /* Stack heading and buttons vertically */
+    justify-content: center; /* Center content within the box */
+    align-items: center; /* Align content horizontally at the center */
+    background-color: #f9f9f9; /* Light background for better contrast */
+    gap: 20px; /* Space between header and buttons */
 }
+
+.report-heading {
+    font-size: 1.5rem; /* Larger font size for headings */
+    color: #000058;
+    margin: 0; /* Remove default margin for consistent spacing */
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* Space between buttons */
+}
+
+#reorder-report-btn,
+#expiry-report-btn,
+#download-reorder-btn,
+#download-expiry-btn {
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #000058;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#reorder-report-btn:hover,
+#expiry-report-btn:hover,
+#download-expiry-btn:hover,
+#download-reorder-btn:hover {
+    background-color: #4b4b99; /* Lighter shade on hover */
+}
+
+
 
 /* FAST SELLING */
 

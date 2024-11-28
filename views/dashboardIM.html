@@ -66,16 +66,44 @@
 
     <!-- rectangles overview -->
     <div class="overview">
-        <div class="rectangle">Helloor 1</div>
-        <div class="rectangle">Helloor 2</div>
-        <div class="rectangle">Helloor 3</div>
+        <div class="rectangle">
+            <h3>Heading 1</h3>
+            <p>Total No. of Products</p>
+        </div>
+        <div class="rectangle">
+            <h3>Heading 2</h3>
+            <p>Another descriptive text here.</p>
+        </div>
+        <div class="rectangle">
+            <h3>Heading 3</h3>
+            <p>Additional details go here.</p>
+        </div>
     </div>
 
-    <!-- graph -->
-    <div class="graph">
-        <div class="graphcon">Helloor 1</div>
-        <div class="graphcon">Helloor 2</div>
+
+    <!-- Reports Section -->
+    <div class="reports">
+        <div class="report">
+            <div class="report-con">
+                <h3 class="report-heading">Low Stock and Reorder Report</h3>
+                <div class="button-container">
+                    <button id="reorder-report-btn">View</button>
+                    <button id="download-reorder-btn" onclick="downloadReport('Sales Trends')">Download</button>
+                </div>
+            </div>
+        </div>
+        <div class="report">
+            <div class="report-con">
+                <h3 class="report-heading">Product Expiration Report</h3>
+                <div class="button-container">
+                    <button id="expiry-report-btn">View</button>
+                    <button id="download-expiry-btn" onclick="downloadReport('Inventory Trends')">Download</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+
 
      <!-- Fast Selling Section -->
     <div class="fast-selling">
@@ -119,8 +147,8 @@
         <div class="section-header">
             <h2>Stock Aging Report</h2>
             <div class="button-container">
-                <button class="view-btn">View All</button>
-                <button class="download-btn" onclick="downloadStockAging()">Download</button>
+                <button id="view-btn">View All</button>
+                <button id="download-btn" onclick="downloadStockAging()">Download</button>
             </div>
         </div>
         <table border="1">
