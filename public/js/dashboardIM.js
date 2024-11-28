@@ -20,6 +20,7 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
     window.location.href = "suppliersIM.html"; // Redirect to the inventory page
 });
 
+//Reports Section
 document.getElementById("reorder-report-btn").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "reorderReportIM.html"; // Redirect to the inventory page
@@ -30,6 +31,7 @@ document.getElementById("expiry-report-btn").addEventListener("click", function(
     window.location.href = "expiryReportIM.html"; // Redirect to the inventory page
 });
 
+//side bar function
 async function loadRecentRestocks() {
   try {
       const response = await fetch('/api/recent-restocks');
