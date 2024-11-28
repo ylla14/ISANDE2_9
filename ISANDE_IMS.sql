@@ -263,8 +263,8 @@ CREATE TABLE SalesRepresentatives (
 LOCK TABLES SalesRepresentatives WRITE;
 /*!40000 ALTER TABLE SalesRepresentatives DISABLE KEYS */;
 INSERT INTO SalesRepresentatives VALUES 
-('SR001', 'Anna Reyes', '0917-654-3210', 'anna.reyes@company.com', 'hashed_password_1'),
-('SR002', 'Mark Dela Cruz', '0918-987-6543', 'mark.delacruz@company.com', 'hashed_password_2');
+('SR001', 'Anna Reyes', '0917-654-3210', 'anna.reyes@Brady.com', 'hashed_password_1'),
+('SR002', 'Mark Dela Cruz', '0918-987-6543', 'mark.delacruz@Brady.com', 'hashed_password_2');
 /*!40000 ALTER TABLE SalesRepresentatives ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -397,8 +397,8 @@ CREATE TABLE OrdersSR (
   payment_ref_num VARCHAR(50) DEFAULT NULL,
   delivery_date DATE DEFAULT NULL,
   order_address VARCHAR(100) DEFAULT NULL,
-  city VARCHAR(100) DEFAULT NULL,
   barangay VARCHAR(100) DEFAULT NULL,
+  city VARCHAR(100) DEFAULT NULL,
   order_receiver VARCHAR(100) DEFAULT NULL,
   sales_rep_id VARCHAR(50) NOT NULL,
   status VARCHAR(10) DEFAULT 'pending',
@@ -409,12 +409,12 @@ CREATE TABLE OrdersSR (
 
 -- Example Insert
 INSERT INTO OrdersSR (
-  customer_id, purchased_date, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id, status, inventory_status
+  customer_id, purchased_date, payment_ref_num, delivery_date, order_address, barangay, city, order_receiver, sales_rep_id, status, inventory_status
 ) VALUES 
-('CST001', '2024-09-02', 'PAY678901', '2024-11-01', '123 Main Street', 'Manila', 'Ermita', 'Dr. Santos', 'SR001', 'paid', 'pending'),
-('CST002', '2024-10-27', '', '2024-12-01', '789 Balintawak Street', 'Quezon City', 'Loyola', 'John Reyes', 'SR002', 'pending', 'pending'),
-('CST003', '2024-11-11', 'PAY123456', '2024-11-28', '202 Greenhills', 'San Juan', 'Greenhills', 'Kevin Tan', 'SR002', 'paid', 'pending'),
-('CST004', '2024-11-19', '', '2024-12-05', '101 Quezon Avenue', 'Makati', 'Bel-Air', 'Maria Cruz', 'SR002', 'pending', 'pending');
+('CST001', '2024-09-02', 'PAY678901', '2024-11-01', '123 Main Street', 'Ermita', 'Manila', 'Dr. Santos', 'SR001', 'paid', 'pending'),
+('CST002', '2024-10-27', '', '2024-12-01', '789 Balintawak Street', 'Loyola', 'Quezon City', 'John Reyes', 'SR002', 'pending', 'pending'),
+('CST003', '2024-11-11', 'PAY123456', '2024-11-28', '202 Greenhills', 'Greenhills', 'San Juan',  'Kevin Tan', 'SR002', 'paid', 'pending'),
+('CST004', '2024-11-19', '', '2024-12-05', '101 Quezon Avenue','Bel-Air', 'Makati', 'Maria Cruz', 'SR002', 'pending', 'pending');
 
 
 

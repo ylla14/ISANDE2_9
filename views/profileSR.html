@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Representative Profile</title>
+    <link rel="stylesheet" href="css/profileSR.css">
+    <script src="/js/profileSR.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class ="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#" id="profile-link">
+                    <img src="/resources/download (1).jpg" alt="Profile" class="profile-icon">
+                    <span>Profile</span>
+            
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="profile-container">
+        <h1>Welcome, <span id="salesRepName">Sales Representative</span></h1>
+        <div class="profile-info">
+            <div>
+                <p>Sales Rep Code: <span id="sales-rep-code"></span></p>
+                <p>Sales Rep Name: <span id="sales-rep-name"></span></p>
+                <p>Contact Info: <span id="sales-rep-contact"></span></p>
+                <p>Email: <span id="sales-rep-email"></span></p>
+            </div>            
+        </div>
+        <button id="logoutButton">Log Out</button>
+    </div>
+
+    <!-- COPY FOR HEADER -->
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }//END OF SCRIPT FOR HEADER
+    </script>
+    
+</body>
+</html>

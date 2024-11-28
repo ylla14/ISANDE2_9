@@ -649,11 +649,10 @@ app.get('/api/suppliers/:supplier_id/products', (req, res) => {
 
 
 
-
 app.get('/api/sales-representative/:userId', (req, res) => {
     const userId = req.params.userId;
 
-    const query = 'SELECT sales_rep_id, name, CURRENT_DATE() AS order_date FROM SalesRepresentatives WHERE sales_rep_id = ?';
+    const query = 'SELECT sales_rep_id, name, contact_info, email, CURRENT_DATE() AS order_date FROM SalesRepresentatives WHERE sales_rep_id = ?';
     db.query(query, [userId], (err, results) => {
         if (err) {
             console.error('Error retrieving sales representative data:', err);
@@ -668,36 +667,49 @@ app.get('/api/sales-representative/:userId', (req, res) => {
 });
 
 app.get('/api/OrdersSR', (req, res) => {
-    const query = `
+    // Destructure the query parameters for filtering and sorting
+    const { status, sortField, sortOrder } = req.query;
+
+    // Start the SQL query
+    let query = `
     SELECT
         CONCAT('ORD', LPAD(osr.order_id, 3, '0')) AS order_code,
         osr.order_id,
         osr.purchased_date,
         osr.customer_id,
-        CONCAT(c.fname, ' ', c.lname) AS customer_name ,
+        CONCAT(c.fname, ' ', c.lname) AS customer_name,
         osr.status
     FROM 
         OrdersSR osr
     LEFT JOIN 
         Customers c ON osr.customer_id = c.customer_id
-    GROUP BY 
-        osr.order_id,
-        osr.purchased_date,
-        osr.customer_id,
-        c.fname,
-        c.lname,
-        osr.status;
+    WHERE 1
     `;
-  
-    db.query(query, (err, results) => {
+
+    // Add filtering based on the 'status' parameter if provided
+    if (status) {
+    query += ` AND osr.status = ?`;
+    }
+
+    // Add sorting based on the 'sortField' and 'sortOrder' parameters if provided
+    if (sortField && sortOrder) {
+    query += ` ORDER BY ${sortField} ${sortOrder}`;
+    } else {
+    // Default sorting if no sortField or sortOrder is provided
+    query += ` ORDER BY osr.purchased_date DESC`; // Ensure this uses purchased_date
+    }
+
+    // Run the query with the filtering and sorting parameters
+    db.query(query, [status], (err, results) => {
         if (err) {
-            console.error('Error retrieving data from OrdersSR:', err); 
+            console.error('Error retrieving data from OrdersSR:', err);
             res.status(500).send('Error retrieving data from database');
             return;
         }
         res.json(results);
-    });    
+    });
 });
+
 
 app.get('/api/salesorders', (req, res) => {
     const query = `
@@ -862,15 +874,15 @@ app.post('/api/create-order', async (req, res) => {
         payment_ref_num, 
         delivery_date, 
         order_address, 
-        city, 
         barangay, 
+        city, 
         order_receiver,
         sales_rep_id, 
         order_items // Array of order items
     } = req.body;
 
     // Validate input fields
-    if (!customer_code || !delivery_date || !order_address || !city || !barangay || !order_receiver || !sales_rep_id || !order_items || order_items.length === 0) {
+    if (!customer_code || !delivery_date || !order_address || !barangay || !city || !order_receiver || !sales_rep_id || !order_items || order_items.length === 0) {
         return res.status(400).json({ success: false, error: "Missing required fields or order items" });
     }
 
@@ -926,7 +938,7 @@ app.post('/api/create-order', async (req, res) => {
                 getNewOrderIdFromDatabase().then((newOrderId) => {
                     // Insert the order into the OrdersSR table (store numeric order_id)
                     const insertOrderQuery = `
-                        INSERT INTO OrdersSR (order_id, purchased_date, customer_id, payment_ref_num, delivery_date, order_address, city, barangay, order_receiver, sales_rep_id,status)
+                        INSERT INTO OrdersSR (order_id, purchased_date, customer_id, payment_ref_num, delivery_date, order_address, barangay, city, order_receiver, sales_rep_id,status)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
                     db.query(insertOrderQuery, [
@@ -935,9 +947,9 @@ app.post('/api/create-order', async (req, res) => {
                         customer_code, 
                         payment_ref_num, 
                         delivery_date, 
-                        order_address, 
-                        city, 
+                        order_address,  
                         barangay, 
+                        city,
                         order_receiver,
                         sales_rep_id, 
                         status
@@ -1090,7 +1102,7 @@ app.get('/api/so-details/:orderId', (req, res) => {
             c.lname AS customer_last_name, 
             c.contact_num AS customer_contact, 
             c.email AS customer_email,
-            sr.name AS sales_rep_name,
+            sr.name AS sales_rep_name
         FROM OrdersSR osr
         LEFT JOIN Customers c ON osr.customer_id = c.customer_id
         LEFT JOIN SalesRepresentatives sr ON osr.sales_rep_id = sr.sales_rep_id
@@ -1206,6 +1218,77 @@ app.get('/api/product-details/:productId', (req, res) => {
       res.json(product);
     });
   });
+
+  app.get('/api/current-user', (req, res) => {
+    // Assuming req.session.user contains the logged-in user details
+    const user = req.session.user;
+
+    if (!user) {
+        return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    res.json({
+        salesRepId: user.salesRepId,
+        name: user.name,
+        contactInfo: user.contactInfo,
+        email: user.email,
+    });
+});
+
+app.get('/api/customers', (req, res) => {
+    const { status, sortField, sortOrder } = req.query;
+
+    let query = 'SELECT customer_id, fname, lname, email FROM Customers WHERE 1=1';
+    
+    // Add status filter if provided
+    if (status) {
+        query += ` AND status = '${status}'`;
+    }
+
+    // Add sorting if provided
+    if (sortField && sortOrder) {
+        query += ` ORDER BY ${sortField} ${sortOrder}`;
+    }
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching customers:', err);
+            res.status(500).json({ error: 'Failed to fetch customer data' });
+            return;
+        }
+
+        res.json(results); // Send the customers as a JSON response
+    });
+});
+
+
+
+  // Assuming the customer ID is passed as a URL parameter
+app.get('/api/customers/:customerId', (req, res) => {
+    const { customerId } = req.params;
+
+    // SQL query to join Customers and OrdersSR
+    const query = `
+        SELECT 
+            c.customer_id, c.fname, c.lname, c.contact_num, c.email,
+            o.delivery_date, o.order_address, o.barangay, o.city
+        FROM Customers c
+        JOIN OrdersSR o ON c.customer_id = o.customer_id
+        WHERE c.customer_id = ?`;
+
+    db.query(query, [customerId], (err, results) => {
+        if (err) {
+            console.error('Error fetching customer details:', err);
+            return res.status(500).json({ error: 'Failed to fetch customer details' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+
+        res.json(results[0]); // Return the first result (since customer_id is unique)
+    });
+});
 
   
 // Start the server

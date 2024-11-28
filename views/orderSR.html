@@ -5,17 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMS Dashboard</title>
     <link rel="stylesheet" href="css/orderSR.css">
-    <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
     <script src="/js/orderSR.js" defer></script>
 </head>
 <body>
+
     <nav>
         <div class="nav-content">
             <div class="logo">
-                <!-- <img src="/public/resources/logo.png" alt="Logo" class="logo-icon"> -->
-                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+                <img src="resources/logo.png" alt="Logo" class="logo-icon">
             </div>
-            <div class="nav-left">
+            <div class ="nav-left">
                 <ul class="nav-links">
                     <li><a href="#" id="dashboard-link">Dashboard</a></li>
                     <li><a href="#" id="inventory-link">Inventory</a></li>
@@ -24,22 +23,45 @@
                 </ul>
             </div>
             <div class="profile">
-                <a href="#">
-                    <!-- <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon"> -->
-                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                <a href="#" id="profile-link">
+                    <img src="/resources/download (1).jpg" alt="Profile" class="profile-icon">
                     <span>Profile</span>
+            
                 </a>
             </div>
         </div>
     </nav>
 
-       <!-- Order table -->
+    <!-- Order table -->
     <div class="order-list">
         <div class="section-header">
             <button class="add-btn" id="add-new-button">Add New</button>
             <div class="button-container">
                 <input type="text" class="search-input" placeholder="Search" oninput="searchOrders()" />
-                <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
+                <button class="filter-btn" onclick="applyFilter()">Filter</button>
+                
+                <!-- Filter Dropdowns -->
+                <div class="filter-options">
+                    <select id="status-filter" onchange="applyFilter()">
+                        <option value="">Status (Paid/Pending)</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                    
+                    <select id="sort-field" onchange="applyFilter()">
+                        <option value="">Sort By</option>
+                        <option value="customer_name">Customer Name</option>
+                        <option value="customer_id">Customer ID</option>
+                        <option value="purchased_date">Date</option>
+                        <option value="order_id">Order ID</option>
+                    </select>
+                    
+                    <select id="sort-order" onchange="applyFilter()">
+                        <option value="">Sort Order</option>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
             </div>
         </div>
         <table border="1">
@@ -59,20 +81,95 @@
     </div>
     
     <section class="footer"></section>
-    <div class="text">
-        <h2>Brady</h2>
-    </div>
 
-    <!-- COPY FOR HEADER -->
     <script>
-        let nav = document.querySelector("nav");
-        window.onscroll = function() {
-            if (document.documentElement.scrollTop > 20) {
-                nav.classList.add("sticky");
-            } else {
-                nav.classList.remove("sticky");
+        // Toggle filter options visibility when clicking the filter button
+        document.querySelector('.filter-btn').addEventListener('click', () => {
+            const filterOptions = document.querySelector('.filter-options');
+            filterOptions.classList.toggle('show');  // Toggle the visibility
+        });
+
+        // Fetch orders from the backend API and load them into the table
+        async function loadOrderSRData(filter = {}, sort = {}) {
+            try {
+                const query = new URLSearchParams({ ...filter, ...sort }).toString();
+                const response = await fetch(`/api/OrdersSR?${query}`);
+                const ordersSR = await response.json();
+                console.log('Fetched orders:', ordersSR);
+
+                const tbody = document.querySelector('.order-list table tbody');
+                tbody.innerHTML = '';
+
+                ordersSR.forEach(order => {
+                    const row = document.createElement('tr');
+                    const orderDate = new Date(order.purchased_date);
+                    const orderDateDisplay = orderDate.toLocaleDateString();
+
+                    row.addEventListener('click', () => {
+                        window.location.href = `orderDetail.html?orderId=${order.order_id}`;
+                    });
+
+                    row.innerHTML = `
+                        <td>${order.order_code}</td>
+                        <td>${orderDateDisplay}</td>
+                        <td>${order.customer_id}</td>
+                        <td>${order.customer_name}</td>
+                        <td>${order.status}</td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading sales order data:', error);
             }
-        }//END OF SCRIPT FOR HEADER
+        }
+
+        // Function to apply the filter based on selected criteria
+        function applyFilter() {
+            const statusFilter = document.getElementById('status-filter').value;
+            const sortField = document.getElementById('sort-field').value;
+            const sortOrder = document.getElementById('sort-order').value;
+
+            const filter = statusFilter ? { status: statusFilter } : {};
+            const sort = sortField && sortOrder ? { sortField, sortOrder } : {};
+
+            loadOrderSRData(filter, sort);
+        }
+
+        // Search functionality
+        function searchOrders() {
+            const searchInput = document.querySelector('.search-input').value.toLowerCase();
+            const rows = document.querySelectorAll('.order-list tbody tr');
+            
+            rows.forEach(row => {
+                const rowText = Array.from(row.children)
+                    .map(cell => cell.textContent.toLowerCase())
+                    .join(' ');
+
+                if (rowText.includes(searchInput)) {
+                    row.style.display = ''; 
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrderSRData();
+            document.querySelector('.search-input').addEventListener('input', searchOrders);
+        });
     </script>
+
+    <!-- Add this CSS to hide the filter options initially and show them when toggled -->
+    <style>
+        .filter-options {
+            display: none;
+        }
+        .filter-options.show {
+            display: block;
+        }
+    </style>
+
 </body>
 </html>

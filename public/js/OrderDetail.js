@@ -19,6 +19,11 @@ document.getElementById("customers-link").addEventListener("click", function(eve
     window.location.href = "customersSR.html"; // Redirect to the inventory page
 });
 
+document.getElementById("profile-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "profileSR.html";
+});
+
 document.getElementById("back-link").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "OrderSR.html"; // Redirect to the inventory page

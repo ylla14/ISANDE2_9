@@ -23,9 +23,9 @@
     <nav>
         <div class="nav-content">
             <div class="logo">
-                <img src="/resources/logo.png" alt="Logo" class="logo-icon">
+                <img src="resources/logo.png" alt="Logo" class="logo-icon">
             </div>
-            <div class="nav-left">
+            <div class ="nav-left">
                 <ul class="nav-links">
                     <li><a href="#" id="dashboard-link">Dashboard</a></li>
                     <li><a href="#" id="inventory-link">Inventory</a></li>
@@ -34,9 +34,10 @@
                 </ul>
             </div>
             <div class="profile">
-                <a href="#">
-                    <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
+                <a href="#" id="profile-link">
+                    <img src="/resources/download (1).jpg" alt="Profile" class="profile-icon">
                     <span>Profile</span>
+            
                 </a>
             </div>
         </div>
@@ -89,9 +90,9 @@
                         <thead>
                             <tr><th>Purchased Date:</th><td id="purchased-date"></td></th></tr>
                             <tr><th>Delivery Date:</th><td id="delivery-date"></td></th></tr>
-                            <tr><th>City:</th><td id="delivery-city"></td></th></tr>
-                            <tr><th>Barangay:</th><td id="delivery-barangay"></td></th></tr>
                             <tr><th>Address:</th><td id="delivery-address"></td></th></tr>
+                            <tr><th>Barangay:</th><td id="delivery-barangay"></td></th></tr>
+                            <tr><th>City:</th><td id="delivery-city"></td></th></tr>
                             <tr><th>Receiver:</th><td id="delivery-receiver"></td></th></tr>
                         </thead>
                     </table>
@@ -123,6 +124,7 @@
                 </section>
             </div>  
             <button onclick="SendInvoice()" id="send-invoice-btn" class="submit-button">Send Invoice</button>
+            <button id="edit-order-btn" class="submit-button">Edit Order</button>
 
     </div>
 

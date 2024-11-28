@@ -13,12 +13,15 @@ document.getElementById("order-link").addEventListener("click", function(event) 
     window.location.href = "orderSR.html"; // Redirect to the inventory page
 });
 
-
 document.getElementById("customers-link").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "customersSR.html"; // Redirect to the inventory page
 });
 
+document.getElementById("profile-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "profileSR.html";
+});
 
 // Event listener for the "Add New" button
 document.getElementById("add-new-button").addEventListener("click", function(event) {
@@ -27,9 +30,11 @@ document.getElementById("add-new-button").addEventListener("click", function(eve
 });
 
 
-async function loadOrderSRData() {
+// Fetch orders from the backend API and load them into the table
+async function loadOrderSRData(filter = {}, sort = {}) {
     try {
-        const response = await fetch('/api/OrdersSR');
+        const query = new URLSearchParams({ ...filter, ...sort }).toString();
+        const response = await fetch(`/api/OrdersSR?${query}`);
         const ordersSR = await response.json();
         console.log('Fetched orders:', ordersSR); // Check what data is received
 
@@ -42,7 +47,6 @@ async function loadOrderSRData() {
             const orderDateDisplay = orderDate.toLocaleDateString();
 
             row.addEventListener('click', () => {
-                // Navigate to the supplier details page with the supplier_id as a query parameter
                 console.log(`/orderDetail.html?orderId=${order.order_id}`);
                 window.location.href = `orderDetail.html?orderId=${order.order_id}`;
             });
@@ -63,8 +67,27 @@ async function loadOrderSRData() {
     }
 }
 
+// Function to apply the filter based on selected criteria
+function applyFilter() {
+    const statusFilter = document.getElementById('status-filter').value;
+    const sortField = document.getElementById('sort-field').value;
+    const sortOrder = document.getElementById('sort-order').value;
+
+    // Construct the filter and sort objects
+    const filter = statusFilter ? { status: statusFilter } : {};
+    const sort = sortField && sortOrder ? { sortField, sortOrder } : {};
+
+    // Reload the data with filter and sorting
+    loadOrderSRData(filter, sort);
+}
+
+// Apply filters when any of the dropdowns change
+document.getElementById('status-filter').addEventListener('change', applyFilter);
+document.getElementById('sort-field').addEventListener('change', applyFilter);
+document.getElementById('sort-order').addEventListener('change', applyFilter);
 
 
+// Search functionality
 function searchOrders() {
     const searchInput = document.querySelector('.search-input').value.toLowerCase();
     const rows = document.querySelectorAll('.order-list tbody tr');
@@ -82,4 +105,8 @@ function searchOrders() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', loadOrderSRData);
+// Load orders when the page is ready
+document.addEventListener('DOMContentLoaded', () => {
+    loadOrderSRData();  // Initial load without any filters
+    document.querySelector('.search-input').addEventListener('input', searchOrders); // Attach search functionality
+});

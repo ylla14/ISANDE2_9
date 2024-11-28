@@ -187,6 +187,11 @@ function fetchOrderDetails(orderId) {
                 } else {
                     console.log("No order items found.");
                 }
+                // Check if the payment reference number exists and is not empty
+                if (data.order.payment_ref_num && data.order.payment_ref_num.trim() !== '') {
+                    const headerContainer = document.querySelector('.header-container');
+                    headerContainer.style.backgroundColor = '#AFE1AF';
+                }
 
                 // Disable the confirm button if already confirmed
                 if (data.order.inventory_status === 'confirmed') {
