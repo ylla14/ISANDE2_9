@@ -29,7 +29,7 @@
                 <a href="#">
                     <!-- <img src="/public/resources/download (1).jpg" alt="Profile Icon" class="profile-icon"> -->
                     <img src="/resources/download (1).jpg" alt="Profile Icon" class="profile-icon">
-                    <span>Profile</span>
+                    <span a href="#" id="profile-link">Profile</span>
                 </a>
             </div>
             <div class="hamburger" onclick="toggleSidebar()">
@@ -67,12 +67,12 @@
     <!-- rectangles overview -->
     <div class="overview">
         <div class="rectangle">
-            <h3>Heading 1</h3>
+            <h3>100</h3>
             <p>Total No. of Products</p>
         </div>
         <div class="rectangle">
-            <h3>Heading 2</h3>
-            <p>Another descriptive text here.</p>
+            <h3>35</h3>
+            <p>Low Stock Products</p>
         </div>
         <div class="rectangle">
             <h3>Heading 3</h3>
@@ -88,7 +88,6 @@
                 <h3 class="report-heading">Low Stock and Reorder Report</h3>
                 <div class="button-container">
                     <button id="reorder-report-btn">View</button>
-                    <button id="download-reorder-btn" onclick="downloadReport('Sales Trends')">Download</button>
                 </div>
             </div>
         </div>
@@ -97,7 +96,7 @@
                 <h3 class="report-heading">Product Expiration Report</h3>
                 <div class="button-container">
                     <button id="expiry-report-btn">View</button>
-                    <button id="download-expiry-btn" onclick="downloadReport('Inventory Trends')">Download</button>
+                    <button id="download-expiry-btn">Download</button>
                 </div>
             </div>
         </div>
@@ -106,7 +105,7 @@
 
 
      <!-- Fast Selling Section -->
-    <div class="fast-selling">
+    <!-- <div class="fast-selling">
         <div class="section-header">
             <h2>Fast Selling Products</h2>
             <div class="button-container">
@@ -140,10 +139,10 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </div> -->
 
     <!-- Stock Aging Section -->
-    <div class="table-section">
+    <!-- <div class="table-section">
         <div class="section-header">
             <h2>Stock Aging Report</h2>
             <div class="button-container">
@@ -177,7 +176,7 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </div> -->
 
     <!-- FOOTER -->
     <section class="gap"></section>

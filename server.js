@@ -566,6 +566,35 @@ app.get('/api/products/:productId', (req, res) => {
     });
 });
 
+app.get('/api/reorder-report', (req, res) => {
+    const query = `
+        SELECT 
+            p.product_id,
+            p.product_name,
+            s.supplier_id,
+            s.supplier_name,
+            p.current_stock_level,
+            p.reorder_level,
+            p.min_order_quantity,
+            p.reorder_level,
+            p.lead_time,
+            p.stock_status
+        FROM Products p
+        JOIN Suppliers s ON p.supplier_id = s.supplier_id
+        WHERE p.current_stock_level <= p.reorder_level
+        ORDER BY s.supplier_id, p.product_id;  -- Sort by supplier_id and then by product_id
+    `;
+
+    // Execute the SQL query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error executing query: ', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        res.status(200).json(results);  // Send the results as JSON
+    });
+});
 
 
 // used to display the info of the supplier w/ just one layout for all
