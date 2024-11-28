@@ -184,7 +184,7 @@ container {
 .section {
     background-color: #f0f0f0;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 3px;
     width: 48%; 
 }
 
@@ -233,23 +233,26 @@ input[type="text"], input[type="date"], input[type="number"], select {
     display: flex;
 }
 
-.submit-button {
+.submit-button, .cancel-button {
     margin: 20px auto;
     display: block; 
     font-size: 16px;
     padding: 10px 20px;
     border: none; 
     border-radius: 4px; 
-    background-color: #228B22; 
+    background-color: #000040; 
     color: white;
     cursor: pointer; 
     transition: background-color 0.3s; 
 }
 
 .submit-button:hover {
-    background-color: #000040; 
+    background-color: #228B22; 
 }
 
+.cancel-button:hover {
+    background-color: #228B22; 
+}
 
 .sales-rep-table {
     width: 100%; 
@@ -316,7 +319,6 @@ table.details-table input {
 .details td {
     padding: 10px;
     text-align: justify;
-    border: 1px solid #ccc;
     word-wrap: break-word; /
 }
 
@@ -325,7 +327,6 @@ table.details-table input {
 }
 
 .details td {
-    background-color: #FFFFFF;
     width: 70%;
     margin: 0 10px;
 }

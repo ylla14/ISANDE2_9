@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="css/editOrderSR.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="/js/editOrderSR.js" defer></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+    (function(){
+        emailjs.init({
+            publicKey: "gcE-7vYnfBRf-FJWU",
+        });
+    })();
+    </script>
+
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class ="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#" id="profile-link">
+                    <img src="/resources/SR.jpg" alt="Profile" class="profile-icon">
+                    <span>Profile</span>
+            
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        
+    <a href="#" id="back-link">← Orders</a>
+
+    <div class="order-details">
+        <div class="header-container">
+            <h1 class="page-title" id="order-title">ORD###</h1>
+        </div>
+        <form id="edit-order-form">
+            <div class="card">
+            <h3>Sales Representative Details</h3>
+            <div class="container">
+                <table class="sales-rep-table">
+                    <thead>
+                        <tr>
+                            <th>Sales Rep #</th>
+                            <th>Name</th>
+                            <th>Contact Info</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <tbody>
+                            <td><input type="text" id="sales-rep-id" value="#id" readonly></td>
+                            <td><input type="text" id="sales-rep-name" value="Anna Reyes" readonly></td>
+                            <td><input type="text" id="sales-rep-contactinfo" value="091716518" readonly></td>
+                        </tbody>
+                    </tr>
+                </table>
+            </div>
+            <div class="order-form">
+                <div class="section customer-details">
+                    <h2>Customer's Details</h2>
+                    <table class="details">
+                        <thead>
+                            <tr><th>Customer ID:</th>
+                                <td><input type="text" id="customer-id"></td> 
+                            </th></tr>
+                            <tr><th>Name:</th>
+                                <td> <input type="text" id="customer-name"></td>
+                            </th></tr>
+                            <tr><th>Contact Number:</th>
+                                <td> <input type="text" id="customer-contact"></td>
+                            </th></tr>
+                            <tr><th>Email:</th>
+                                <td><input type="text" id="customer-email"></td>
+                            </th></tr>
+                            <tr><th>Payment Reference Number:</th>
+                                <td><input type="text" id="customer-payment-ref"></td>
+                            </th></tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div class="section delivery-details">
+                    <h2>Delivery Details</h2>
+                    <table class="details">
+                        <thead>
+                            <tr><th>Delivery Date:</th>
+                                <td><input type="text" id="delivery-date"></td>
+                            </th></tr>
+                            <tr><th>Address:</th>
+                                <td><input type="text" id="order-address"></td>
+                            </th></tr>
+                            <tr><th>Barangay:</th>
+                                <td><input type="text" id="delivery-barangay"></td>
+                            </th></tr>
+                            <tr><th>City:</th>
+                                <td><input type="text" id="delivery-city"></td>
+                            </th></tr>
+                            <tr><th>Receiver:</th>
+                                <td><input type="text" id="delivery-receiver"></td>
+                            </th></tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section order-details">
+                <section class="product-section">
+                        <h2>Order Details</h2>
+                        <table border="3">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-items-table">
+                            <!-- Items will be dynamically inserted here -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Overall Total Price:</td>
+                                <td id="overall-total-price" style="font-weight: bold;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!--  <button type="button" id="add-item-btn">Add Item</button> -->
+                </section>
+            </div> 
+            <div class="button-container">
+                <button type="submit" class="submit-button">Save Changes</button>
+                <button type="button" href="#" id="cancel-edit-btn" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+        </form>
+    </div>
+    <!-- FOOTER -->
+    <section class="footer">
+        <div class="footer-logo">
+            <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
+        </div>
+        <div class="footer-text">
+            <p>&copy; 2024 PharmaTrack</p> 
+        </div>
+    </section>  
+    <!-- END OF FOOTER --> 
+
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }//END OF SCRIPT FOR HEADER
+    </script>
+</body>
+</html>

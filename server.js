@@ -1371,7 +1371,55 @@ app.get('/sales-rep-stats/:userId', (req, res) => {
     });
 });
 
+app.put('/api/edit-order/:orderId', async (req, res) => {
+    const orderId = req.params.orderId;
+    const { customer_id, payment_ref_num, delivery_date, order_address, barangay, city, order_receiver, salesRepId } = req.body;
 
+    // Set status based on payment_ref_num
+    let status = payment_ref_num && payment_ref_num.trim() !== '' ? 'paid' : 'pending';
+
+    const query = `
+        UPDATE OrdersSR
+        SET 
+            customer_id = ?,
+            payment_ref_num = ?,
+            delivery_date = ?,
+            order_address = ?,
+            barangay = ?,
+            city = ?,
+            order_receiver = ?,
+            sales_rep_id = ?,
+            status = ?
+        WHERE order_id = ?
+    `;
+
+    const values = [
+        customer_id, 
+        payment_ref_num, 
+        delivery_date, 
+        order_address, 
+        barangay, 
+        city, 
+        order_receiver, 
+        salesRepId, 
+        status,  // Status based on payment_ref_num
+        orderId
+    ];
+
+    try {
+        const [result] = await db.execute(query, values);
+        if (result.affectedRows > 0) {
+            res.json({ message: 'Order updated successfully!' });
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        console.error('Error updating order:', error);
+        res.status(500).json({ message: 'Error updating order' });
+    }
+});
+
+  
   
 // Start the server
 app.listen(PORT, () => {

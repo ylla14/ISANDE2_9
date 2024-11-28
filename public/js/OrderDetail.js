@@ -110,5 +110,8 @@ function generateOrderDetails() {
     return rows.join(""); // Return the entire HTML table as a string
 }
 
-
+document.getElementById('edit-order-btn').addEventListener('click', function () {
+    const orderId = new URLSearchParams(window.location.search).get('orderId');
+    window.location.href = `/editOrderSR.html?orderId=${orderId}`;
+});
 
