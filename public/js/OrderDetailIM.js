@@ -19,3 +19,8 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "suppliersIM.html"; // Redirect to the inventory page
 });
+
+document.getElementById("profile-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "profileIM.html";
+});
