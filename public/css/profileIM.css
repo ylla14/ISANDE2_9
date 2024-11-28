@@ -1,0 +1,225 @@
+/* profileSR.css */
+/* Google Font Import Link */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header styles remain unchanged */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+nav.sticky {
+    padding: 15px 20px;
+    background: #000058;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+nav .nav-content {
+    height: 100%;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav .logo a {
+    display: flex; /* Ensures the image fits inside the anchor */
+    align-items: center; /* Vertically centers the image */
+}
+
+.logo-icon {
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
+}
+
+.nav-content .nav-left {
+    display: flex; 
+}
+
+.nav-content .nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-content .nav-links li {
+    list-style: none;
+    margin: 0 10px;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #0E2431;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 1px 4px;
+    transition: all 0.3s ease;
+    align-items: center; 
+}
+
+.nav-links li a:hover {
+    color: #000058;
+}
+
+
+/* Profile header part */
+.profile-icon {
+    width: 32px; 
+    height: 32px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-right: 10px; 
+    vertical-align: middle; 
+}
+
+.profile a {
+    text-decoration: none;
+    color: #0E2431; /* Match this with other nav text */
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.profile a:hover {
+    color: #000058; /* Hover color like other nav links */
+}
+
+/* Sticky (stay on screen and change appearance when scroll) */
+.nav-links li a span {
+    font-size: 20px; 
+    color: inherit; 
+}
+
+nav.sticky .nav-links li a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+nav.sticky .profile a {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+nav.sticky .nav-links li a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+nav.sticky .logo-icon {
+    content: url("/resources/logo_light.png"); /* Path to the sticky version of the logo */
+    width: 150px; /* Adjust this to control the width of the logo */
+    height: auto; /* Maintain the aspect ratio */
+    object-fit: contain; /* Ensure the image scales properly without distortion */
+}
+
+/* Prevent navbar links from shifting due to longer text */
+.nav-links li {
+    white-space: nowrap; 
+}
+
+/* Order Form Styles */
+main {
+    padding: 80px 20px;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 20px;
+    background-color: #FFDEAD;
+    padding: 20px; 
+    border-radius: 8px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.profile-container {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 20px 40px;
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+.profile-info {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.profile-info p {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #555;
+}
+
+span {
+    font-weight: bold;
+    color: #333;
+}
+
+button {
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+    .profile-container {
+        padding: 15px 20px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .profile-info p {
+        font-size: 0.9rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+    }
+}

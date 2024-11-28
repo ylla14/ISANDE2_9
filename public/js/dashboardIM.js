@@ -22,8 +22,9 @@ document.getElementById("suppliers-link").addEventListener("click", function(eve
 
 document.getElementById("profile-link").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "login.html"; // Redirect to the inventory page
+    window.location.href = "profileIM.html";
 });
+
 //Reports Section
 document.getElementById("reorder-report-btn").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link

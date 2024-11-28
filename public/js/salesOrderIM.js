@@ -14,6 +14,10 @@ document.getElementById("sales-link").addEventListener("click", function(event) 
     window.location.href = "salesOrderIM.html"; // Redirect to the inventory page
 });
 
+document.getElementById("profile-link").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "profileIM.html";
+});
 
 // Select the Inventory link by its ID
 document.getElementById("suppliers-link").addEventListener("click", function(event) {
