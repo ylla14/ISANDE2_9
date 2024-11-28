@@ -1322,14 +1322,12 @@ app.get('/api/customers/:customerId', (req, res) => {
 // Route to serve the dashboard with userId
 app.get('/dashboard/:userId', (req, res) => {
     const userId = req.params.userId;
-    console.log('User ID:', userId);  // Log to see if the userId is correct
     res.render('dashboard', { userId });
 });
 
 // Sales Rep Stats API endpoint
 app.get('/sales-rep-stats/:userId', (req, res) => {
     const salesRepId = req.params.userId; // Use userId from URL
-    console.log('Sales Rep ID:', salesRepId);
 
     // Query for total sales
     db.query(`

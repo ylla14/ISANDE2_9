@@ -242,7 +242,7 @@ table th {
 }
 
 .view-btn:hover, .download-btn:hover {
-    background-color: #333;
+    background-color: #4b4b99;
 }
 
 
@@ -301,6 +301,19 @@ table th {
     flex-direction: column;
 }
 
+.stat-card b {
+    font-size: 1.2rem; /* Larger font size for the heading */
+    margin: 0;
+    color: #000058; /* Darker text for heading */
+}
+
+.stat-card span {
+    display: block;
+    font-size: 24px;
+    color: #333;
+    margin-top: 5px;
+}
+
 .stat-card1 {
     background-color: #fff;
     border: 2px solid #488521;
@@ -316,12 +329,6 @@ table th {
     flex-direction: column;
 }
 
-.stat-card b {
-    font-size: 1.2rem; /* Larger font size for the heading */
-    margin: 0;
-    color: #000058; /* Darker text for heading */
-}
-
 .stat-card1 b {
     font-size: 1.2rem; /* Larger font size for the heading */
     margin: 0;
@@ -335,11 +342,55 @@ table th {
     margin-top: 5px;
 }
 
-.stat-card span {
+.report {
+    background-color: #fff;
+    border: 2px solid #000058;
+    border-radius: 10px;
+    padding: 20px;
+    width: 520px;               
+    height: 150px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;            
+    justify-content: center;    
+    align-items: center;        
+    flex-direction: column;
+}
+
+.report b {
+    font-size: 1.2rem; /* Larger font size for the heading */
+    margin: 0;
+    color: #000000; /* Darker text for heading */
+}
+
+.report span {
     display: block;
     font-size: 24px;
     color: #333;
     margin-top: 5px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* Space between buttons */
+    margin-top: 10px;
+}
+
+#view-report-btn {
+    padding: 5px 50px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #000058;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#view-report-btn:hover {
+    background-color: #4b4b99; /* Lighter shade on hover */
 }
 
 /* Product Section Table */

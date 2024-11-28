@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Representative Profile</title>
-    <link rel="stylesheet" href="css/profileSR.css">
+    <title>IMS Dashboard</title>
+    <link rel="stylesheet" href="css/inventoryIM.css">
     <link rel="stylesheet" href="css/headerAndFooter.css">
-    <script src="/js/profileSR.js" defer></script>
+    <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
+    <script src="/js/inventorySR.js" defer></script>
 </head>
 <body>
+    <!-- HEADER -->
     <nav>
         <div class="nav-content">
             <div class="logo">
@@ -31,31 +33,53 @@
             </div>
         </div>
     </nav>
-    <div class="profile-container">
-        <h1>Welcome, <span id="salesRepName">Sales Representative</span></h1>
-        <div class="profile-info">
-            <div>
-                <p>Sales Rep Code: <span id="sales-rep-code"></span></p>
-                <p>Sales Rep Name: <span id="sales-rep-name"></span></p>
-                <p>Contact Info: <span id="sales-rep-contact"></span></p>
-                <p>Email: <span id="sales-rep-email"></span></p>
-            </div>            
+    <!-- END OF HEADER -->
+
+       <!-- Inventory table -->
+    <div class="inventory-list">
+        <div class="section-header">
+            <div class="button-container">
+                <input type="text" class="search-input" placeholder="Search" oninput="searchInventory()" />
+                <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
+            </div>
         </div>
-        <button id="logoutButton">Log Out</button>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>QTY</th>
+                    <th>Reorder Lvl</th>
+                    <th>Expiraton</th>
+                    <th>Stock Alert</th>
+                    <th>Expiration Alert</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be populated by script.js -->
+            </tbody>
+        </table>
     </div>
 
-    <!-- FOOTER -->
-    <section class="footer">
+
+<!-- FOOTER -->
+<section class="footer">
+    <div class="footer-content">
         <div class="footer-logo">
             <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
         </div>
         <div class="footer-text">
             <p>&copy; 2024 PharmaTrack</p> 
         </div>
-    </section>
-    <!-- END OF FOOTER --> 
+    </div>
+</section>   
+    
 
-    <!-- COPY FOR HEADER -->
+    <!-- COPY SCRIPT FOR THE HEADER  -->
+
     <script>
         let nav = document.querySelector("nav");
         window.onscroll = function() {
@@ -64,8 +88,8 @@
             } else {
                 nav.classList.remove("sticky");
             }
-        }//END OF SCRIPT FOR HEADER
+        }
     </script>
-    
+
 </body>
 </html>
