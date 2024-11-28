@@ -229,6 +229,9 @@ input[type="text"], input[type="date"], input[type="number"], select {
     transition: background-color 0.3s;
     background-color: #000058;
 }
+.button-container {
+    display: flex;
+}
 
 .submit-button {
     margin: 20px auto;
