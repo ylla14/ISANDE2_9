@@ -259,17 +259,36 @@ table th {
 }
 
 /* Statistic Cards */
-.statistics {
+.greetings {
     display: flex;                
     gap: 20px;                   
     margin-top: 20px;
     margin-bottom: 20px;         
     justify-content: center;    
+    font-size: 2rem;
+    color: #0c0c89;
+}
+.actual .greetings{
+    margin-left: 1px;
+    margin-top: 1px;
+}
+
+/* Statistic Cards */
+.statistics {
+    display: flex;                
+    gap: 20px;                   
+    margin-top: -40px;
+    margin-bottom: 20px;         
+    justify-content: center;    
+}
+.actual .statistics{
+    margin-left: 1px;
+    margin-top: 1px;
 }
 
 .stat-card {
     background-color: #fff;
-    border: 1px solid #ddd;
+    border: 2px solid #000058;
     border-radius: 10px;
     padding: 20px;
     width: 250px;               
@@ -280,6 +299,40 @@ table th {
     justify-content: center;    
     align-items: center;        
     flex-direction: column;
+}
+
+.stat-card1 {
+    background-color: #fff;
+    border: 2px solid #488521;
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;               
+    height: 150px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;            
+    justify-content: center;    
+    align-items: center;        
+    flex-direction: column;
+}
+
+.stat-card b {
+    font-size: 1.2rem; /* Larger font size for the heading */
+    margin: 0;
+    color: #000058; /* Darker text for heading */
+}
+
+.stat-card1 b {
+    font-size: 1.2rem; /* Larger font size for the heading */
+    margin: 0;
+    color: #000000; /* Darker text for heading */
+}
+
+.stat-card1 span {
+    display: block;
+    font-size: 24px;
+    color: #333;
+    margin-top: 5px;
 }
 
 .stat-card span {

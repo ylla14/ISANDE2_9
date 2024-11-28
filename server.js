@@ -1319,6 +1319,61 @@ app.get('/api/customers/:customerId', (req, res) => {
     });
 });
 
+// Route to serve the dashboard with userId
+app.get('/dashboard/:userId', (req, res) => {
+    const userId = req.params.userId;
+    console.log('User ID:', userId);  // Log to see if the userId is correct
+    res.render('dashboard', { userId });
+});
+
+// Sales Rep Stats API endpoint
+app.get('/sales-rep-stats/:userId', (req, res) => {
+    const salesRepId = req.params.userId; // Use userId from URL
+    console.log('Sales Rep ID:', salesRepId);
+
+    // Query for total sales
+    db.query(`
+        SELECT SUM(od.total_price) AS total_sales
+        FROM OrderDetails od
+        JOIN OrdersSR osr ON od.order_id = osr.order_id
+        WHERE osr.sales_rep_id = ?`, [salesRepId], (err, totalSalesResult) => {
+        if (err) {
+            console.error('Error fetching total sales: ', err.message);
+            return res.status(500).send('Error fetching sales representative stats');
+        }
+
+        // Query for total customers
+        db.query(`
+            SELECT COUNT(DISTINCT osr.customer_id) AS total_customers
+            FROM OrdersSR osr
+            WHERE osr.sales_rep_id = ?`, [salesRepId], (err, totalCustomersResult) => {
+            if (err) {
+                console.error('Error fetching total customers: ', err.message);
+                return res.status(500).send('Error fetching sales representative stats');
+            }
+
+            // Query for total orders
+            db.query(`
+                SELECT COUNT(*) AS total_orders
+                FROM OrdersSR osr
+                WHERE osr.sales_rep_id = ?`, [salesRepId], (err, totalOrdersResult) => {
+                if (err) {
+                    console.error('Error fetching total orders: ', err.message);
+                    return res.status(500).send('Error fetching sales representative stats');
+                }
+
+                // Send the response with the data
+                res.json({
+                    totalSales: parseFloat(totalSalesResult[0].total_sales) || 0,
+                    totalCustomers: totalCustomersResult[0].total_customers || 0,
+                    totalOrders: totalOrdersResult[0].total_orders || 0
+                });
+            });
+        });
+    });
+});
+
+
   
 // Start the server
 app.listen(PORT, () => {

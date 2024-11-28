@@ -7,14 +7,12 @@
     <link rel="stylesheet" href="css/dashboardSRStyle.css">
     <script src="js/dashboardSR.js" defer></script>
 </head>
-<body>
-    <!-- Navigation -->
     <nav>
         <div class="nav-content">
             <div class="logo">
                 <img src="resources/logo.png" alt="Logo" class="logo-icon">
             </div>
-            <div class ="nav-left">
+            <div class="nav-left">
                 <ul class="nav-links">
                     <li><a href="#" id="dashboard-link">Dashboard</a></li>
                     <li><a href="#" id="inventory-link">Inventory</a></li>
@@ -24,28 +22,30 @@
             </div>
             <div class="profile">
                 <a href="#" id="profile-link">
-                    <img src="/resources/download (1).jpg" alt="Profile" class="profile-icon">
+                    <img src="resources/download (1).jpg" alt="Profile" class="profile-icon">
                     <span>Profile</span>
-            
                 </a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Dashboard Content -->
-    <main class="dashboard-content">
+        <main class="dashboard-content">
+            <div class ="overview">
+                <section class = "greetings">
+                    <b> Hello, <span id="sales-rep-name"></span>!</b>
+                </section>
+            </div>
+            <body data-sales-rep-id="<%= userId %>">
+                <div class="overview">
+                    <section class="statistics">
+                        <div class="stat-card1"><b>Target Sales</b> <span>₱150,000.00</span></div>
+            
+                        <div class="stat-card"><b>Total Sales</b> <span id="total-sales">₱</span></div>
+                        <div class="stat-card"><b>Total Customers</b> <span id="total-customers">0</span></div>
+                        <div class="stat-card"><b>Total Orders</b> <span id="total-orders">0</span></div>
+                    </section>
+                </div>
 
-        <!-- Statistic Cards -->
-        <div class="overview">
-            <section class="statistics">
-                <div class="stat-card"><b> Total Sales </b> <span>$900k</span></div>
-                <div class="stat-card"><b>Target Sales</b> <span>$1M</span></div>
-                <div class="stat-card"><b>Total Customers</b> <span>270</span></div>
-                <div class="stat-card"><b>Total Orders</b> <span>127</span></div>
-                <div class="stat-card"><b>Total Deliveries</b> <span>270</span></div>
-            </section>
-        </div>
-        
         <!-- Top Products Table -->
          <div class="section-header">
             <h2>Top Products</h2>
