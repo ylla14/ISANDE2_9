@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details</title>
+    <link rel="stylesheet" href="css/customersDetailSR.css">
+    <link rel="stylesheet" href="css/headerAndFooter.css">
+    <script src="/js/customersDetailSR.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <img src="resources/logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <div class ="nav-left">
+                <ul class="nav-links">
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="inventory-link">Inventory</a></li>
+                    <li><a href="#" id="order-link">Orders</a></li>
+                    <li><a href="#" id="customers-link">Customers</a></li>
+                </ul>
+            </div>
+            <div class="profile">
+                <a href="#" id="profile-link">
+                    <img src="/resources/SR.jpg" alt="Profile" class="profile-icon">
+                    <span>Profile</span>
+            
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="order-details">
+            <div class="header-container">
+                <h1 class="page-title"> Customer #</h1>
+                <h1 class="page-title" id="customer-id"></h1>
+            </div>
+        </div>
+
+        <div class="customer-details">
+            <div class="card">
+                <div class="profile-section">
+                    <h2>Customer Profile</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Customer ID:</label>
+                            <span id="customer-id"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Full Name:</label>
+                            <span id="full-name"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Contact Number:</label>
+                            <span id="contact-number"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span id="email"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="address-section">
+                    <h2>Address Information</h2>
+                    <div class="info-grid2">
+                        <div class="info-item2">
+                            <label>Order Address:</label>
+                            <span id="order-address"></span>
+                        </div>
+                        <div class="info-item2">
+                            <label>Barangay:</label>
+                            <span id="barangay"></span>
+                        </div>
+                        <div class="info-item2">
+                            <label>City:</label>
+                            <span id="city"></span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="orders-section">
+                    <h2>Order History</h2>
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Total Amount</th>
+                                <th>Sales Rep ID </th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        let nav = document.querySelector("nav");
+        window.onscroll = function() {
+            if (document.documentElement.scrollTop > 20) {
+                nav.classList.add("sticky");
+            } else {
+                nav.classList.remove("sticky");
+            }
+        }//END OF SCRIPT FOR HEADER
+    </script>
+</body>
+</html>

@@ -1319,6 +1319,61 @@ app.get('/api/customers/:customerId', (req, res) => {
     });
 });
 
+app.get('/api/customersDets/:customer_id', (req, res) => {
+    const { customer_id } = req.params;
+    const query = `
+        SELECT 
+            c.customer_id, 
+            c.fname, 
+            c.lname, 
+            c.contact_num, 
+            c.email,
+            o.order_id, 
+            o.purchased_date, 
+            o.payment_ref_num, 
+            o.delivery_date, 
+            o.order_address, 
+            o.barangay, 
+            o.city, 
+            o.order_receiver, 
+            o.sales_rep_id
+        FROM Customers c
+        LEFT JOIN OrdersSR o ON c.customer_id = o.customer_id
+        WHERE c.customer_id = ?`;
+
+    db.query(query, [customer_id], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error retrieving customer details');
+        }
+
+        // Organize orders data
+        const orders = results.map(order => ({
+            order_id: order.order_id,
+            purchased_date: order.purchased_date,
+            payment_ref_num: order.payment_ref_num,
+            delivery_date: order.delivery_date,
+            order_address: order.order_address,
+            barangay: order.barangay,
+            city: order.city,
+            order_receiver: order.order_receiver,
+            sales_rep_id: order.sales_rep_id,
+        }));
+
+        // Send customer data with orders
+        res.json({
+            customer_id: results[0].customer_id,
+            full_name: `${results[0].fname} ${results[0].lname}`,
+            contact_number: results[0].contact_num,
+            email: results[0].email,
+            order_address: results[0].order_address,
+            barangay:results[0].barangay,
+            city:results[0].city,
+            orders: orders,
+        });
+    });
+}); 
+
+
 // Route to serve the dashboard with userId
 app.get('/dashboard/:userId', (req, res) => {
     const userId = req.params.userId;
