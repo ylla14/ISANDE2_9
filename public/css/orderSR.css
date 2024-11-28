@@ -134,7 +134,6 @@ nav.sticky .logo-icon {
 .footer {
     height: 50vh;
     width: 100%;
-    background: url("images/background.png") no-repeat;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -238,6 +237,27 @@ table th {
     font-size: 16px;
     margin-left: 8px;
 }
+
+/* Hide the filter options by default */
+.filter-options {
+    display: none;
+}
+
+/* Show the filter options when the filter button is clicked */
+.filter-options.show {
+    display: block;
+}
+
+
+/* Optional: style for filter dropdowns */
+#status-filter,
+#sort-field,
+#sort-order {
+    margin-left: 8px;
+    padding: 5px;
+    font-size: 14px;
+}
+
 
 .filter-btn {
     background-color: #000058;

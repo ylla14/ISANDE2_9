@@ -39,10 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".search-input").addEventListener("input", searchCustomers);
 });
 
-// Fetch customers from the server
-async function fetchCustomers() {
+// Fetch customers from the server with filters
+async function fetchCustomers(filter = {}, sort = {}) {
     try {
-        const response = await fetch("/api/customers"); // Call the GET route
+        const query = new URLSearchParams({ ...filter, ...sort }).toString();
+        const response = await fetch(`/api/customers?${query}`); // Pass filter and sort parameters
         if (!response.ok) {
             throw new Error("Failed to fetch customer data");
         }
@@ -89,9 +90,36 @@ function searchCustomers() {
     });
 }
 
-// Optional: Filter button functionality (placeholder for further enhancements)
-function downloadStockAging() {
-    alert("Filter functionality is not yet implemented.");
+function applyCustomerFilter() {
+    // Get filter values
+    const statusFilter = document.getElementById('status-filter') ? document.getElementById('status-filter').value : '';
+    const sortField = document.getElementById('sort-field').value;
+    const sortOrder = document.getElementById('sort-order').value;
+
+    console.log('Filters applied:', statusFilter, sortField, sortOrder);
+
+    // Build filter object, only adding status filter if it's set
+    const filter = statusFilter ? { status: statusFilter } : {};
+
+    // Build sort object only if both sort field and order are selected
+    const sort = sortField && sortOrder ? { sortField, sortOrder } : {};
+
+    // Call the function to fetch customers with applied filters and sorting
+    fetchCustomers(filter, sort);
 }
 
-document.addEventListener('DOMContentLoaded', loadOrderSRData);
+// Function to show/hide the filter section when the "Filter" button is clicked
+function toggleFilterSection() {
+    const filterSection = document.querySelector(".filter-section");
+    // Toggle the visibility of the filter section
+    if (filterSection.style.display === "none" || filterSection.style.display === "") {
+        filterSection.style.display = "block";
+    } else {
+        filterSection.style.display = "none";
+    }
+}
+
+// Event listener for the filter button
+document.querySelector(".filter-btn").addEventListener("click", toggleFilterSection);
+
+

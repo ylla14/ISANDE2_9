@@ -32,13 +32,28 @@
         </div>
     </nav>
 
-       <!-- Order table -->
+    <!-- Customer table -->
     <div class="order-list">
         <div class="section-header">
             <button class="add-btn" id="add-new-button">Add New</button>
             <div class="button-container">
-                <input type="text" class="search-input" placeholder="Search" oninput="searchOrders()" />
-                <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
+                <input type="text" class="search-input" placeholder="Search" oninput="searchCustomers()" />
+                <button class="filter-btn" onclick="applyCustomerFilter()">Filter</button>
+                
+                <!-- Filter Dropdowns -->
+                <div class="filter-section" style="display: none;"> <!-- Hidden by default -->
+                    <select id="sort-field">
+                        <option value="">Sort By</option>
+                        <option value="customer_id">Customer ID</option>
+                        <option value="fname">Customer Name</option>
+                        <option value="email">Customer Email</option>
+                    </select>
+                    <select id="sort-order" onchange="applyCustomerFilter()"> <!-- Added onchange event -->
+                        <option value="">Sort Order</option>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>                    
+                </div>                
             </div>
         </div>
         <table border="1">
@@ -54,6 +69,7 @@
             </tbody>
         </table>
     </div>
+
     
     <section class="footer"></section>
     <div class="text">

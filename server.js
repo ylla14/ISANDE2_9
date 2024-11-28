@@ -667,36 +667,49 @@ app.get('/api/sales-representative/:userId', (req, res) => {
 });
 
 app.get('/api/OrdersSR', (req, res) => {
-    const query = `
+    // Destructure the query parameters for filtering and sorting
+    const { status, sortField, sortOrder } = req.query;
+
+    // Start the SQL query
+    let query = `
     SELECT
         CONCAT('ORD', LPAD(osr.order_id, 3, '0')) AS order_code,
         osr.order_id,
         osr.purchased_date,
         osr.customer_id,
-        CONCAT(c.fname, ' ', c.lname) AS customer_name ,
+        CONCAT(c.fname, ' ', c.lname) AS customer_name,
         osr.status
     FROM 
         OrdersSR osr
     LEFT JOIN 
         Customers c ON osr.customer_id = c.customer_id
-    GROUP BY 
-        osr.order_id,
-        osr.purchased_date,
-        osr.customer_id,
-        c.fname,
-        c.lname,
-        osr.status;
+    WHERE 1
     `;
-  
-    db.query(query, (err, results) => {
+
+    // Add filtering based on the 'status' parameter if provided
+    if (status) {
+    query += ` AND osr.status = ?`;
+    }
+
+    // Add sorting based on the 'sortField' and 'sortOrder' parameters if provided
+    if (sortField && sortOrder) {
+    query += ` ORDER BY ${sortField} ${sortOrder}`;
+    } else {
+    // Default sorting if no sortField or sortOrder is provided
+    query += ` ORDER BY osr.purchased_date DESC`; // Ensure this uses purchased_date
+    }
+
+    // Run the query with the filtering and sorting parameters
+    db.query(query, [status], (err, results) => {
         if (err) {
-            console.error('Error retrieving data from OrdersSR:', err); 
+            console.error('Error retrieving data from OrdersSR:', err);
             res.status(500).send('Error retrieving data from database');
             return;
         }
         res.json(results);
-    });    
+    });
 });
+
 
 app.get('/api/salesorders', (req, res) => {
     const query = `
@@ -1223,18 +1236,32 @@ app.get('/api/product-details/:productId', (req, res) => {
 });
 
 app.get('/api/customers', (req, res) => {
-    const query = 'SELECT customer_id, fname, lname, email FROM Customers';
-  
+    const { status, sortField, sortOrder } = req.query;
+
+    let query = 'SELECT customer_id, fname, lname, email FROM Customers WHERE 1=1';
+    
+    // Add status filter if provided
+    if (status) {
+        query += ` AND status = '${status}'`;
+    }
+
+    // Add sorting if provided
+    if (sortField && sortOrder) {
+        query += ` ORDER BY ${sortField} ${sortOrder}`;
+    }
+
     db.query(query, (err, results) => {
-      if (err) {
-        console.error('Error fetching customers:', err);
-        res.status(500).json({ error: 'Failed to fetch customer data' });
-        return;
-      }
-  
-      res.json(results); // Send the customers as a JSON response
+        if (err) {
+            console.error('Error fetching customers:', err);
+            res.status(500).json({ error: 'Failed to fetch customer data' });
+            return;
+        }
+
+        res.json(results); // Send the customers as a JSON response
     });
-  });
+});
+
+
 
   // Assuming the customer ID is passed as a URL parameter
 app.get('/api/customers/:customerId', (req, res) => {
