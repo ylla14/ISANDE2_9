@@ -10,7 +10,7 @@ function downloadPDF() {
         filename: 'Monthly Sales Report.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 1 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+        jsPDF: { unit: 'in', format: 'legal', orientation: 'landscape' }
     };
     html2pdf().set(options).from(element).save();
 }

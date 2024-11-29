@@ -26,12 +26,12 @@ document.getElementById("profile-link").addEventListener("click", function(event
 
 document.getElementById("view-inventory-report-btn").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "reorderReportIM.html"; 
+    window.location.href = "inventoryReportSR.html"; 
 });
 
 document.getElementById("view-sales-report-btn").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "salesreportSR.html"; 
+    window.location.href = "salesReportSR.html"; 
 });
 
 
