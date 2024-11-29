@@ -73,17 +73,22 @@
 }
 
 .report-con {
-    width: 740px;
-    height: 200px;
+    width: 500px;
+    height: 150px; /* Increased height to accommodate both h3 and p */
     border: 2px solid #000058; /* Border color */
     border-radius: 15px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for 3D effect */
     display: flex;
-    flex-direction: column; /* Stack heading and buttons vertically */
-    justify-content: center; /* Center content within the box */
-    align-items: center; /* Align content horizontally at the center */
-    background-color: #f9f9f9; /* Light background for better contrast */
-    gap: 20px; /* Space between header and buttons */
+    flex-direction: column; /* Arrange content vertically */
+    justify-content: center;
+    align-items: center;
+    color: #000058; 
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 10px;
+    text-align: center; /* Ensure the text is centered */
+    padding: 15px; /* Padding for better spacing inside the box */
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .report-heading {

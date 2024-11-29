@@ -241,7 +241,7 @@ table th {
     margin-left: 0; 
 }
 
-.view-btn:hover, .download-btn:hover {
+.view-btn:hover, .download-btn:hover{
     background-color: #4b4b99;
 }
 
@@ -316,7 +316,7 @@ table th {
 
 .stat-card1 {
     background-color: #fff;
-    border: 2px solid #488521;
+    border: 2px solid #000058;
     border-radius: 10px;
     padding: 20px;
     width: 250px;               
@@ -332,13 +332,13 @@ table th {
 .stat-card1 b {
     font-size: 1.2rem; /* Larger font size for the heading */
     margin: 0;
-    color: #000000; /* Darker text for heading */
+    color: #488521; /* Darker text for heading */
 }
 
 .stat-card1 span {
     display: block;
     font-size: 24px;
-    color: #333;
+    color: #488521;
     margin-top: 5px;
 }
 
@@ -377,7 +377,7 @@ table th {
     margin-top: 10px;
 }
 
-#view-report-btn {
+#view-report-btn, #view-sales-report-btn, #view-inventory-report-btn {
     padding: 5px 50px;
     font-size: 1rem;
     font-weight: 500;
@@ -389,7 +389,7 @@ table th {
     transition: background-color 0.3s ease;
 }
 
-#view-report-btn:hover {
+#view-report-btn:hover, #view-sales-report-btn:hover, #view-inventory-report-btn:hover {
     background-color: #4b4b99; /* Lighter shade on hover */
 }
 

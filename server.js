@@ -1209,40 +1209,92 @@ app.get('/api/so-details/:orderId', (req, res) => {
 app.post('/api/confirm-order/:orderId', (req, res) => {
     const orderId = req.params.orderId;
 
-    const updateOrderQuery = `
-        UPDATE OrdersSR
-        SET inventory_status = 'confirmed'
-        WHERE order_id = ? AND inventory_status = 'pending';
+    // Check if any ordered quantity exceeds the current stock level
+    const validateStockQuery = `
+        SELECT p.product_id, p.current_stock_level, od.quantity
+        FROM Products p
+        JOIN OrderDetails od ON p.product_id = od.product_id
+        WHERE od.order_id = ? AND od.quantity > p.current_stock_level;
     `;
 
-    db.query(updateOrderQuery, [orderId], (err, result) => {
+    db.query(validateStockQuery, [orderId], (err, result) => {
         if (err) {
-            console.error('Error updating inventory status:', err);
-            return res.status(500).json({ success: false, message: 'Failed to update order status' });
+            console.error('Error validating stock levels:', err);
+            return res.status(500).json({ success: false, message: 'Failed to validate stock levels' });
         }
 
-        if (result.affectedRows === 0) {
-            return res.status(400).json({ success: false, message: 'Order is already confirmed or does not exist' });
+        if (result.length > 0) {
+            // If any product has insufficient stock, return an error
+            const insufficientStockItems = result.map(item => ({
+                productId: item.product_id,
+                currentStock: item.current_stock_level,
+                orderedQuantity: item.quantity,
+            }));
+            return res.status(400).json({
+                success: false,
+                message: 'Insufficient stock for one or more items',
+                items: insufficientStockItems,
+            });
         }
 
-        // Deduct inventory for all items in the order
-        const updateInventoryQuery = `
-            UPDATE Products p
-            JOIN OrderDetails od ON p.product_id = od.product_id
-            SET p.current_stock_level = p.current_stock_level - od.quantity
-            WHERE od.order_id = ?;
+        // Proceed with updating the order status
+        const updateOrderQuery = `
+            UPDATE OrdersSR
+            SET inventory_status = 'confirmed'
+            WHERE order_id = ? AND inventory_status = 'pending';
         `;
 
-        db.query(updateInventoryQuery, [orderId], (err, result) => {
+        db.query(updateOrderQuery, [orderId], (err, result) => {
             if (err) {
-                console.error('Error updating inventory:', err);
-                return res.status(500).json({ success: false, message: 'Failed to update inventory' });
+                console.error('Error updating inventory status:', err);
+                return res.status(500).json({ success: false, message: 'Failed to update order status' });
             }
 
-            res.json({ success: true });
+            if (result.affectedRows === 0) {
+                return res.status(400).json({ success: false, message: 'Order is already confirmed or does not exist' });
+            }
+
+            // Deduct inventory for all items in the order
+            const updateInventoryQuery = `
+                UPDATE Products p
+                JOIN OrderDetails od ON p.product_id = od.product_id
+                SET p.current_stock_level = p.current_stock_level - od.quantity
+                WHERE od.order_id = ?;
+            `;
+
+            db.query(updateInventoryQuery, [orderId], (err, result) => {
+                if (err) {
+                    console.error('Error updating inventory:', err);
+                    return res.status(500).json({ success: false, message: 'Failed to update inventory' });
+                }
+
+                // Update stock status based on the new stock levels
+                const updateStockStatusQuery = `
+                    UPDATE Products
+                    SET stock_status = CASE
+                        WHEN current_stock_level <= reorder_level THEN 'Low Stock'
+                        ELSE 'Ok'
+                    END
+                    WHERE product_id IN (
+                        SELECT product_id
+                        FROM OrderDetails
+                        WHERE order_id = ?
+                    );
+                `;
+
+                db.query(updateStockStatusQuery, [orderId], (err, result) => {
+                    if (err) {
+                        console.error('Error updating stock status:', err);
+                        return res.status(500).json({ success: false, message: 'Failed to update stock status' });
+                    }
+
+                    res.json({ success: true, message: 'Order confirmed and inventory updated successfully' });
+                });
+            });
         });
     });
 });
+
 
 
 
@@ -1506,7 +1558,48 @@ app.put('/api/edit-order/:orderId', async (req, res) => {
     }
 });
 
-  
+// API endpoint to get the monthly sales report
+app.get('/api/monthly-sales-report', (req, res) => {
+    const query = `
+        SELECT 
+    DATE_FORMAT(o.purchased_date, '%M %Y') AS "Month",
+    o.purchased_date AS "Purchase Date",
+    c.customer_id AS "Customer ID #",
+    CONCAT(c.fname, ' ', c.lname) AS "Customer Name",
+    o.order_id AS "Order ID #",
+    p.product_id AS "Product ID #",
+    p.product_name AS "Product Name",
+    SUM(od.quantity) AS "QTY",  -- Sum the quantity for each product
+    SUM(od.total_price) AS "Total Cost"  -- Sum the total price for each product
+    FROM 
+        OrdersSR o
+    JOIN 
+        Customers c ON o.customer_id = c.customer_id
+    JOIN 
+        OrderDetails od ON o.order_id = od.order_id
+    JOIN 
+        Products p ON od.product_id = p.product_id
+    GROUP BY 
+        DATE_FORMAT(o.purchased_date, '%Y-%m'),  -- Group by month-year
+        o.purchased_date, 
+        c.customer_id, 
+        o.order_id, 
+        p.product_id
+    ORDER BY 
+        DATE_FORMAT(o.purchased_date, '%Y-%m') DESC, 
+        o.purchased_date DESC;
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching sales report: ', err.message);
+            return res.status(500).json({ message: 'Error fetching sales report', error: err.message });
+        }
+        
+        res.json(results); // Send the results as a JSON response
+    });
+});
+
   
 // Start the server
 app.listen(PORT, () => {

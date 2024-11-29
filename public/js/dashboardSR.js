@@ -24,6 +24,17 @@ document.getElementById("profile-link").addEventListener("click", function(event
     window.location.href = "profileSR.html";
 });
 
+document.getElementById("view-inventory-report-btn").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "inventoryReportSR.html"; 
+});
+
+document.getElementById("view-sales-report-btn").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "salesReportSR.html"; 
+});
+
+
         async function fetchSalesRepInfo(userId) {
             try {
                 const response = await fetch(`/api/sales-representative/${userId}`);

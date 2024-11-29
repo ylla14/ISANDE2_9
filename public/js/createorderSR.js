@@ -160,40 +160,63 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        productSelect.addEventListener('change', () => {
-            const productId = productSelect.value;
-    
-            if (productId) {
-                fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
-                    .then(response => response.json())
-                    .then(product => {
-                        const stockStatus = product.stock_status;
-                        const expirationStatus = product.expiry_status;
-    
-                        // Check stock level and expiration
-                        if (stockStatus == "Low Stock") {
-                            // Low stock: yellow color
-                            newItemCard.style.backgroundColor = '#FFEE8C'; 
-                        } 
-                        
-                        if (expirationStatus == "Near Expiry") {
-                            // Near expiry: blue color
-                            newItemCard.style.backgroundColor = '#ADD8E6';
-                        } 
+        // Check stock level and expiration date when a product is selected
+productSelect.addEventListener('change', () => {
+    const productId = productSelect.value;
 
-                        if (expirationStatus == "Near Expiry" && stockStatus == "Low Stock") {
-                            // Both: red color
-                            newItemCard.style.backgroundColor = '#FF7F7F';
-                        } 
-                        
-                        else {
-                            // Reset to default color
-                            newItemCard.style.backgroundColor = '';
-                        }
-                    })
-                    .catch(error => console.error('Error fetching product details:', error));
-            }
-        });
+    if (productId) {
+        fetch(`/api/product-details/${productId}`) // Fetch product details including stock level and expiration date
+            .then(response => response.json())
+            .then(product => {
+                // Store product details in a variable for reuse
+                window.currentProduct = {
+                    stockLevel: product.current_stock_level, // Numeric stock level
+                    expirationStatus: product.expiry_status,
+                    stockStatus: product.stock_status
+                };
+
+                updatenewItemCard(); // Update the card based on the current state
+            })
+            .catch(error => console.error('Error fetching product details:', error));
+    }
+});
+
+// Update the product card based on conditions
+function updatenewItemCard() {
+    const { stockLevel = 0, expirationStatus = '', stockStatus = '' } = window.currentProduct || {};
+    const orderQuantity = parseInt(qtyInput.value) || 0;
+
+    // Check if order quantity exceeds current stock level
+    if (orderQuantity > stockLevel) {
+        // Quantity exceeds stock: orange color
+        newItemCard.style.backgroundColor = '#FFA07A';
+    } 
+    // Check both conditions
+    else if (expirationStatus === "Near Expiry" && stockStatus === "Low Stock") {
+        // Both: blue color
+        newItemCard.style.backgroundColor = '#ADD8E6';
+    } 
+    // Check individual conditions
+    else if (expirationStatus === "Near Expiry") {
+        // Near expiry: yellow color
+        newItemCard.style.backgroundColor = '#FFEE8C';
+    } 
+    else if (stockStatus === "Low Stock") {
+        // Low Stock: red color
+        newItemCard.style.backgroundColor = '#FF7F7F';
+    } 
+    // Reset to default color for all other cases
+    else {
+        newItemCard.style.backgroundColor = '';
+    }
+}
+
+// Add event listener to qtyInput to recheck conditions dynamically
+qtyInput.addEventListener('input', () => {
+    updatenewItemCard(); // Dynamically check conditions when quantity changes
+});
+
+        
 
         // Fetch unit price when a new product is selected
         productSelect.addEventListener('change', () => {
