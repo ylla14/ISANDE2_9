@@ -217,19 +217,28 @@ function confirmOrder(orderId) {
         .then(data => {
             if (data.success) {
                 alert('Order confirmed successfully!');
-
-                // Only disable the button after successful confirmation
                 disableConfirmButton();
-
-                // Refresh order details
                 fetchOrderDetails(orderId);
             } else {
                 console.error('Error confirming order:', data.message);
-                alert('Failed to confirm the order.');
+                if (data.items) {
+                    const errorMessage = data.items
+                        .map(item => 
+                            `Product ID: ${item.productId}, Ordered: ${item.orderedQuantity}, Available: ${item.currentStock}`
+                        )
+                        .join('\n');
+                    alert(`Failed to confirm the order due to insufficient stock:\n${errorMessage}`);
+                } else {
+                    alert(`Failed to confirm the order: ${data.message}`);
+                }
             }
         })
-        .catch(error => console.error('Error confirming order:', error));
+        .catch(error => {
+            console.error('Error confirming order:', error);
+            alert(`Failed to confirm the order: ${error.message}`);
+        });
 }
+
 
 function disableConfirmButton() {
     const confirmButton = document.getElementById('confirm-button');
