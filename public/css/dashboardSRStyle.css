@@ -241,7 +241,7 @@ table th {
     margin-left: 0; 
 }
 
-.view-btn:hover, .download-btn:hover {
+.view-btn:hover, .download-btn:hover{
     background-color: #4b4b99;
 }
 
@@ -377,7 +377,7 @@ table th {
     margin-top: 10px;
 }
 
-#view-report-btn {
+#view-report-btn, #view-sales-report-btn, #view-inventory-report-btn {
     padding: 5px 50px;
     font-size: 1rem;
     font-weight: 500;
@@ -389,7 +389,7 @@ table th {
     transition: background-color 0.3s ease;
 }
 
-#view-report-btn:hover {
+#view-report-btn:hover, #view-sales-report-btn:hover, #view-inventory-report-btn:hover {
     background-color: #4b4b99; /* Lighter shade on hover */
 }
 
