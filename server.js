@@ -596,6 +596,38 @@ app.get('/api/reorder-report', (req, res) => {
     });
 });
 
+app.get('/api/expiry-report', (req, res) => {
+    const query = `
+    SELECT 
+        p.product_id,
+        p.product_name,
+        s.supplier_name,
+        p.current_stock_level,
+        DATE_FORMAT(p.expiration_date, '%Y-%m-%d') AS expiration_date,
+        p.expiry_status  -- Correct column name
+    FROM Products p
+    JOIN Suppliers s ON p.supplier_id = s.supplier_id
+    WHERE p.expiration_date IS NOT NULL  -- Exclude products with NULL expiration_date
+      AND p.expiry_status != 'OK'       -- Exclude products with status "OK"
+    ORDER BY 
+        CASE 
+            WHEN p.expiry_status = 'Near Expiry' THEN 1  -- "Near Expiry" products first
+            ELSE 2                                       -- Other statuses last (if any)
+        END,
+        p.expiration_date ASC;  -- Then sort by expiration date
+`;
+
+    // Execute the SQL query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error executing query: ', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        res.status(200).json(results);  // Send the results as JSON
+    });
+});
+
 
 // used to display the info of the supplier w/ just one layout for all
 app.get('/api/suppliers/:supplierId', (req, res) => {
