@@ -405,3 +405,15 @@ table.details-table input {
     background: #000058;
     color: #fff;
 }
+
+table input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+}
+
+table input:focus {
+    outline: 1px solid #007bff;
+    background-color: #f9f9f9;
+}
