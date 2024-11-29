@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IMS Dashboard</title>
+    <link rel="stylesheet" href="css/headerInventory.css">
     <link rel="stylesheet" href="css/inventoryIM.css">
-    <link rel="stylesheet" href="css/headerAndFooter.css">
     <!-- <link rel="stylesheet" href="/public/css/inventoryIM.css"> -->
     <script src="/js/inventoryIM.js" defer></script>
 </head>
@@ -14,6 +14,7 @@
     <nav>
         <div class="nav-content">
             <div class="logo">
+                <!-- <img src="/public/resources/logo.png" alt="Logo" class="logo-icon"> -->
                 <img src="/resources/logo.png" alt="Logo" class="logo-icon">
             </div>
             <div class="nav-left">
@@ -30,8 +31,36 @@
                     <span>Profile</span>
                 </a>
             </div>
+            <div class="hamburger" onclick="toggleSidebar()">
+                &#9776; <!-- Hamburger icon -->
+            </div>
         </div>
     </nav>
+     <!-- SIDE BAR -->
+     <div class="sidebar" id="sidebar">
+        <div class="close-btn" onclick="toggleSidebar()">&times;</div>
+        <div class="sidebar-content">
+            <h2>Recent Inventory Restocks</h2>
+            <div class="restock-group">
+                <p class="restock-header">Restock ### - 08/24/2024</p>
+                <ul class="restock-products">
+                    <li>#0001: PMMA Lenses Single/Three Pieces</li>
+                    <li>#0008: OATSENSE - Shower & Bath Oil</li>
+                </ul>
+                <hr>
+            </div>
+            <div class="restock-group">
+                <p class="restock-header">Restock ### - 08/20/2024</p>
+                <ul class="restock-products">
+                    <li>#0003: Sunshade Capsules</li>
+                    <li>#0005: Herbal Soothing Cream</li>
+                </ul>
+                <hr>
+            </div>
+            <!-- Add more restock groups as needed -->
+        </div>
+    </div>
+    
     <!-- END OF HEADER -->
 
        <!-- Inventory table -->
@@ -90,6 +119,14 @@
                 nav.classList.remove("sticky");
             }
         }
+
+        // SIDE BAR CODE
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        }
+
+        
     </script>
 
 </body>

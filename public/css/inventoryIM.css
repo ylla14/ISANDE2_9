@@ -9,6 +9,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
+
 /* INVENTORY TABLE */
 
 .inventory-list {
@@ -108,4 +109,27 @@ table th {
     font-size: 24px;
     color: #000058;
     margin: 0;
+}
+
+.low-stock-group h3 {
+    color: red;
+}
+
+.near-expiry-group h3 {
+    color: orange;
+}
+
+.sidebar-content ul {
+    list-style-type: disc;
+    padding: 15px;
+}
+
+.sidebar-content li {
+    margin: 15px;
+    font-size: 14px;
+}
+
+.sidebar-content p {
+    font-size: 14px;
+    color: #555;
 }

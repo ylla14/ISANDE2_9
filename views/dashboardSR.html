@@ -62,66 +62,35 @@
            </section>
        </div>
 
-        <!-- Top Products Table -->
-         <div class="section-header">
-            <h2>Top Products</h2>
-            <div class="button-container">
-                <button class="view-btn">View</button>
-                <button class="download-btn">Download</button>
-            </div>
-        </div>
+        <!-- Total Sales by Month -->
         <section class="inventory-level">
             <div class="inventory-container">
                 <div class="inventory-item">
-                    <span class="product-name">Super Block SPF50++</span>
-                    <div class="inventory-bar" style="width: 50%; background: #8a2be2;"></div>
-                    <span class="inventory-total">  45%</span>
-                </div>
-                <div class="inventory-item">
-                    <span class="product-name">Thioderm</span>
-                    <div class="inventory-bar" style="width: 30%; background: #ff6347;"></div>
-                    <span class="inventory-total">  20%</span>
-                </div>
-                <div class="inventory-item">
-                    <span class="product-name">Oatsense - Moisturizer</span>
-                    <div class="inventory-bar" style="width: 20%; background: #4682b4;"></div>
-                    <span class="inventory-total">  15%</span>
-                </div>
-                <div class="inventory-item">
-                    <span class="product-name">Cell Repair Cream</span>
-                    <div class="inventory-bar" style="width: 20%; background: #4682b4;"></div>
-                    <span class="inventory-total">  10%</span>
-                </div>
-                <div class="inventory-item">
-                    <span class="product-name">Thioderm Skin Lightening Bar</span>
-                    <div class="inventory-bar" style="width: 20%; background: #4682b4;"></div>
-                    <span class="inventory-total">  10%</span>
+                    <h3>Total Sales by Month</h3>
+                    <canvas id="salesByMonthChart" width="700" height="200"></canvas>
                 </div>
             </div>
         </section>
 
-
-    <!-- top products table -->
-        <section class="product-section">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Popularity</th>
-                        <th>Sales</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>01</td><td>Super Block SPF50++</td><td>45%</td><td>$1000</td></tr>
-                    <tr><td>02</td><td>Thioderm</td><td>20%</td><td>$800</td></tr>
-                    <tr><td>03</td><td>Oatsense - Moisturizer</td><td>15%</td><td>$500</td></tr>
-                    <tr><td>04</td><td>Cell Repair Cream</td><td>10%</td><td>$400</td></tr>
-                    <tr><td>05</td><td>Thioderm Skin Lightening Bar</td><td>10%</td><td>$400</td></tr>
-            
-                </tbody>
-            </table>
+        <!-- Total Sales by Brand -->
+        <section class="inventory-level">
+            <div class="inventory-container">
+                <div class="inventory-item">
+                    <h3>Total Sales by Brand</h3>
+                    <canvas id="salesByBrandChart" width="700" height="200"></canvas>
+                </div>
+            </div>
         </section>
+
+        <!-- Total Number of Products Sold per Brand -->
+            <section class="inventory-level">
+                <div class="inventory-container">
+                    <div class="inventory-item">
+                        <h3>Total Number of Products Sold per Brand</h3>
+                        <canvas id="productsSoldPerCategoryChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </section>
         
         <!-- FOOTER -->
      <section class="footer">
@@ -147,5 +116,6 @@
         }//END OF SCRIPT FOR HEADER
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

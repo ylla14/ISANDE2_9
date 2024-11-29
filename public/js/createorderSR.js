@@ -253,6 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.addEventListener('click', () => {
         // Get the values from the form
         const purchasedDate = purchasedDateInput.value;
+
+        const nearExpiryAccepted = document.getElementById('near-expiry-accepted').checked;
+
+        sessionStorage.setItem('nearExpiryAccepted', nearExpiryAccepted);
         
         const customerCode = document.querySelector('.customer-code-input').value;
         const firstName = document.querySelector('.first-name-input').value;
