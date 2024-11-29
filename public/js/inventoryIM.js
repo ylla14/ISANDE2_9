@@ -39,34 +39,41 @@ async function loadInventoryData() {
     try {
         const response = await fetch('/api/products');
         const products = await response.json();
-        
+
         // Sort products by SKU in ascending order
         products.sort((a, b) => a.product_id.localeCompare(b.product_id));
-        
+
         const tbody = document.querySelector('.inventory-list tbody');
         tbody.innerHTML = ''; // Clear any existing rows
 
         products.forEach(product => {
             const row = document.createElement('tr');
-            
+
             // Stock alert logic
             let stockAlertMessage = product.stock_status || 'OK';
             let stockAlertColor = 'green'; // Default color for OK
 
             if (stockAlertMessage === 'Low Stock') {
                 stockAlertColor = 'red'; // Red color for low stock
+                row.style.backgroundColor = 'rgba(255, 99, 71, 0.2)'; // Light red background
             }
 
             // Expiry alert logic
             let expiryAlertMessage = product.expiry_status || 'OK';
-            let expiryAlertColor = 'green'; // Default color for OK
+            let expiryAlertColor = 'green'; 
 
             if (expiryAlertMessage === 'Near Expiry') {
-                expiryAlertColor = '#f1c40f'; // Yellow color for near expiry
+                expiryAlertColor = '#f1c40f'; 
+                row.style.backgroundColor = 'rgba(241, 196, 15, 0.2)'; 
+            }
+
+            // If both "Low Stock" and "Near Expiry," use blue
+            if (stockAlertMessage === 'Low Stock' && expiryAlertMessage === 'Near Expiry') {
+                row.style.backgroundColor = 'rgba(0, 118, 255, 0.1)'; 
             }
 
             row.addEventListener('click', () => {
-                // Navigate to the supplier details page with the product_id as a query parameter
+                // Navigate to the products details page with the product_id as a query parameter
                 window.location.href = `/prodDetailsIM.html?productId=${product.product_id}`;
             });
 
@@ -82,13 +89,14 @@ async function loadInventoryData() {
                 <td style="color: ${stockAlertColor};">${stockAlertMessage}</td>
                 <td style="color: ${expiryAlertColor};">${expiryAlertMessage}</td>
             `;
-            
+
             tbody.appendChild(row);
         });
     } catch (error) {
         console.error('Error loading inventory data:', error);
     }
 }
+
 
 
 
