@@ -234,6 +234,33 @@ app.get('/api/products', (req, res) => {
     });
   });
 
+  // inventory side bar
+  app.get('/api/alerts', (req, res) => {
+    const query = `
+      SELECT 
+        p.product_id, 
+        p.product_name, 
+        p.selling_price, 
+        p.current_stock_level, 
+        p.expiration_date, 
+        p.stock_status, 
+        p.expiry_status
+      FROM 
+        Products p
+      WHERE 
+        p.stock_status = 'Low Stock' OR p.expiry_status = 'Near Expiry'
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving alert data from database');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
   app.get('/api/suppliers', (req, res) => {
     const query = `
       SELECT 
