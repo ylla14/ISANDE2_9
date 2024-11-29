@@ -316,7 +316,7 @@ table th {
 
 .stat-card1 {
     background-color: #fff;
-    border: 2px solid #488521;
+    border: 2px solid #000058;
     border-radius: 10px;
     padding: 20px;
     width: 250px;               
@@ -332,13 +332,13 @@ table th {
 .stat-card1 b {
     font-size: 1.2rem; /* Larger font size for the heading */
     margin: 0;
-    color: #000000; /* Darker text for heading */
+    color: #488521; /* Darker text for heading */
 }
 
 .stat-card1 span {
     display: block;
     font-size: 24px;
-    color: #333;
+    color: #488521;
     margin-top: 5px;
 }
 
