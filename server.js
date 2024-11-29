@@ -1568,7 +1568,84 @@ app.get('/api/monthly-sales-report', (req, res) => {
     });
 });
 
-  
+// Query to get total sales by month
+app.get('/sales-by-month', (req, res) => {
+    const userId = req.query.userId; // Get the userId from the query parameters
+    const query = `
+        SELECT 
+            MONTH(purchased_date) AS month,
+            YEAR(purchased_date) AS year,
+            SUM(od.total_price) AS total_sales
+        FROM OrdersSR os
+        JOIN OrderDetails od ON os.order_id = od.order_id
+        WHERE os.sales_rep_id = ?  -- Filter by sales rep
+        GROUP BY YEAR(purchased_date), MONTH(purchased_date)
+        ORDER BY YEAR(purchased_date), MONTH(purchased_date);
+    `;
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).send('Error retrieving data');
+        } else {
+            res.json(results); // Send data back as JSON
+        }
+    });
+});
+
+
+// Query to get total sales by brand
+app.get('/sales-by-brand', (req, res) => {
+    const userId = req.query.userId; // Get the userId from the query parameters
+    const query = `
+        SELECT 
+            s.supplier_name AS brand,
+            SUM(od.total_price) AS total_sales
+        FROM OrderDetails od
+        JOIN Products p ON od.product_id = p.product_id
+        JOIN Suppliers s ON p.supplier_id = s.supplier_id
+        JOIN OrdersSR os ON od.order_id = os.order_id
+        WHERE os.sales_rep_id = ?  -- Filter by sales rep
+        GROUP BY s.supplier_name
+        ORDER BY total_sales DESC;
+    `;
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error(err.message);
+            res.status(500).send('Error retrieving data');
+        } else {
+            res.json(results); // Send data back as JSON
+        }
+    });
+});
+
+
+
+// Query to get total number of products sold per supplier (brand)
+app.get('/products-sold-per-category', (req, res) => {
+    const userId = req.query.userId; // Get the userId from the query parameters
+    const query = `
+        SELECT 
+            s.supplier_name AS brand,
+            SUM(od.quantity) AS total_products_sold
+        FROM OrderDetails od
+        JOIN Products p ON od.product_id = p.product_id
+        JOIN Suppliers s ON p.supplier_id = s.supplier_id
+        JOIN OrdersSR os ON od.order_id = os.order_id
+        WHERE os.sales_rep_id = ?  -- Filter by sales rep
+        GROUP BY s.supplier_name;
+    `;
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching product sales data:', err.message);
+            res.status(500).send('Error fetching data');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

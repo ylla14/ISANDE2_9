@@ -422,15 +422,15 @@ table th {
     color: #fff;
 }
 
-
-/* Inventory Level Section */
-
 h2 {
     margin-bottom: 10px;
     font-size: 24px;
     color: #000058;
     text-align: left;
 }
+
+
+/* Bar Graphs */
 .inventory-level {
     margin: 20px 0 20px 15px;
     background: #fff;
@@ -449,7 +449,18 @@ h2 {
 /* Inventory Item */
 .inventory-item {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* Stack the title and canvas vertically */
+    align-items: center;    /* Center the content horizontally */
+    justify-content: center; /* Center the content vertically if needed */
+}
+
+/* Style for the h3 */
+.inventory-item h3 {
+    margin-bottom: 10px; /* Add space between the title and canvas */
+    text-align: center;  /* Center the text */
+    font-size: 24px;
+    color: #000058;
+    font-weight: bold;
 }
 
 /* Inventory Bar */
@@ -466,4 +477,17 @@ h2 {
     font-weight: 500; 
     right: 0; 
 
+}
+
+.category-filter {
+    margin-top: 20px;
+}
+
+#category-filter-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#category-filter-form label {
+    margin-bottom: 5px;
 }

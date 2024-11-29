@@ -30,6 +30,9 @@ document.getElementById("back-link").addEventListener("click", function(event) {
 });
 
 function SendInvoice() {
+    // Retrieve the nearExpiryAccepted value from sessionStorage
+    const nearExpiryAccepted = sessionStorage.getItem('nearExpiryAccepted') === 'true';  // Ensure it's a boolean value
+
     var params = {
         orderID: document.getElementById("order-title").textContent.replace("ORD", ""), // Extract order ID from the title
         CustomerName: document.getElementById("customer-name").textContent,
@@ -37,13 +40,20 @@ function SendInvoice() {
         overallTotal: calculateOverallTotal(), // Compute total dynamically
         salesRepName: document.getElementById("sales-rep-name").textContent,
         contactInfo: document.getElementById("sales-rep-contactinfo").textContent,
-        order_details: generateOrderDetails() 
+        order_details: generateOrderDetails(), // Function to generate order details
+        near_expiry_accepted: nearExpiryAccepted  // Include the flag for near-expiry items
     };
+
+    // Log params to check if all data is passed correctly
+    console.log(params);
 
     emailjs.send("service_voi1upb", "template_2llj3f1", params).then(function (res) {
         alert("Success!" + res.status);
+    }).catch(function (error) {
+        alert("Failed to send email: " + error);
     });
 }
+
 
 function calculateOverallTotal() {
     let totalPrice = 0;
