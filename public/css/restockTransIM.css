@@ -87,6 +87,14 @@ table th {
     text-align: left;
 }
 
+.total-section {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
 .button-section {
     text-align: center;
     margin-top: 30px; /* Ensure there’s space between the table and buttons */

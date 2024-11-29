@@ -64,118 +64,132 @@
     <!-- END OF HEADER -->
 
     <!-- rectangles overview -->
-    <div class="overview">
-        <div class="rectangle">
-            <h3>100</h3>
-            <p>Total No. of Products</p>
+    <main class="dashboard-content">
+        <div class ="overview">
+            <section class = "greetings">
+                <b> Hello, <span id="sales-rep-name">Inventory Manager</span>!</b>
+            </section>
         </div>
-        <div class="rectangle">
-            <h3>35</h3>
-            <p>Low Stock Products</p>
+        <div class="overview">
+            <section class="statistics">
+                <div class="stat-card">
+                    <b>Total No. of Products</b>
+                    <span>100</span>
+                </div>
+                
+                <div class="stat-card">
+                    <b>Total Categories</b>
+                    <span>20</span>
+                </div>
+        
+                <div class="stat-card">
+                    <b>Low Stock Products</b>
+                    <span>35</span>
+                </div>
+
+                <div class="stat-card">
+                    <b>Total Sales</b>
+                    <span>2</span>
+                </div>
+            </section>
         </div>
-        <div class="rectangle">
-            <h3>Heading 3</h3>
-            <p>Additional details go here.</p>
-        </div>
-    </div>
 
 
-    <!-- Reports Section -->
-    <div class="reports">
-        <div class="report">
-            <div class="report-con">
-                <h3 class="report-heading">Low Stock and Reorder Report</h3>
+        <!-- Reports Section -->
+        <div class="overview">
+            <section class="statistics">
+                <div class="report">
+                    <b>Low Stock and Reorder Report</b>
+                    <div class="button-container">
+                        <button id="reorder-report-btn">View</button>
+                    </div>
+                </div>
+                <div class="report">
+                    <b>Product Expiration Report</b>
+                    <div class="button-container">
+                        <button id="expiry-report-btn">View</button>
+                        <button id="download-expiry-btn">Download</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        
+
+        <!-- Stock Aging Section -->
+        <div class="table-section">
+            <div class="section-header">
+                <h2>Stock Aging Report</h2>
                 <div class="button-container">
-                    <button id="reorder-report-btn">View</button>
+                    <button id="view-btn">View All</button>
+                    <button id="download-btn" onclick="downloadStockAging()">Download</button>
                 </div>
             </div>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Expiry Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Product 1</td>
+                        <td>50</td>
+                        <td>2024-12-31</td>
+                    </tr>
+                    <tr>
+                        <td>Product 2</td>
+                        <td>30</td>
+                        <td>2025-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>Product 3</td>
+                        <td>20</td>
+                        <td>2024-11-05</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="report">
-            <div class="report-con">
-                <h3 class="report-heading">Product Expiration Report</h3>
+
+        <!-- Stock Aging Section -->
+        <!-- <div class="table-section">
+            <div class="section-header">
+                <h2>Stock Aging Report</h2>
                 <div class="button-container">
-                    <button id="expiry-report-btn">View</button>
-                    <button id="download-expiry-btn">Download</button>
+                    <button id="view-btn">View All</button>
+                    <button id="download-btn" onclick="downloadStockAging()">Download</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-
-
-     <!-- Fast Selling Section -->
-    <!-- <div class="fast-selling">
-        <div class="section-header">
-            <h2>Fast Selling Products</h2>
-            <div class="button-container">
-                <button class="view-btn">View All</button>
-                <button class="download-btn" onclick="downloadFastSelling()">Download</button>
-            </div>
-        </div>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Expiry Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Product 1</td>
-                    <td>50</td>
-                    <td>2024-12-31</td>
-                </tr>
-                <tr>
-                    <td>Product 2</td>
-                    <td>30</td>
-                    <td>2025-01-15</td>
-                </tr>
-                <tr>
-                    <td>Product 3</td>
-                    <td>20</td>
-                    <td>2024-11-05</td>
-                </tr>
-            </tbody>
-        </table>
-    </div> -->
-
-    <!-- Stock Aging Section -->
-    <!-- <div class="table-section">
-        <div class="section-header">
-            <h2>Stock Aging Report</h2>
-            <div class="button-container">
-                <button id="view-btn">View All</button>
-                <button id="download-btn" onclick="downloadStockAging()">Download</button>
-            </div>
-        </div>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Expiry Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Product 1</td>
-                    <td>50</td>
-                    <td>2024-12-31</td>
-                </tr>
-                <tr>
-                    <td>Product 2</td>
-                    <td>30</td>
-                    <td>2025-01-15</td>
-                </tr>
-                <tr>
-                    <td>Product 3</td>
-                    <td>20</td>
-                    <td>2024-11-05</td>
-                </tr>
-            </tbody>
-        </table>
-    </div> -->
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Expiry Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Product 1</td>
+                        <td>50</td>
+                        <td>2024-12-31</td>
+                    </tr>
+                    <tr>
+                        <td>Product 2</td>
+                        <td>30</td>
+                        <td>2025-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>Product 3</td>
+                        <td>20</td>
+                        <td>2024-11-05</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
+    </main>
 
     <!-- FOOTER -->
     <section class="gap"></section>

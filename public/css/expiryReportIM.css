@@ -1,0 +1,106 @@
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Download Button Styling */
+.download-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.download-btn {
+    background-color: #000058;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.download-btn:hover {
+    background-color: #333;
+}
+
+/* Report Container Styling */
+#report-container {
+    background-color: white;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+}
+
+/* Report Header Styling */
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #000058;
+    color: white;
+    border-bottom: 4px solid #ddd;
+}
+
+.logo-section {
+    flex: 1;
+}
+
+.logo {
+    height: 80px;
+    max-width: 100%;
+}
+
+.title-section {
+    flex: 2;
+    text-align: center;
+}
+
+.title-section h1 {
+    margin: 0;
+    font-size: 28px;
+    text-transform: uppercase;
+}
+
+.report-date {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #f3f3f3;
+}
+
+/* Table Section */
+.table-section {
+    margin: 20px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+table thead {
+    background-color: #000058;
+    color: white;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}

@@ -110,7 +110,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/api/purchase-order', (req, res) => {
-    const { supplier_id, order_date, delivery_date, order_address, products } = req.body;
+    const { supplier_id, order_date, delivery_date, order_address, products, total } = req.body;
 
     if (!supplier_id || !order_date || !products || products.length === 0) {
         return res.status(400).json({ error: 'Missing required fields or no products provided' });
@@ -139,12 +139,12 @@ app.post('/api/purchase-order', (req, res) => {
 
         // Insert into PurchaseOrders
         const purchaseOrderQuery = `
-            INSERT INTO PurchaseOrders (porder_id, supplier_id, order_date, delivery_date, order_address)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO PurchaseOrders (porder_id, supplier_id, order_date, delivery_date, order_address, total)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
         db.query(
             purchaseOrderQuery,
-            [porder_id, supplier_id, order_date, delivery_date, order_address],
+            [porder_id, supplier_id, order_date, delivery_date, order_address, total],
             (err) => {
                 if (err) {
                     console.error('Error inserting into PurchaseOrders:', err);
@@ -301,7 +301,8 @@ app.get('/api/purchase-orders', (req, res) => {
         s.supplier_name, 
         po.order_date, 
         po.delivery_date, 
-        po.order_address
+        po.order_address,
+        po.total,
         po.status
       FROM 
         PurchaseOrders po
@@ -584,6 +585,38 @@ app.get('/api/reorder-report', (req, res) => {
         WHERE p.current_stock_level <= p.reorder_level
         ORDER BY s.supplier_id, p.product_id;  -- Sort by supplier_id and then by product_id
     `;
+
+    // Execute the SQL query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error executing query: ', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        res.status(200).json(results);  // Send the results as JSON
+    });
+});
+
+app.get('/api/expiry-report', (req, res) => {
+    const query = `
+    SELECT 
+        p.product_id,
+        p.product_name,
+        s.supplier_name,
+        p.current_stock_level,
+        DATE_FORMAT(p.expiration_date, '%Y-%m-%d') AS expiration_date,
+        p.expiry_status  -- Correct column name
+    FROM Products p
+    JOIN Suppliers s ON p.supplier_id = s.supplier_id
+    WHERE p.expiration_date IS NOT NULL  -- Exclude products with NULL expiration_date
+      AND p.expiry_status != 'OK'       -- Exclude products with status "OK"
+    ORDER BY 
+        CASE 
+            WHEN p.expiry_status = 'Near Expiry' THEN 1  -- "Near Expiry" products first
+            ELSE 2                                       -- Other statuses last (if any)
+        END,
+        p.expiration_date ASC;  -- Then sort by expiration date
+`;
 
     // Execute the SQL query
     db.query(query, (err, results) => {
