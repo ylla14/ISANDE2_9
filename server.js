@@ -110,7 +110,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/api/purchase-order', (req, res) => {
-    const { supplier_id, order_date, delivery_date, order_address, products } = req.body;
+    const { supplier_id, order_date, delivery_date, order_address, products, total } = req.body;
 
     if (!supplier_id || !order_date || !products || products.length === 0) {
         return res.status(400).json({ error: 'Missing required fields or no products provided' });
@@ -139,12 +139,12 @@ app.post('/api/purchase-order', (req, res) => {
 
         // Insert into PurchaseOrders
         const purchaseOrderQuery = `
-            INSERT INTO PurchaseOrders (porder_id, supplier_id, order_date, delivery_date, order_address)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO PurchaseOrders (porder_id, supplier_id, order_date, delivery_date, order_address, total)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
         db.query(
             purchaseOrderQuery,
-            [porder_id, supplier_id, order_date, delivery_date, order_address],
+            [porder_id, supplier_id, order_date, delivery_date, order_address, total],
             (err) => {
                 if (err) {
                     console.error('Error inserting into PurchaseOrders:', err);
@@ -301,7 +301,8 @@ app.get('/api/purchase-orders', (req, res) => {
         s.supplier_name, 
         po.order_date, 
         po.delivery_date, 
-        po.order_address
+        po.order_address,
+        po.total,
         po.status
       FROM 
         PurchaseOrders po

@@ -54,6 +54,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById("reorder-level").value = product.reorder_level;
                 document.getElementById("min-order").value = product.min_order_quantity;
                 document.getElementById("lead-time").value = product.lead_time;
+
+                // Fetch and display the product image
+                const productImage = document.getElementById("product-image");
+                if (product.product_image) {
+                    productImage.src = product.product_image; // Set the image source
+                    productImage.alt = product.product_name; // Add alt text for accessibility
+                } else {
+                    productImage.src = "resources/brady_logo.jpg"; // Fallback image if no product image is provided
+                    productImage.alt = "Placeholder Image";
+                }
             }
         } catch (error) {
             console.error("Error fetching product details:", error);

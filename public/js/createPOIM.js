@@ -214,6 +214,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }).filter(Boolean); // Filter out invalid or incomplete product rows
 
+        
+        // Calculate the overall total price
+        const overallTotal = productRows.reduce((sum, row) => sum + (row.totalPrice || 0), 0);
+
         // Validate required fields
         if (!companyAddress || !requestorName || !requestorPosition || !requestDate || !requiredDate || productRows.length === 0) {
             alert("Please fill out all required fields and select valid products.");
@@ -226,15 +230,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             requestor_position: requestorPosition,
             request_date: requestDate,
             required_date: requiredDate,
-            order_details: productRows.map(row => `
+            order_details: `
+                ${productRows.map(row => `
+                    <tr>
+                        <td>${row.productName}</td>
+                        <td>₱${row.unitPrice.toFixed(2)}</td>
+                        <td>${row.quantity}</td>
+                        <td>₱${row.totalPrice.toFixed(2)}</td>
+                    </tr>
+                `).join("")}
                 <tr>
-                    <td>${row.productName}</td>
-                    <td>₱${row.unitPrice}</td>
-                    <td>${row.quantity}</td>
-                    <td>₱${row.totalPrice}</td>
+                    <td colspan="3" style="text-align: right;"><strong>Total Price:</strong></td>
+                    <td><strong>₱${overallTotal.toFixed(2)}</strong></td>
                 </tr>
-            `).join("")
+            `
         };
+        
 
         try {
             await emailjs.send('service_skc39jp', 'template_ghl25dg', emailParams, 'mTGzRd_flL6wCKlxk');
@@ -251,12 +262,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                     delivery_date: requiredDate,
                     order_address: companyAddress,
                     products: productRows,
+                    total: overallTotal, // Store overall total in the database
                     status: 'Pending'
                 })
             });
 
             if (response.ok) {
                 alert('Purchase Order sent and saved successfully!');
+            
+                // Remove all product groups
+                const productGroups = document.querySelectorAll(".product-group");
+                productGroups.forEach(group => group.remove());
+            
+                // Recreate an empty product group
+                await createProductGroup();
             } else {
                 console.error('Failed to save purchase order:', await response.json());
                 alert('Failed to save Purchase Order. Please try again.');
