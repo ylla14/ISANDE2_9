@@ -42,7 +42,7 @@ document.getElementById("back-link").addEventListener("click", function (event) 
     }
 });
 
-async function fetchInventoryManager(userId) {
+async function fetchInventoryManager(userId) { //autofill comp name to requested date
     try {
         const response = await fetch(`/api/inventory-manager/${userId}`);
         if (!response.ok) {
@@ -86,25 +86,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Get the supplier ID from the URL query parameters
     const supplierId = new URLSearchParams(window.location.search).get("supplierId");
     if (!supplierId) return console.warn("No supplier ID found in the URL.");
 
+    // Get references to the DOM elements
     const productInfoContainer = document.querySelector(".form-section-product-info");
     const sendBtn = document.querySelector(".send-btn");
     const addProductBtn = document.getElementById("add-product");
     const requestDateInput = document.getElementById("request-date");
     const requiredDateInput = document.getElementById("required-date");
 
-    // Ensure "Required Date" is set to 1 month after "Request Date"
+    // Event listener to update the "Required Date" to be 1 month after the "Request Date"
     requestDateInput.addEventListener("change", () => {
         const requestDate = new Date(requestDateInput.value);
         if (isNaN(requestDate)) return; // If the date is invalid, do nothing
         const requiredDate = new Date(requestDate);
-        requiredDate.setMonth(requiredDate.getMonth() + 1); // Add 1 month
-        requiredDateInput.value = requiredDate.toISOString().split("T")[0]; // Set in YYYY-MM-DD format
+        requiredDate.setMonth(requiredDate.getMonth() + 1); // Add 1 month to the request date
+        requiredDateInput.value = requiredDate.toISOString().split("T")[0]; // Set the required date in YYYY-MM-DD format
     });
 
-    // Fetch products from the server
+    // Function to fetch product data from the server
     const fetchProducts = async () => {
         try {
             const response = await fetch(`/api/suppliers/${supplierId}/products`);
@@ -114,7 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    // Populate the product dropdown
+    // Populate the product dropdown with products fetched from the server
     const populateProductDropdown = async (productDropdown) => {
         const products = await fetchProducts();
         if (products) {
@@ -122,23 +124,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             products.forEach(({ product_id, selling_price, product_category, product_name }) => {
                 const option = document.createElement("option");
                 option.value = product_id;
-                option.dataset.price = selling_price;
-                option.textContent = `${product_category} - ${product_name}`;
+                option.dataset.price = selling_price; // Store the price in a data attribute
+                option.textContent = `${product_category} - ${product_name}`; // Set the dropdown option text
                 productDropdown.appendChild(option);
             });
         }
     };
 
-    // Setup product event listeners
+    // Setup event listeners for product selection, quantity input, and price calculations
     const setupProductEventListeners = (productDropdown, quantityInput, unitPriceInput, totalPriceInput) => {
         productDropdown.addEventListener("change", () => {
             const unitPrice = parseFloat(productDropdown.selectedOptions[0]?.dataset.price) || 0;
-            unitPriceInput.value = unitPrice ? `₱${unitPrice.toFixed(2)}` : ""; // Set unit price or clear it
-            calculateTotalPrice();
+            unitPriceInput.value = unitPrice ? `₱${unitPrice.toFixed(2)}` : ""; // Set the unit price or clear it
+            calculateTotalPrice(); // Update total price whenever the product or quantity changes
         });
 
-        quantityInput.addEventListener("input", calculateTotalPrice);
+        quantityInput.addEventListener("input", calculateTotalPrice); // Recalculate total price when quantity changes
 
+        // Function to calculate the total price based on unit price and quantity
         function calculateTotalPrice() {
             const unitPrice = parseFloat(unitPriceInput.value.replace(/₱/, "")) || 0;
             const quantity = parseInt(quantityInput.value, 10) || 0;
@@ -146,11 +149,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    // Create a new product input group
+    // Function to create a new product input group
     const createProductGroup = async () => {
         const productGroup = document.createElement("div");
         productGroup.classList.add("product-group");
 
+        // Add HTML structure for the product selection, quantity, and price fields
         productGroup.innerHTML = `
             <div class="form-group">
                 <label for="product">Select Product:</label>
@@ -170,11 +174,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
             <button class="remove-product-btn">Remove Product</button>
         `;
-        productInfoContainer.appendChild(productGroup);
+        productInfoContainer.appendChild(productGroup); // Append the new product group to the container
 
+        // Populate the product dropdown with available products
         const newProductDropdown = productGroup.querySelector(".product-dropdown");
         await populateProductDropdown(newProductDropdown);
 
+        // Set up event listeners for the new product group
         setupProductEventListeners(
             newProductDropdown,
             productGroup.querySelector(".quantity-input"),
@@ -182,20 +188,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             productGroup.querySelector(".total-price-output")
         );
 
+        // Set up remove button to remove the product group
         const removeButton = productGroup.querySelector(".remove-product-btn");
         removeButton.addEventListener("click", () => productGroup.remove());
     };
 
+    // Initially create one product group
     await createProductGroup();
+
+    // Add a new product group when the "Add Product" button is clicked
     addProductBtn.addEventListener("click", createProductGroup);
 
+    // Handle the form submission when the "Send" button is clicked
     sendBtn.addEventListener("click", async () => {
+        // Get the form field values
         const companyAddress = document.getElementById("company-address").value.trim();
         const requestorName = document.getElementById("requestor-name").value.trim();
         const requestorPosition = document.getElementById("requestor-position").value.trim();
         const requestDate = requestDateInput.value;
         const requiredDate = requiredDateInput.value;
 
+        // Gather all product rows from the form
         const productRows = Array.from(document.querySelectorAll(".product-group")).map(group => {
             const productDropdown = group.querySelector(".product-dropdown");
             const quantityInput = group.querySelector(".quantity-input");
@@ -214,16 +227,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }).filter(Boolean); // Filter out invalid or incomplete product rows
 
-        
-        // Calculate the overall total price
+        // Calculate the overall total price of the order
         const overallTotal = productRows.reduce((sum, row) => sum + (row.totalPrice || 0), 0);
 
-        // Validate required fields
+        // Validate that all required fields are filled out
         if (!companyAddress || !requestorName || !requestorPosition || !requestDate || !requiredDate || productRows.length === 0) {
             alert("Please fill out all required fields and select valid products.");
             return;
         }
 
+        // Prepare the email parameters & table format
         const emailParams = {
             company_address: companyAddress,
             from_name: requestorName,
@@ -231,26 +244,39 @@ document.addEventListener("DOMContentLoaded", async () => {
             request_date: requestDate,
             required_date: requiredDate,
             order_details: `
-                ${productRows.map(row => `
-                    <tr>
-                        <td>${row.productName}</td>
-                        <td>₱${row.unitPrice.toFixed(2)}</td>
-                        <td>${row.quantity}</td>
-                        <td>₱${row.totalPrice.toFixed(2)}</td>
-                    </tr>
-                `).join("")}
-                <tr>
-                    <td colspan="3" style="text-align: right;"><strong>Total Price:</strong></td>
-                    <td><strong>₱${overallTotal.toFixed(2)}</strong></td>
-                </tr>
+                <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Product Name</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Unit Price</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Quantity</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productRows.map(row => `
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${row.productName}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₱${row.unitPrice.toFixed(2)}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${row.quantity}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">₱${row.totalPrice.toFixed(2)}</td>
+                            </tr>
+                        `).join("")}
+                        <tr>
+                            <td colspan="3" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>Total Price:</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><strong>₱${overallTotal.toFixed(2)}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
             `
         };
-        
 
         try {
+            // Send the email with the order details
             await emailjs.send('service_skc39jp', 'template_ghl25dg', emailParams, 'mTGzRd_flL6wCKlxk');
             console.log('Email sent successfully.');
 
+            // Save the order data to the database
             const response = await fetch('/api/purchase-order', {
                 method: 'POST',
                 headers: {
@@ -270,7 +296,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (response.ok) {
                 alert('Purchase Order sent and saved successfully!');
             
-                // Remove all product groups
+                // Remove all product groups from the form
                 const productGroups = document.querySelectorAll(".product-group");
                 productGroups.forEach(group => group.remove());
             
@@ -286,3 +312,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 });
+
