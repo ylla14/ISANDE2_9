@@ -118,6 +118,46 @@ function searchInventory() {
     });
 }
 
+async function loadSidebarAlerts() {
+    try {
+        const response = await fetch('/api/alerts');
+        const products = await response.json();
+
+        const lowStockProducts = products.filter(product => product.stock_status === 'Low Stock');
+        const nearExpiryProducts = products.filter(product => product.expiry_status === 'Near Expiry');
+
+        const sidebarContent = document.querySelector('.sidebar-content');
+        sidebarContent.innerHTML = `
+            <h2>Product Alerts</h2>
+            <div class="low-stock-group">
+                <h3 style="color: red;">Low Stock Products</h3>
+                ${lowStockProducts.length ? `
+                    <ul>
+                        ${lowStockProducts.map(product => `
+                            <li>${product.product_name} (ID: ${product.product_id}, Stock: ${product.current_stock_level})</li>
+                        `).join('')}
+                    </ul>
+                ` : '<p>No low-stock products</p>'}
+            </div>
+            <hr>
+            <div class="near-expiry-group">
+                <h3 style="color: orange;">Near Expiry Products</h3>
+                ${nearExpiryProducts.length ? `
+                    <ul>
+                        ${nearExpiryProducts.map(product => `
+                            <li>${product.product_name} (ID: ${product.product_id}, Expiry: ${new Date(product.expiration_date).toLocaleDateString()})</li>
+                        `).join('')}
+                    </ul>
+                ` : '<p>No near-expiry products</p>'}
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading alerts:', error);
+    }
+}
+
+// Initialize the sidebar alerts
+document.addEventListener('DOMContentLoaded', loadSidebarAlerts);
 
 // Call the function to load data when the page loads
 window.onload = loadInventoryData;

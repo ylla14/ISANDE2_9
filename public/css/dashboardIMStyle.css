@@ -281,12 +281,7 @@ table th {
     text-transform: uppercase;
 }
 
-.table-section h2 {
-    margin-bottom: 10px;
-    font-size: 24px;
-    color: #000058;
-    text-align: left;
-}
+
 
 
 /* Section Header */
@@ -301,7 +296,7 @@ table th {
     white-space: nowrap;
 }
 
-.view-btn, .download-btn {
+#view-btn, #download-btn {
     background-color: #000058;
     color: white;
     border: none;
