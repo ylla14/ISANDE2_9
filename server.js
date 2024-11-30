@@ -1680,8 +1680,39 @@ app.put('/api/edit-order/:orderId', async (req, res) => {
     }
 });
 
+app.delete('/api/deleteOrderDetails/:orderId', (req, res) => {
+    const { orderId } = req.params;
 
+    const query = 'DELETE FROM OrderDetails WHERE order_id = ?';
+    db.query(query, [orderId], (error, results) => {
+        if (error) {
+            console.error('Error deleting order details:', error);
+            return res.status(500).json({ message: 'Error deleting order details' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Order details not found' });
+        }
+        res.status(200).json({ message: 'Order details deleted successfully' });
+    });
+});
 
+app.delete('/api/deleteOrder/:orderId', (req, res) => {
+    const orderId = req.params.orderId;
+
+    const deleteQuery = 'DELETE FROM OrdersSR WHERE order_id = ?';
+    db.query(deleteQuery, [orderId], (err, result) => {
+        if (err) {
+            console.error('Error deleting order:', err);
+            return res.status(500).send('Failed to delete the order.');
+        }
+
+        if (result.affectedRows > 0) {
+            res.status(200).send('Order deleted successfully.');
+        } else {
+            res.status(404).send('Order not found.');
+        }
+    });
+});
 
 
 // API endpoint to get the monthly sales report

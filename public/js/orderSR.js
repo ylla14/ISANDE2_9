@@ -51,6 +51,18 @@ async function loadOrderSRData(filter = {}, sort = {}) {
                 window.location.href = `orderDetail.html?orderId=${order.order_id}`;
             });
 
+            // Adding the delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-btn');
+            deleteButton.textContent = 'Delete';
+            deleteButton.dataset.orderId = order.order_id;
+
+            // Adding the delete button event listener
+            deleteButton.addEventListener('click', (event) => {
+                event.stopPropagation();  // Prevent the row click event from firing
+                deleteOrder(order.order_id);
+            });
+
             row.innerHTML = `
                 <td>${order.order_code}</td>
                 <td>${orderDateDisplay}</td>
@@ -59,6 +71,11 @@ async function loadOrderSRData(filter = {}, sort = {}) {
                 <td>${order.status}</td>
             `;
             
+            // Append the delete button to the row
+            const actionCell = document.createElement('td');
+            actionCell.appendChild(deleteButton);
+            row.appendChild(actionCell);
+            
             tbody.appendChild(row);
         });
         
@@ -66,6 +83,7 @@ async function loadOrderSRData(filter = {}, sort = {}) {
         console.error('Error loading sales order data:', error);
     }
 }
+
 
 // Function to apply the filter based on selected criteria
 function applyFilter() {
@@ -110,3 +128,37 @@ document.addEventListener('DOMContentLoaded', () => {
     loadOrderSRData();  // Initial load without any filters
     document.querySelector('.search-input').addEventListener('input', searchOrders); // Attach search functionality
 });
+
+async function deleteOrder(orderId) {
+    const confirmDelete = confirm('Are you sure you want to delete this order?');
+    if (!confirmDelete) return;
+
+    try {
+        // First, delete the related rows in OrderDetails
+        const deleteDetailsResponse = await fetch(`/api/deleteOrderDetails/${orderId}`, {
+            method: 'DELETE',
+        });
+
+        if (!deleteDetailsResponse.ok) {
+            alert('Failed to delete order details.');
+            return;
+        }
+
+        // Now delete the order from OrdersSR
+        const response = await fetch(`/api/deleteOrder/${orderId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            alert('Order deleted successfully!');
+            loadOrderSRData();  // Reload the orders after deletion
+        } else {
+            alert('Failed to delete the order.');
+        }
+    } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('An error occurred while deleting the order.');
+    }
+}
+
+
