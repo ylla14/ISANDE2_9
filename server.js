@@ -1757,30 +1757,31 @@ app.get('/api/monthly-sales-report', (req, res) => {
     });
 });
 
+// API Endpoint to fetch inventory report
 app.get('/api/inventory-report', (req, res) => {
     const query = `
-    SELECT 
-        p.product_id AS "PROD_ID",
-        s.supplier_name AS "SUPPLIER",
-        p.product_name AS "NAME",
-        p.pack_size AS "PACK_SIZE",
-        p.current_stock_level AS "CURRENT_STOCK_LVL",
-        p.min_stock_level AS "MIN_STOCK_LVL",
-        p.max_stock_level AS "MAX_STOCK_LVL",
-        p.selling_price AS "SP"
-    FROM Products p
-    JOIN Suppliers s ON p.supplier_id = s.supplier_id
-    ORDER BY p.product_id;
+      SELECT 
+        p.product_id, 
+        s.supplier_name, 
+        p.product_name, 
+        p.pack_size, 
+        p.current_stock_level, 
+        p.reorder_level AS min_stock_level, 
+        p.min_order_quantity AS max_stock_level, 
+        p.selling_price AS sp
+      FROM Products p
+      JOIN Suppliers s ON p.supplier_id = s.supplier_id
     `;
-
-    connection.query(query, (error, results) => {
-        if (error) {
-            res.status(500).send('Error fetching inventory report.');
-        } else {
-            res.json(results);
-        }
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error('Error fetching inventory report:', err);
+        return res.status(500).json({ error: 'Error fetching inventory data' });
+      }
+  
+      res.json(results);
     });
-});
+  });
 
 // Query to get total sales by month
 app.get('/sales-by-month', (req, res) => {
