@@ -1150,9 +1150,16 @@ app.get('/api/order-details/:orderId', (req, res) => {
 
         // Get order details for products
         const orderDetailQuery = `
-            SELECT od.product_id, p.product_name, od.quantity, od.unit_price, od.total_price
+            SELECT 
+                od.product_id, 
+                p.product_name, 
+                od.quantity, 
+                od.unit_price, 
+                od.total_price,
+                s.supplier_name AS brand_name
             FROM OrderDetails od
             JOIN Products p ON od.product_id = p.product_id
+            JOIN Suppliers s ON p.supplier_id = s.supplier_id
             WHERE od.order_id = ?;
         `;
 
@@ -1161,8 +1168,6 @@ app.get('/api/order-details/:orderId', (req, res) => {
                 console.error('Error fetching order details:', err);
                 return res.status(500).json({ message: 'Error fetching order details' });
             }
-
-            console.log("Order Detail Results:", orderDetailResults);  // Log order items
 
             res.json({
                 order: orderResults[0],
@@ -1540,12 +1545,28 @@ app.get('/sales-rep-stats/:userId', (req, res) => {
 
 app.put('/api/edit-order/:orderId', async (req, res) => {
     const orderId = req.params.orderId;
-    const { customer_id, payment_ref_num, delivery_date, order_address, barangay, city, order_receiver, salesRepId } = req.body;
+    const { 
+        customer_id, 
+        payment_ref_num, 
+        delivery_date, 
+        order_address, 
+        barangay, 
+        city, 
+        order_receiver, 
+        salesRepId, 
+        orderItems // Array of updated order items
+    } = req.body;
 
-    // Set status based on payment_ref_num
+    // Log the orderItems to debug the issue
+    console.log('Order Items:', orderItems);
+
+    // Convert delivery_date to the correct format (YYYY-MM-DD)
+    const formattedDeliveryDate = new Date(delivery_date).toISOString().split('T')[0];
+
+    // Determine status based on payment_ref_num
     let status = payment_ref_num && payment_ref_num.trim() !== '' ? 'paid' : 'pending';
 
-    const query = `
+    const updateOrderQuery = `
         UPDATE OrdersSR
         SET 
             customer_id = ?,
@@ -1560,31 +1581,108 @@ app.put('/api/edit-order/:orderId', async (req, res) => {
         WHERE order_id = ?
     `;
 
-    const values = [
+    const updateOrderValues = [
         customer_id, 
         payment_ref_num, 
-        delivery_date, 
+        formattedDeliveryDate, 
         order_address, 
         barangay, 
         city, 
         order_receiver, 
         salesRepId, 
-        status,  // Status based on payment_ref_num
+        status,
         orderId
     ];
 
+    const dbQuery = (query, values) => {
+        return new Promise((resolve, reject) => {
+            db.query(query, values, (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+    };
+
     try {
-        const [result] = await db.execute(query, values);
-        if (result.affectedRows > 0) {
-            res.json({ message: 'Order updated successfully!' });
-        } else {
-            res.status(404).json({ message: 'Order not found' });
+        // Start a transaction
+        await dbQuery('START TRANSACTION');
+
+        // Update the order details
+        const orderResult = await dbQuery(updateOrderQuery, updateOrderValues);
+        if (orderResult.affectedRows === 0) {
+            await dbQuery('ROLLBACK');
+            return res.status(404).json({ message: 'Order not found' });
         }
+
+        // Clear existing order items for the given order ID
+        const deleteItemsQuery = `DELETE FROM OrderDetails WHERE order_id = ?`;
+        await dbQuery(deleteItemsQuery, [orderId]);
+
+        // If orderItems is an array, we need to ensure each item contains product_name and product_id
+        if (orderItems && Array.isArray(orderItems)) {
+            // Query to get the product_name and cost_price (instead of unit_price) from the product_id for each order item
+            const getProductQuery = `
+                SELECT product_name, cost_price 
+                FROM Products 
+                WHERE product_id = ?
+            `;
+
+            // Insert updated order items with correct product_name and cost_price
+            const insertItemsQuery = `
+                INSERT INTO OrderDetails (order_id, product_id, quantity, unit_price, total_price)
+                VALUES (?, ?, ?, ?, ?)
+            `;
+            for (const item of orderItems) {
+                const { product_id, quantity, total_price } = item;
+
+                // Ensure unit_price is not null
+                const unit_price = item.unit_price || 0; // Default to 0 if unit_price is missing
+
+                // Log the individual item for debugging
+                console.log('Processing item:', item);
+
+                if (!product_id) {
+                    console.error('Missing product_id in order item:', item);
+                    continue; // Skip this item if product_id is missing
+                }
+
+                // Get the product_name and cost_price based on the product_id
+                const [productResult] = await dbQuery(getProductQuery, [product_id]);
+                if (productResult && productResult.product_name) {
+                    const product_name = productResult.product_name;
+                    const product_cost_price = productResult.cost_price;
+
+                    // If unit_price is not provided in the request, use the price from the database
+                    const finalUnitPrice = unit_price !== 0 ? unit_price : product_cost_price;
+
+                    // Insert the order item with the correct product_name and final unit_price
+                    await dbQuery(insertItemsQuery, [orderId, product_id, quantity, finalUnitPrice, total_price]);
+                } else {
+                    console.error(`Product not found for ID: ${product_id}`);
+                    // Optionally, you can return an error if the product is not found
+                    await dbQuery('ROLLBACK');
+                    return res.status(400).json({ message: `Product not found: ${product_id}` });
+                }
+            }
+        }
+
+        // Commit the transaction
+        await dbQuery('COMMIT');
+        res.json({ message: 'Order and items updated successfully!' });
+
     } catch (error) {
         console.error('Error updating order:', error);
+        await dbQuery('ROLLBACK');
         res.status(500).json({ message: 'Error updating order' });
     }
 });
+
+
+
+
 
 // API endpoint to get the monthly sales report
 app.get('/api/monthly-sales-report', (req, res) => {

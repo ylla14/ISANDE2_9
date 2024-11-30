@@ -98,8 +98,8 @@ fetch(`/sales-by-month?userId=${userId}`)
                 datasets: [{
                     label: 'Total Sales',
                     data: salesByMonth,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: '#008000',
+                    borderColor: '#008000',
                     borderWidth: 1
                 }]
             },
