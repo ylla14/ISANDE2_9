@@ -1628,6 +1628,31 @@ app.get('/api/monthly-sales-report', (req, res) => {
     });
 });
 
+app.get('/api/inventory-report', (req, res) => {
+    const query = `
+    SELECT 
+        p.product_id AS "PROD_ID",
+        s.supplier_name AS "SUPPLIER",
+        p.product_name AS "NAME",
+        p.pack_size AS "PACK_SIZE",
+        p.current_stock_level AS "CURRENT_STOCK_LVL",
+        p.min_stock_level AS "MIN_STOCK_LVL",
+        p.max_stock_level AS "MAX_STOCK_LVL",
+        p.selling_price AS "SP"
+    FROM Products p
+    JOIN Suppliers s ON p.supplier_id = s.supplier_id
+    ORDER BY p.product_id;
+    `;
+
+    connection.query(query, (error, results) => {
+        if (error) {
+            res.status(500).send('Error fetching inventory report.');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 // Query to get total sales by month
 app.get('/sales-by-month', (req, res) => {
     const userId = req.query.userId; // Get the userId from the query parameters
