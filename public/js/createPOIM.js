@@ -133,13 +133,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Setup event listeners for product selection, quantity input, and price calculations
     const setupProductEventListeners = (productDropdown, quantityInput, unitPriceInput, totalPriceInput) => {
-        productDropdown.addEventListener("change", () => {
-            const unitPrice = parseFloat(productDropdown.selectedOptions[0]?.dataset.price) || 0;
+        productDropdown.addEventListener("change", () => { //waits for the "change"
+            const unitPrice = parseFloat(productDropdown.selectedOptions[0]?.dataset.price) || 0; //gets the price comig w the item/ if none set to 0
             unitPriceInput.value = unitPrice ? `₱${unitPrice.toFixed(2)}` : ""; // Set the unit price or clear it
             calculateTotalPrice(); // Update total price whenever the product or quantity changes
         });
 
-        quantityInput.addEventListener("input", calculateTotalPrice); // Recalculate total price when quantity changes
+        quantityInput.addEventListener("input", calculateTotalPrice); // Recalculate total price when quantity changes -- waits for the "input" then calls calculate
 
         // Function to calculate the total price based on unit price and quantity
         function calculateTotalPrice() {
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await populateProductDropdown(newProductDropdown);
 
         // Set up event listeners for the new product group
-        setupProductEventListeners(
+        setupProductEventListeners( // this corresponds/lines up to the params in line 35
             newProductDropdown,
             productGroup.querySelector(".quantity-input"),
             productGroup.querySelector(".unit-price-output"),
