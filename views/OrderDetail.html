@@ -152,8 +152,8 @@
         }//END OF SCRIPT FOR HEADER
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
+document.addEventListener('DOMContentLoaded', function() {
+const urlParams = new URLSearchParams(window.location.search);
     const orderId = urlParams.get('orderId'); // Get orderId from URL
 
     if (orderId) {
@@ -201,9 +201,15 @@ function fetchOrderDetails(orderId) {
                 console.log("No order items found.");
             }
             // Check if the payment reference number exists and is not empty
+            const headerContainer = document.querySelector('.header-container');
             if (data.order.payment_ref_num && data.order.payment_ref_num.trim() !== '') {
-                const headerContainer = document.querySelector('.header-container');
                 headerContainer.style.backgroundColor = '#AFE1AF';
+
+                // Hide the edit order button
+                const editOrderBtn = document.getElementById('edit-order-btn');
+                if (editOrderBtn) {
+                    editOrderBtn.style.display = 'none';
+                }
             }
         } else {
             console.error("Order not found or invalid data:", data);

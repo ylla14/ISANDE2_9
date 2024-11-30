@@ -1,40 +1,28 @@
-// Navigation Links
-document.getElementById("dashboard-link").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "dashboardSR.html"; // Redirect to the inventory page
+// Navigation Links Event Listeners
+const links = [
+    { id: "dashboard-link", url: "dashboardSR.html" },
+    { id: "inventory-link", url: "inventorySR.html" },
+    { id: "order-link", url: "orderSR.html" },
+    { id: "customers-link", url: "customersSR.html" },
+    { id: "profile-link", url: "profileSR.html" },
+    { id: "back-link", url: "OrderSR.html" },
+    { id: "cancel-edit-btn", url: "OrderSR.html" },
+];
+
+links.forEach(link => {
+    document.getElementById(link.id)?.addEventListener("click", event => {
+        event.preventDefault();
+        window.location.href = link.url;
+    });
 });
 
-document.getElementById("inventory-link").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "inventorySR.html"; // Redirect to the inventory page
-});
+// Format Date Helper Function
+function formatDate(dateString) {
+    const [month, day, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
+}
 
-document.getElementById("order-link").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "orderSR.html"; // Redirect to the inventory page
-});
-
-document.getElementById("customers-link").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "customersSR.html"; // Redirect to the inventory page
-});
-
-document.getElementById("profile-link").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "profileSR.html";
-});
-
-document.getElementById("back-link").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "OrderSR.html"; // Redirect to the inventory page
-});
-
-document.getElementById("cancel-edit-btn").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "OrderSR.html"; // Redirect to the inventory page
-});
-
-// DOM Content Loaded
+// Populate Order Details
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const orderId = urlParams.get('orderId');
@@ -43,9 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/api/order-details/${orderId}`)
             .then(response => response.json())
             .then(data => {
-                if (data && data.order) {
+                if (data?.order) {
                     const formattedDeliveryDate = new Date(data.order.delivery_date).toLocaleDateString();
-                    
                     // Populate sales representative details
                     document.getElementById('order-title').textContent = `ORD00${data.order.order_id}`;
                     document.getElementById('sales-rep-id').value = data.order.sales_rep_id;
@@ -65,149 +52,111 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('delivery-barangay').value = data.order.barangay;
                     document.getElementById('delivery-city').value = data.order.city;
                     document.getElementById('delivery-receiver').value = data.order.order_receiver;
-
-                    // Populate order items
-                    const itemsTable = document.getElementById('order-items-table');
-                    let totalPrice = 0;
-                    if (data.order_items && data.order_items.length > 0) {
-                        data.order_items.forEach(item => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `<td>${item.product_name}</td><td>${item.quantity}</td><td>${item.unit_price}</td><td>${item.total_price}</td>`;
-                            itemsTable.appendChild(row);
-                            totalPrice += parseFloat(item.total_price) || 0; // Handle cases where total_price is not a valid number
-                        });
-                        document.getElementById('overall-total-price').textContent = totalPrice.toFixed(2);
-                    } else {
-                        console.log("No order items found.");
-                    }
+                    populateOrderItems(data.order_items);
                 }
-            });
+            })
+            .catch(error => console.error('Error fetching order details:', error));
     }
 });
 
-function formatDate(dateString) {
-    const [month, day, year] = dateString.split('/');
-    return `${year}-${month}-${day}`;
+function populateOrderItems(orderItems) {
+    const itemsTable = document.getElementById('order-items-table').querySelector('tbody');
+    let totalPrice = 0;
+
+    // Clear existing rows to avoid duplication
+    itemsTable.innerHTML = '';
+
+    orderItems.forEach(item => {
+        const row = document.createElement('tr');
+        const quantity = parseFloat(item.quantity) || 0;
+        const totalItemPrice = quantity > 0 ? (quantity * item.unit_price).toFixed(2) : '0.00'; // Only compute if quantity > 0
+        row.innerHTML = `
+            <td>${item.brand_name}</td> <!-- Display brand name -->
+            <td>${item.product_name}</td>
+            <td><input type="number" value="${item.quantity}" class="item-quantity" /></td>
+            <td class="item-unit-price">${item.unit_price}</td>
+            <td class="item-total-price">${item.total_price}</td>
+            <td><button type="button" class="delete-item-btn">Delete</button></td>
+            <!-- Hidden product_id and brand_id for easy access during form submission -->
+            <input type="hidden" class="product-id" value="${item.product_id}" />
+        `;
+        itemsTable.appendChild(row);
+        totalPrice += parseFloat(item.total_price);
+
+         // Add event listeners for dynamic updates (quantity change)
+         row.querySelector('.item-quantity').addEventListener('input', handleQuantityChange);
+    });
+
+    // Add event listeners for dynamic updates
+    itemsTable.addEventListener('click', handleItemDelete);
 }
 
-// Enable editing for Order Details
-document.getElementById("edit-order-form").addEventListener("submit", function (event) {
-    event.preventDefault();
+function handleQuantityChange(event) {
+    const target = event.target;
+    const row = target.closest('tr');
+    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+    const unitPrice = parseFloat(row.querySelector('.item-unit-price').textContent) || 0; // Ensure unit price is used from the .item-unit-price cell
+    const totalPrice = (quantity * unitPrice).toFixed(2); // Calculate the total price for the item
 
-    const orderItems = document.querySelectorAll("#order-items-table tr");
-    orderItems.forEach(row => {
-        const inputs = row.querySelectorAll("input");
-        inputs.forEach(input => {
-            input.readOnly = false; // Make fields editable
-        });
-    });
-
-    // Show Save button if necessary
-    document.querySelector(".submit-button").style.display = "inline-block";
-});
-
-// Save updated Order Details
-document.querySelector(".submit-button").addEventListener("click", function (event) {
-    event.preventDefault();
-
-    const updatedOrderItems = [];
-    const rows = document.querySelectorAll("#order-items-table tr");
-
-    rows.forEach(row => {
-        const productName = row.querySelector(".order-product-name").value;
-        const quantity = parseFloat(row.querySelector(".order-quantity").value);
-        const unitPrice = parseFloat(row.querySelector(".order-unit-price").value);
-
-        const totalPrice = quantity * unitPrice;
-
-        updatedOrderItems.push({
-            product_name: productName,
-            quantity: quantity,
-            unit_price: unitPrice,
-            total_price: totalPrice,
-        });
-
-        // Update Total Price in the table
-        row.querySelector(".order-total-price").value = totalPrice.toFixed(2);
-
-        // Disable editing after saving
-        const inputs = row.querySelectorAll("input");
-        inputs.forEach(input => {
-            input.readOnly = true;
-        });
-    });
+    // Update the total price cell for the item
+    row.querySelector('.item-total-price').textContent = totalPrice;
 
     // Update the overall total price
-    const overallTotal = updatedOrderItems.reduce((sum, item) => sum + item.total_price, 0);
-    document.getElementById("overall-total-price").textContent = overallTotal.toFixed(2);
+    updateTotalPrice();
+}
 
-    // Send updated data to the backend
-    fetch("/api/update-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updatedOrderItems }),
-    })
-        .then(response => {
-            if (response.ok) {
-                alert("Order details updated successfully!");
-            } else {
-                alert("Error updating order details.");
-            }
-        })
-        .catch(error => console.error("Error:", error));
-});
+function handleItemDelete(event) {
+    if (event.target.classList.contains('delete-item-btn')) {
+        event.target.closest('tr').remove();
+        updateTotalPrice();
+    }
+}
+
+function updateTotalPrice() {
+    const total = Array.from(document.querySelectorAll('.item-total-price')).reduce((sum, cell) => {
+        return sum + parseFloat(cell.textContent || '0');
+    }, 0);
+}
 
 
-// Enable editing for order items
-document.getElementById('editOrderBtn').addEventListener('click', () => {
-    const rows = document.querySelectorAll('#order-items-table tr');
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        cells.forEach((cell, index) => {
-            if (index < 3) { // Exclude the Total Price column from editing
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = cell.textContent.trim();
-                cell.textContent = '';
-                cell.appendChild(input);
-            }
-        });
-    });
 
-    document.getElementById('saveOrderBtn').style.display = 'inline-block';
-});
 
-// Save updated order items
-document.getElementById('saveOrderBtn').addEventListener('click', () => {
-    const rows = document.querySelectorAll('#order-items-table tr');
-    const updatedItems = [];
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const item = {
-            product_name: cells[0].querySelector('input').value,
-            quantity: parseFloat(cells[1].querySelector('input').value),
-            unit_price: parseFloat(cells[2].querySelector('input').value),
-        };
-        item.total_price = item.quantity * item.unit_price;
-        updatedItems.push(item);
 
-        cells[0].textContent = item.product_name;
-        cells[1].textContent = item.quantity;
-        cells[2].textContent = item.unit_price.toFixed(2);
-        cells[3].textContent = item.total_price.toFixed(2);
-    });
+// Submit Edited Order
+document.getElementById('edit-order-form').addEventListener('submit', function (event) {
+    event.preventDefault();
 
-    document.getElementById('saveOrderBtn').style.display = 'none';
+    const orderId = new URLSearchParams(window.location.search).get('orderId');
+    const items = Array.from(document.querySelectorAll('#order-items-table tbody tr')).map(row => ({
+        product_id: row.querySelector('.product-id').value,
+        quantity: row.querySelector('.item-quantity').value,
+        unit_price: row.querySelector('.item-unit-price').value,
+        total_price: row.querySelector('.item-total-price').textContent
+    }));
 
-    fetch('/api/update-order', {
-        method: 'POST',
+    const updatedData = {
+        customer_id: document.getElementById('customer-id').value,
+        customer_contact: document.getElementById('customer-contact').value,
+        customer_email: document.getElementById('customer-email').value,
+        payment_ref_num: document.getElementById('customer-payment-ref').value,
+        delivery_date: document.getElementById('delivery-date').value,
+        order_address: document.getElementById('order-address').value,
+        barangay: document.getElementById('delivery-barangay').value,
+        city: document.getElementById('delivery-city').value,
+        order_receiver: document.getElementById('delivery-receiver').value,
+        salesRepId: document.getElementById('sales-rep-id').value,
+        orderItems: items
+    };
+
+    fetch(`/api/edit-order/${orderId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ updatedItems }),
-    }).then(response => {
-        if (response.ok) {
+        body: JSON.stringify(updatedData)
+    })
+        .then(response => response.json())
+        .then(() => {
             alert('Order updated successfully!');
-        } else {
-            alert('Error updating order.');
-        }
-    });
+            window.location.href = `/orderDetail.html?orderId=${orderId}`;
+        })
+        .catch(error => console.error('Error updating order:', error));
 });
