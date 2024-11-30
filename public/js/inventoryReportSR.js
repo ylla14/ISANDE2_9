@@ -49,3 +49,4 @@ async function loadInventoryReportData() {
 
 // Call the function when the page loads
 window.onload = loadInventoryReportData;
+
