@@ -342,13 +342,24 @@ LOCK TABLES PurchaseOrders WRITE, PurchaseOrderDetails WRITE;
 /*!40000 ALTER TABLE PurchaseOrders DISABLE KEYS */;
 
 INSERT INTO PurchaseOrders VALUES 
-('PO001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila', 120000.00, 'pending'),
-('PO002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu', 100000.00, 'pending');
+('PO001', 'SUP001', '2024-09-20', '2024-09-25', '123 Pharma St., Manila', 120000.00, 'confirmed'),
+('PO002', 'SUP002', '2024-09-21', '2024-09-27', '456 Medical Ave., Cebu', 100000.00, 'pending'),
+('PO003', 'SUP003', '2024-10-01', '2024-10-05', '789 Healthcare Rd., Davao', 150000.00, 'pending'),
+('PO004', 'SUP004', '2024-10-10', '2024-10-15', '101 Wellness Blvd., Manila', 200000.00, 'confirmed'),
+('PO005', 'SUP005', '2024-10-12', '2024-10-17', '202 Pharma Ave., Cebu', 250000.00, 'confirmed'),
+('PO006', 'SUP006', '2024-11-05', '2024-11-10', '303 Medical St., Makati', 180000.00, 'pending');
 /*!40000 ALTER TABLE PurchaseOrders ENABLE KEYS */;
 
 INSERT INTO PurchaseOrderDetails VALUES
-('POD001', 'PO001', 'AR001', 1200.00, 100, 120000.00), -- Details for PO001
-('POD002', 'PO002', 'AR002', 500.00, 200, 100000.00); -- Details for PO002
+('POD001', 'PO001', 'AR001', 700.00, 100, 70000.00), -- Details for PO001
+('POD002', 'PO002', 'BR002', 500.00, 200, 100000.00),
+('POD003', 'PO003', 'OT003', 1500.00, 80, 120000.00), -- Details for PO003, Product AR003
+('POD004', 'PO003', 'OT005', 800.00, 40, 32000.00),  -- Details for PO003, Product AR004
+('POD005', 'PO004', 'TH001', 2500.00, 60, 150000.00), -- Details for PO004, Product AR005
+('POD006', 'PO005', 'RP002', 1250.00, 100, 125000.00),  -- Details for PO005, Product AR007
+('POD007', 'PO005', 'RP003', 1250.00, 50, 62500.00),  -- Details for PO005, Product AR008
+('POD008', 'PO006', 'VD001', 1095.00, 90, 98550.00), -- Details for PO006, Product AR009
+('POD009', 'PO006', 'VD003', 300.00, 60, 180000.00);  -- Details for PO006, Product AR010 
 UNLOCK TABLES;
 --
 -- Table structure for table OrderDetails
