@@ -292,5 +292,10 @@ table th {
     background-color: darkred;
 }
 
+/* Highlight rows with multiple customers */
+.highlight {
+    background-color: #C1E1C1; 
+}
+
 
 
