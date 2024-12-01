@@ -48,6 +48,7 @@ async function loadSalesOrderData() {
 
             const orderDateDisplay = orderDate.toLocaleDateString();
             const deliveryDateDisplay = deliveryDate.toLocaleDateString();
+            const inventoryStatus = salesorder.inventory_status === 'confirmed' ? 'Confirmed' : 'Pending';
 
             row.addEventListener('click', () => {
                 console.log(salesorder); // This will show the structure of `salesorder`
@@ -60,6 +61,7 @@ async function loadSalesOrderData() {
                 <td>${orderDateDisplay}</td>
                 <td>${deliveryDateDisplay}</td>
                 <td>${salesorder.total_order_value}</td>
+                <td>${inventoryStatus}</td>
             `;
 
             tbody.appendChild(row);

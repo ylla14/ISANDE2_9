@@ -44,7 +44,7 @@ document.getElementById("expiry-report-btn").addEventListener("click", function(
 //side bar function
 async function loadRecentRestocks() {
   try {
-      const response = await fetch('/api/recent-restocks');
+      const response = await fetch('/api/recent-restocks'); // fetch from recent restocks (po table)
       const data = await response.json();
 
       const sidebarContent = document.querySelector('.sidebar-content');
@@ -63,7 +63,7 @@ async function loadRecentRestocks() {
           // Add restock header
           const restockHeader = document.createElement('a'); // Use <a> to make it clickable
           restockHeader.classList.add('restock-header');
-          restockHeader.href = `restockTransIM.html?porder_id=${details.porder_id}`; // Pass the porder_id
+          restockHeader.href = `restockTransIM.html?porder_id=${details.porder_id}`; // Pass the porder_id >> go to restrans of that porder
           restockHeader.textContent = `${restockId} - ${formattedDate}`;
           restockGroup.appendChild(restockHeader);
 

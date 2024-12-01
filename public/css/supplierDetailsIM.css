@@ -45,16 +45,22 @@ body {
     text-align: center;
     margin-top: 50px;
 }
-.button {
+#create-po {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #000058;
-    color: white;
+    border: 2px solid #000058;
+    color: #000058;
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
 }
-.button:hover {
-    background-color: #000058;
+#create-po {
+    text-decoration: none; /* Optional: To remove underline if needed */
+    color: inherit; /* Use the parent's color by default */
+}
+
+#create-po:hover {
+    background-color: #000058; /* Background color on hover */
+    color: #fff; /* Text color changes to white on hover */
 }
