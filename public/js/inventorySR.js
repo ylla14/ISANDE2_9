@@ -63,7 +63,7 @@ async function loadInventoryData() {
 
             row.addEventListener('click', () => {
                 // Navigate to the products details page with the product_id as a query parameter
-                window.location.href = `/prodDetailsIM.html?productId=${product.product_id}`;
+                window.location.href = `/prodDetailsSR.html?productId=${product.product_id}`;
             });
 
             row.innerHTML = `

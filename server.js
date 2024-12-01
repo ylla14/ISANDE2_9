@@ -1774,45 +1774,61 @@ app.delete('/api/deleteOrder/:orderId', (req, res) => {
 
 // API endpoint to get the monthly sales report
 app.get('/api/monthly-sales-report', (req, res) => {
+    const { month, year } = req.query;
+
+    let whereClause = '';
+    if (month && year) {
+        whereClause = `WHERE MONTH(o.purchased_date) = ${month} AND YEAR(o.purchased_date) = ${year}`;
+    } else if (month) {
+        whereClause = `WHERE MONTH(o.purchased_date) = ${month}`;
+    } else if (year) {
+        whereClause = `WHERE YEAR(o.purchased_date) = ${year}`;
+    }
+
     const query = `
         SELECT 
-    DATE_FORMAT(o.purchased_date, '%M %Y') AS "Month",
-    o.purchased_date AS "Purchase Date",
-    c.customer_id AS "Customer ID #",
-    CONCAT(c.fname, ' ', c.lname) AS "Customer Name",
-    o.order_id AS "Order ID #",
-    p.product_id AS "Product ID #",
-    p.product_name AS "Product Name",
-    SUM(od.quantity) AS "QTY",  -- Sum the quantity for each product
-    SUM(od.total_price) AS "Total Cost"  -- Sum the total price for each product
-    FROM 
-        OrdersSR o
-    JOIN 
-        Customers c ON o.customer_id = c.customer_id
-    JOIN 
-        OrderDetails od ON o.order_id = od.order_id
-    JOIN 
-        Products p ON od.product_id = p.product_id
-    GROUP BY 
-        DATE_FORMAT(o.purchased_date, '%Y-%m'),  -- Group by month-year
-        o.purchased_date, 
-        c.customer_id, 
-        o.order_id, 
-        p.product_id
-    ORDER BY 
-        DATE_FORMAT(o.purchased_date, '%Y-%m') DESC, 
-        o.purchased_date DESC;
+            DATE_FORMAT(o.purchased_date, '%M %Y') AS "Month",
+            o.purchased_date AS "Purchase Date",
+            c.customer_id AS "Customer ID #",
+            CONCAT(c.fname, ' ', c.lname) AS "Customer Name",
+            o.order_id AS "Order ID #",
+            p.product_id AS "Product ID #",
+            p.product_name AS "Product Name",
+            SUM(od.quantity) AS "QTY",
+            SUM(od.total_price) AS "Total Cost"
+        FROM 
+            OrdersSR o
+        JOIN 
+            Customers c ON o.customer_id = c.customer_id
+        JOIN 
+            OrderDetails od ON o.order_id = od.order_id
+        JOIN 
+            Products p ON od.product_id = p.product_id
+        ${whereClause}
+        GROUP BY 
+            MONTH(o.purchased_date), 
+            YEAR(o.purchased_date), 
+            o.purchased_date, 
+            c.customer_id, 
+            o.order_id, 
+            p.product_id
+        ORDER BY 
+            MONTH(o.purchased_date) ASC,
+            YEAR(o.purchased_date) DESC, 
+            o.purchased_date DESC;
     `;
-    
+
     db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching sales report: ', err.message);
             return res.status(500).json({ message: 'Error fetching sales report', error: err.message });
         }
-        
-        res.json(results); // Send the results as a JSON response
+
+        res.json(results);
     });
 });
+
+
 
 // API Endpoint to fetch inventory report
 app.get('/api/inventory-report', (req, res) => {

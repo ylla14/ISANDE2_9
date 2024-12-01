@@ -15,65 +15,82 @@ function downloadPDF() {
     html2pdf().set(options).from(element).save();
 }
 
+document.getElementById('filter-btn').addEventListener('click', loadMonthlySalesReportData);
+
+// Helper function to format date as MM/DD/YYYY
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0'); // Get the day
+    const year = date.getFullYear(); // Get the year
+    return `${month}/${day}/${year}`; // Return formatted date
+}
+
+
 async function loadMonthlySalesReportData() {
+    const month = document.getElementById('month-filter').value;
+    const year = document.getElementById('year-filter').value;
+
+    let url = '/api/monthly-sales-report';
+    if (month || year) {
+        const queryParams = new URLSearchParams();
+        if (month) queryParams.append('month', month); // Send numeric month
+        if (year) queryParams.append('year', year);
+        url += `?${queryParams.toString()}`;
+    }
+
     try {
-        // Fetch data from the reorder report API
-        const response = await fetch('/api/monthly-sales-report');
+        const response = await fetch(url);
         const monthlySalesReport = await response.json();
 
-        // Sort data by 'Month' field (assuming it's in a sortable format like 'YYYY-MM')
+        // Sort data by 'Purchase Date'
         monthlySalesReport.sort((a, b) => {
             const dateA = new Date(a["Purchase Date"]);
             const dateB = new Date(b["Purchase Date"]);
-            return dateA - dateB; // Sorting by ascending date
+            return dateA - dateB; // Sort ascending
         });
 
-        // Get the table body element
+        // Get the table body
         const tbody = document.querySelector('.table-section tbody');
-        tbody.innerHTML = ''; // Clear any existing rows
+        tbody.innerHTML = ''; // Clear existing rows
 
-        // Helper function to format date as MM/DD/YYYY
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Get month (0-based, so add 1)
-            const day = String(date.getDate()).padStart(2, '0'); // Get day
-            const year = date.getFullYear(); // Get year
-            return `${month}/${day}/${year}`; // Return formatted date
-        }
-
-        // Populate the table
+        // Format and populate rows
         monthlySalesReport.forEach(data => {
-            // Ensure Total Cost is a valid number and is not undefined or null
-            let totalCost = parseFloat(data["Total Cost"]);
-            if (isNaN(totalCost)) {
-                totalCost = 0; // Default to 0 if the value is not a valid number
-            }
-            
-            const formattedTotalCost = totalCost.toFixed(2); // Safe to use toFixed
-
-            // Format Purchase Date
-            const formattedPurchaseDate = formatDate(data["Purchase Date"]);
-
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${data["Month"]}</td>
-                <td>${formattedPurchaseDate}</td>
+                <td>${formatDate(data["Purchase Date"])}</td>
                 <td>${data["Customer ID #"]}</td>
                 <td>${data["Customer Name"]}</td>
                 <td>${data["Order ID #"]}</td>
                 <td>${data["Product ID #"]}</td>
                 <td>${data["Product Name"]}</td>
                 <td>${data["QTY"]}</td>
-                <td>${formattedTotalCost}</td>
+                <td>${parseFloat(data["Total Cost"] || 0).toFixed(2)}</td>
             `;
             tbody.appendChild(row);
         });
+
     } catch (error) {
         console.error('Error fetching sales report:', error);
     }
 }
 
 
+
+
+function populateYearDropdown() {
+    const yearDropdown = document.getElementById('year-filter');
+    const currentYear = new Date().getFullYear();
+    for (let year = 2021; year <= currentYear; year++) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearDropdown.appendChild(option);
+    }
+}
+
+populateYearDropdown();
 
 // Call the function when the page loads
 window.onload = loadMonthlySalesReportData;
