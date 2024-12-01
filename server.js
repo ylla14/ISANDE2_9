@@ -1170,20 +1170,17 @@ app.post('/api/create-order', async (req, res) => {
                             INSERT INTO OrderDetails (order_id, product_id, quantity, unit_price, total_price)
                             VALUES (?, ?, ?, ?, ?)`;
 
-                        const itemInsertions = order_items.map(item => {
-                            const { product_id, quantity, unit_price } = item;
-                            const total_price = quantity * unit_price; // Calculate total price
-
-                            return new Promise((resolve, reject) => {
-                                db.query(insertOrderItemsQuery, [newOrderId, product_id, quantity, unit_price, total_price], (insertItemErr) => {
-                                    if (insertItemErr) {
-                                        reject(insertItemErr);
-                                    } else {
-                                        resolve();
-                                    }
-                                });
-                            });
-                        });
+                            const itemInsertions = order_items.map(item => {
+                                const { product_id, quantity, unit_price } = item;
+                            
+                                if (!product_id || isNaN(quantity) || isNaN(unit_price) || quantity <= 0 || unit_price < 0) {
+                                    throw new Error('Invalid order item details');
+                                }
+                            
+                                const total_price = quantity * unit_price; // Calculate total price
+                            
+                                return db.promise().query(insertOrderItemsQuery, [newOrderId, product_id, quantity, unit_price, total_price]);
+                            });                            
 
                         // Execute all item insertions and commit the transaction if successful
                         Promise.all(itemInsertions).then(() => {
