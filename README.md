@@ -1,6 +1,7 @@
 ![LOGO](https://github.com/user-attachments/assets/fff2c1f9-4f51-457c-a2f1-a0ae573a65fe)
 
-PharmaTrack Web App
+**PharmaTrack Web App**
+
 created by: Sophia Reine Orencia, Kaneesha Ysabel Rosales, Allyssa Justine Salgado, Clarissa Ivy Valdez
 
 Welcome to the Inventory Management System (IMS) of Brady Pharma Inc. We developed an Inventory Management System (IMS) to streamline inventory tracking and organization, providing real-time updates and reports for improved decision-making. 
