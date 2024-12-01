@@ -13,11 +13,7 @@ body {
     margin: 20px 0;
 }
 
-.report-heading {
-    text-align: center;  /* Centers the text */
-    margin: 0 auto;      /* Centers the whole block horizontally */
-    width: 50%;          /* Optional: limits the width */
-}
+
 
 .download-btn {
     display: block;      /* Makes the button a block element */

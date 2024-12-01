@@ -1668,33 +1668,35 @@ app.get('/dashboard/:userId', (req, res) => {
 // Sales Rep Stats API endpoint
 app.get('/sales-rep-stats/:userId', (req, res) => {
     const salesRepId = req.params.userId; // Use userId from URL
+    const currentYear = new Date().getFullYear(); // Get the current year
 
-    // Query for total sales
+    // Query for total sales this year
     db.query(`
         SELECT SUM(od.total_price) AS total_sales
         FROM OrderDetails od
         JOIN OrdersSR osr ON od.order_id = osr.order_id
-        WHERE osr.sales_rep_id = ?`, [salesRepId], (err, totalSalesResult) => {
+        WHERE osr.sales_rep_id = ? 
+        AND YEAR(osr.purchased_date) = ?`, [salesRepId, currentYear], (err, totalSalesResult) => {
         if (err) {
             console.error('Error fetching total sales: ', err.message);
             return res.status(500).send('Error fetching sales representative stats');
         }
 
-        // Query for total customers
+        // Query for total customers this year
         db.query(`
             SELECT COUNT(DISTINCT osr.customer_id) AS total_customers
             FROM OrdersSR osr
-            WHERE osr.sales_rep_id = ?`, [salesRepId], (err, totalCustomersResult) => {
+            WHERE osr.sales_rep_id = ?`, [salesRepId, currentYear], (err, totalCustomersResult) => {
             if (err) {
                 console.error('Error fetching total customers: ', err.message);
                 return res.status(500).send('Error fetching sales representative stats');
             }
 
-            // Query for total orders
+            // Query for total orders this year
             db.query(`
                 SELECT COUNT(*) AS total_orders
                 FROM OrdersSR osr
-                WHERE osr.sales_rep_id = ?`, [salesRepId], (err, totalOrdersResult) => {
+                WHERE osr.sales_rep_id = ? `, [salesRepId, currentYear], (err, totalOrdersResult) => {
                 if (err) {
                     console.error('Error fetching total orders: ', err.message);
                     return res.status(500).send('Error fetching sales representative stats');
@@ -1710,6 +1712,7 @@ app.get('/sales-rep-stats/:userId', (req, res) => {
         });
     });
 });
+
 
 app.put('/api/edit-order/:orderId', async (req, res) => {
     const orderId = req.params.orderId;
@@ -1791,14 +1794,14 @@ app.put('/api/edit-order/:orderId', async (req, res) => {
 
         // If orderItems is an array, we need to ensure each item contains product_name and product_id
         if (orderItems && Array.isArray(orderItems)) {
-            // Query to get the product_name and cost_price (instead of unit_price) from the product_id for each order item
+            // Query to get the product_name and selling_price from the product_id for each order item
             const getProductQuery = `
-                SELECT product_name, cost_price 
+                SELECT product_name, selling_price 
                 FROM Products 
                 WHERE product_id = ?
             `;
 
-            // Insert updated order items with correct product_name and cost_price
+            // Insert updated order items with correct product_name and selling_price
             const insertItemsQuery = `
                 INSERT INTO OrderDetails (order_id, product_id, quantity, unit_price, total_price)
                 VALUES (?, ?, ?, ?, ?)
@@ -1817,14 +1820,14 @@ app.put('/api/edit-order/:orderId', async (req, res) => {
                     continue; // Skip this item if product_id is missing
                 }
 
-                // Get the product_name and cost_price based on the product_id
+                // Get the product_name and selling_price based on the product_id
                 const [productResult] = await dbQuery(getProductQuery, [product_id]);
                 if (productResult && productResult.product_name) {
                     const product_name = productResult.product_name;
-                    const product_cost_price = productResult.cost_price;
+                    const product_selling_price = productResult.selling_price;
 
                     // If unit_price is not provided in the request, use the price from the database
-                    const finalUnitPrice = unit_price !== 0 ? unit_price : product_cost_price;
+                    const finalUnitPrice = unit_price !== 0 ? unit_price : product_selling_price;
 
                     // Insert the order item with the correct product_name and final unit_price
                     await dbQuery(insertItemsQuery, [orderId, product_id, quantity, finalUnitPrice, total_price]);

@@ -246,7 +246,17 @@ INSERT INTO Customers VALUES
 ('CST001', 'John', 'Doe', '0917-123-4567', 'john.doe@email.com', 123, 'Main Street', 'Manila', 'NCR'),
 ('CST002', 'Jane', 'Smith', '0918-987-6543', 'jane.smith@email.com', 456, 'Elm Street', 'Cebu', 'Central Visayas'),
 ('CST003', 'Belle', 'Kim', '0977-123-8765', 'belleKim@email.com', 789, '202 Greenhills', 'Greenhills', 'Metro Manila'),
-('CST004', 'Mark', 'Stan', '0912-985-3432', 'marklee@email.com', 321, '101 Quezon Avenue', 'Makati', 'Metro Manila');
+('CST004', 'Mark', 'Stan', '0912-985-3432', 'marklee@email.com', 321, '101 Quezon Avenue', 'Makati', 'Metro Manila'),
+('CST005', 'Alice', 'Brown', '0921-567-8901', 'alice.brown@email.com', 678, 'Sunset Boulevard', 'Quezon City', 'NCR'),
+('CST006', 'Robert', 'White', '0919-876-5432', 'robert.white@email.com', 234, 'Oak Street', 'Davao City', 'Davao Region'),
+('CST007', 'Emily', 'Clark', '0908-234-5678', 'emily.clark@email.com', 567, 'Pine Street', 'Taguig', 'Metro Manila'),
+('CST008', 'David', 'Harris', '0917-456-7890', 'david.harris@email.com', 890, 'Rizal Avenue', 'Pasig', 'Metro Manila'),
+('CST009', 'Sophia', 'Lopez', '0922-345-6789', 'sophia.lopez@email.com', 135, 'Bonifacio Road', 'Cavite City', 'CALABARZON'),
+('CST010', 'Daniel', 'Taylor', '0918-543-2109', 'daniel.taylor@email.com', 246, 'Coconut Lane', 'Baguio City', 'Cordillera'),
+('CST011', 'Laura', 'Green', '0907-678-1234', 'laura.green@email.com', 369, 'Palm Avenue', 'Zamboanga City', 'Zamboanga Peninsula'),
+('CST012', 'Michael', 'King', '0915-987-6543', 'michael.king@email.com', 579, 'Maple Drive', 'Iloilo City', 'Western Visayas'),
+('CST013', 'Olivia', 'Adams', '0909-654-3210', 'olivia.adams@email.com', 480, 'Pearl Street', 'Cagayan de Oro', 'Northern Mindanao'),
+('CST014', 'James', 'Scott', '0916-234-5670', 'james.scott@email.com', 159, 'Cherry Street', 'San Juan', 'Metro Manila');
 
 /*!40000 ALTER TABLE Customers ENABLE KEYS */;
 UNLOCK TABLES;
@@ -359,14 +369,31 @@ CREATE TABLE OrderDetails (
 
 LOCK TABLES OrderDetails WRITE;
 INSERT INTO OrderDetails VALUES
-(1, 1, 'AR001', 10, 250.00, 2500.00), -- 10 units of AR001 in order ORD001
-(2, 1, 'AR002', 5, 300.00, 1500.00),  -- 5 units of AR002 in order ORD001
-(3, 1, 'AR003', 3, 250.00, 750.00), -- 3 more units of AR001 in order ORD001
+(1, 1, 'AR001', 10, 250.00, 2500.00),
+(2, 1, 'AR002', 5, 300.00, 1500.00),
+(3, 1, 'AR003', 3, 250.00, 750.00),
 (4, 2, 'BR006', 4, 200.00, 800.00),
 (5, 2, 'BR005', 2, 200.00, 400.00),
 (6, 3, 'VD007', 1, 1565.00, 1565.00),
 (7, 4, 'OT002', 3, 3515.00, 10545.00),
-(8, 4, 'OT005', 3, 3450.00, 10350.00);
+(8, 4, 'OT005', 3, 3450.00, 10350.00),
+(9, 5, 'SB001', 2, 7500.00, 15000.00),
+(10, 5, 'SB002', 1, 7250.00, 7250.00),
+(11, 6, 'OT005', 5, 3450.00, 17250.00),
+(12, 6, 'OT007', 3, 12500.00, 37500.00),
+(13, 7, 'SB003', 1, 7250.00, 7250.00),
+(14, 8, 'SB006', 2, 7250.00, 14500.00),
+(15, 9, 'SB009', 4, 28125.00, 112500.00),
+(16, 10, 'OT003', 3, 3515.00, 10545.00),
+(17, 11, 'SB010', 2, 28750.00, 57500.00),
+(18, 12, 'SB014', 1, 28750.00, 28750.00),
+(19, 13, 'OT015', 3, 3450.00, 10350.00),
+(20, 14, 'OT004', 5, 3450.00, 17250.00),
+(21, 15, 'SB012', 2, 28750.00, 57500.00), 
+(22, 16, 'OT018', 4, 11250.00, 45000.00),
+(23, 17, 'SB008', 1, 7250.00, 7250.00),
+(24, 18, 'OT007', 3, 12500.00, 37500.00),
+(25, 19, 'SB006', 2, 7250.00, 14500.00);
 UNLOCK TABLES;
 
 --
@@ -422,7 +449,23 @@ INSERT INTO OrdersSR (
 ('CST001', '2024-09-02', 'PAY678901', '2024-11-01', '123 Main Street', 'Ermita', 'Manila', 'Dr. Santos', 'SR001', 'paid', 'pending'),
 ('CST002', '2024-10-27', '', '2024-12-01', '789 Balintawak Street', 'Loyola', 'Quezon City', 'John Reyes', 'SR002', 'pending', 'pending'),
 ('CST003', '2024-11-11', 'PAY123456', '2024-11-28', '202 Greenhills', 'Greenhills', 'San Juan',  'Kevin Tan', 'SR002', 'paid', 'pending'),
-('CST004', '2024-11-19', '', '2024-12-05', '101 Quezon Avenue','Bel-Air', 'Makati', 'Maria Cruz', 'SR002', 'pending', 'pending');
+('CST004', '2024-11-19', '', '2024-12-05', '101 Quezon Avenue','Bel-Air', 'Makati', 'Maria Cruz', 'SR002', 'pending', 'pending'),
+('CST005', '2023-06-15', 'PAY765432', '2023-07-01', '678 Sunset Boulevard', 'Quezon City', 'NCR', 'Mia Garcia', 'SR001', 'paid', 'paid'),
+('CST006', '2022-08-22', 'PAY246810', '2022-09-10', '456 Oak Street', 'Davao City', 'Davao Region', 'Liam Perez', 'SR002', 'paid', 'shipped'),
+('CST007', '2023-05-13', 'PAY112233', '2023-05-25', '567 Pine Street', 'Taguig', 'Metro Manila', 'Sofia Morales', 'SR001', 'paid', 'paid'),
+('CST008', '2021-12-02', 'PAY334455', '2021-12-10', '890 Rizal Avenue', 'Pasig', 'Metro Manila', 'Carlos Torres', 'SR001', 'paid', 'shipped'),
+('CST009', '2023-11-05', 'PAY998877', '2023-11-20', '135 Bonifacio Road', 'Cavite City', 'CALABARZON', 'Diana Reyes', 'SR001', 'pending', 'pending'),
+('CST010', '2024-01-09', 'PAY123789', '2024-02-01', '246 Coconut Lane', 'Baguio City', 'Cordillera', 'Antonio Ruiz', 'SR002', 'paid', 'paid'),
+('CST011', '2022-02-18', 'PAY667788', '2022-03-05', '369 Palm Avenue', 'Zamboanga City', 'Zamboanga Peninsula', 'Javier Garcia', 'SR002', 'pending', 'pending'),
+('CST012', '2023-09-30', 'PAY555444', '2023-10-15', '579 Maple Drive', 'Iloilo City', 'Western Visayas', 'Rachel Cruz', 'SR001', 'paid', 'paid'),
+('CST013', '2024-03-11', 'PAY221100', '2024-03-25', '480 Pearl Street', 'Cagayan de Oro', 'Northern Mindanao', 'Antonio Ramos', 'SR001', 'pending', 'shipped'),
+('CST014', '2021-07-10', 'PAY334477', '2021-07-20', '159 Cherry Street', 'San Juan', 'Metro Manila', 'Eva Santos', 'SR002', 'paid', 'paid'),
+('CST005', '2021-04-22', 'PAY998811', '2021-05-10', '112 Ocean Drive', 'Malate', 'Manila', 'Gabriel Lopez', 'SR001', 'paid', 'paid'),
+('CST006', '2024-02-25', 'PAY664433', '2024-03-05', '345 Valley Road', 'Iligan', 'Northern Mindanao', 'Isabella Mendoza', 'SR002', 'pending', 'pending'),
+('CST007', '2021-09-17', 'PAY665544', '2021-09-25', '123 Lake View', 'Taguig', 'Metro Manila', 'Francisco Gutierrez', 'SR002', 'paid', 'shipped'),
+('CST008', '2023-03-14', 'PAY776655', '2023-03-28', '234 Forest Avenue', 'Antipolo', 'Rizal', 'Vanessa Morales', 'SR002', 'pending', 'pending'),
+('CST009', '2022-06-25', 'PAY112233', '2022-07-05', '567 Hill Street', 'Davao City', 'Davao Region', 'Edgar Ruiz', 'SR001', 'paid', 'paid');
+
 
 
 

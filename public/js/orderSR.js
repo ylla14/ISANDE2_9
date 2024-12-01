@@ -36,15 +36,48 @@ async function loadOrderSRData(filter = {}, sort = {}) {
         const query = new URLSearchParams({ ...filter, ...sort }).toString();
         const response = await fetch(`/api/OrdersSR?${query}`);
         const ordersSR = await response.json();
-        console.log('Fetched orders:', ordersSR); // Check what data is received
+        console.log('Fetched orders:', ordersSR);
+
+        // Default to sorting by order_id if no sortField is provided
+        if (!sort.sortField) {
+            ordersSR.sort((a, b) => a.order_id - b.order_id);
+        } else {
+            // Apply dynamic sorting based on sortField and sortOrder
+            const field = sort.sortField;
+            const order = sort.sortOrder === 'asc' ? 1 : -1;
+
+            ordersSR.sort((a, b) => {
+                if (a[field] < b[field]) return -1 * order;
+                if (a[field] > b[field]) return 1 * order;
+                return 0;
+            });
+        }
 
         const tbody = document.querySelector('.order-list table tbody');
         tbody.innerHTML = '';
 
+        // Group orders by customer_id to check for multiple customers
+        const customerMap = new Map();
+
+        ordersSR.forEach(order => {
+            if (!customerMap.has(order.customer_id)) {
+                customerMap.set(order.customer_id, []);
+            }
+            customerMap.get(order.customer_id).push(order);
+        });
+
         ordersSR.forEach(order => {
             const row = document.createElement('tr');
-            const orderDate = new Date(order.purchased_date); // Use the correct date field
+            const orderDate = new Date(order.purchased_date);
             const orderDateDisplay = orderDate.toLocaleDateString();
+
+            // Check if the current order's customer has multiple orders
+            const isMultipleCustomers = customerMap.get(order.customer_id).length > 1;
+
+            // Apply the 'highlight' class if there are multiple orders for the customer
+            if (isMultipleCustomers) {
+                row.classList.add('highlight');
+            }
 
             row.addEventListener('click', () => {
                 console.log(`/orderDetail.html?orderId=${order.order_id}`);
@@ -70,8 +103,7 @@ async function loadOrderSRData(filter = {}, sort = {}) {
                 <td>${order.customer_name}</td>
                 <td>${order.status}</td>
             `;
-            
-            // Append the delete button to the row
+
             const actionCell = document.createElement('td');
             actionCell.appendChild(deleteButton);
             row.appendChild(actionCell);
@@ -83,6 +115,9 @@ async function loadOrderSRData(filter = {}, sort = {}) {
         console.error('Error loading sales order data:', error);
     }
 }
+
+
+
 
 
 // Function to apply the filter based on selected criteria

@@ -61,6 +61,7 @@ async function fetchCustomerDetails(customerId) {
 
 // Function to populate customer details on the page
 function populateCustomerDetails(data) {
+    // Populate customer profile information
     document.getElementById('customer-id').textContent = data.customer_id;
     document.getElementById('full-name').textContent = data.full_name;
     document.getElementById('contact-number').textContent = data.contact_number;
@@ -70,19 +71,28 @@ function populateCustomerDetails(data) {
     document.getElementById('barangay').textContent = data.barangay;
     document.getElementById('city').textContent = data.city;
 
-
     // Populate order history table
     const ordersTableBody = document.getElementById('orders-table-body');
     ordersTableBody.innerHTML = ''; // Clear existing rows
 
     data.orders.forEach(order => {
         const row = document.createElement('tr');
+
+        // Create table row content
         row.innerHTML = `
             <td>${order.order_id}</td>
             <td>${order.purchased_date}</td>
             <td>${order.payment_ref_num}</td>
             <td>${order.sales_rep_id}</td>
         `;
+
+        // Add click event to redirect to OrderDetail.html with the specific order_id
+        row.addEventListener('click', () => {
+            window.location.href = `OrderDetail.html?orderId=${order.order_id}`;
+        });
+
+        // Append the row to the table body
         ordersTableBody.appendChild(row);
     });
 }
+

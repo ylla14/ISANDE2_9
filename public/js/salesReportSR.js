@@ -59,7 +59,6 @@ async function loadMonthlySalesReportData() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${data["Month"]}</td>
-                <td>${formatDate(data["Purchase Date"])}</td>
                 <td>${data["Customer ID #"]}</td>
                 <td>${data["Customer Name"]}</td>
                 <td>${data["Order ID #"]}</td>
