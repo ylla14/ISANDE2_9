@@ -28,10 +28,10 @@ document.getElementById("profile-link").addEventListener("click", function(event
     window.location.href = "profileIM.html";
 });
 
-document.getElementById("add-prod").addEventListener("click", function(event) {
-    event.preventDefault(); // Prevent the default action of the link
-    window.location.href = "addProdIM.html"; // Redirect to the inventory page
-});
+// document.getElementById("add-prod").addEventListener("click", function(event) {
+//     event.preventDefault(); // Prevent the default action of the link
+//     window.location.href = "addProdIM.html"; // Redirect to the inventory page
+// });
 
 
 
@@ -147,6 +147,111 @@ async function loadSidebarRecentSalesOrders() {
     } catch (error) {
         console.error('Error loading recent paid sales orders:', error);
     }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchBrands();
+    document.querySelector('.filter-btn').addEventListener('click', openFilterModal);
+});
+
+// Open and close modal
+function openFilterModal() {
+    document.getElementById('filter-modal').style.display = 'block';
+}
+
+function closeFilterModal() {
+    document.getElementById('filter-modal').style.display = 'none';
+}
+
+// Fetch unique brands
+function fetchBrands() {
+    fetch('/api/products')
+        .then(response => response.json())
+        .then(data => {
+            const brands = [...new Set(data.map(item => item.brand))];
+            const brandDropdown = document.getElementById('filter-brand');
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand;
+                option.textContent = brand;
+                brandDropdown.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching brands:', error));
+}
+
+// Apply filters
+function applyFilters() {
+    const form = document.getElementById('filter-form');
+    const lowStock = form.querySelector('input[name="filter-low-stock"]').checked;
+    const nearExpiry = form.querySelector('input[name="filter-near-expiry"]').checked;
+    const brand = form.querySelector('#filter-brand').value;
+
+    const queryParams = new URLSearchParams({
+        lowStock,
+        nearExpiry,
+        brand,
+    });
+
+    fetch(`/api/products/filter?${queryParams}`)
+        .then(response => response.json())
+        .then(data => populateTable(data))
+        .catch(error => console.error('Error applying filters:', error));
+}
+
+// Populate table with filtered data
+function populateTable(data) {
+    const tbody = document.querySelector('.inventory-list table tbody');
+    tbody.innerHTML = ''; // Clear current rows
+
+    data.forEach(product => {
+        const row = document.createElement('tr');
+
+        // Stock alert logic
+        let stockAlertMessage = product.stock_status || 'OK';
+        let stockAlertColor = 'green'; // Default color for OK
+
+        if (stockAlertMessage === 'Low Stock') {
+            stockAlertColor = 'red'; // Red color for low stock
+            row.style.backgroundColor = 'rgba(255, 99, 71, 0.2)'; // Light red background
+        }
+
+        // Expiry alert logic
+        let expiryAlertMessage = product.expiry_status || 'OK';
+        let expiryAlertColor = 'green'; 
+
+        if (expiryAlertMessage === 'Near Expiry') {
+            expiryAlertColor = '#f1c40f'; 
+            row.style.backgroundColor = 'rgba(241, 196, 15, 0.2)'; 
+        }
+
+        // If both "Low Stock" and "Near Expiry," use blue
+        if (stockAlertMessage === 'Low Stock' && expiryAlertMessage === 'Near Expiry') {
+            row.style.backgroundColor = 'rgba(0, 118, 255, 0.1)'; 
+        }
+
+        row.addEventListener('click', () => {
+            // Navigate to the product details page with the product_id as a query parameter
+            window.location.href = `/prodDetailsIM.html?productId=${product.product_id}`;
+        });
+
+        row.innerHTML = `
+            <td>${product.product_id}</td>
+            <td>${product.product_name}</td>
+            <td>${product.brand}</td>
+            <td>${product.product_category}</td>
+            <td>${product.selling_price}</td>
+            <td>${product.current_stock_level}</td>
+            <td>${product.reorder_level}</td>
+            <td>${product.expiration_date ? new Date(product.expiration_date).toLocaleDateString() : ''}</td>
+            <td style="color: ${stockAlertColor};">${stockAlertMessage}</td>
+            <td style="color: ${expiryAlertColor};">${expiryAlertMessage}</td>
+        `;
+
+        tbody.appendChild(row);
+    });
+
+    closeFilterModal();
 }
 
 

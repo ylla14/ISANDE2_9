@@ -234,6 +234,50 @@ app.get('/api/products', (req, res) => {
     });
   });
 
+  // New API Route for Filtered Products
+app.get('/api/products/filter', (req, res) => {
+    const { lowStock, nearExpiry, brand } = req.query;
+    let query = `
+        SELECT 
+            p.product_id, 
+            p.product_name, 
+            s.supplier_name AS brand, 
+            p.product_category, 
+            p.selling_price, 
+            p.current_stock_level, 
+            p.reorder_level, 
+            p.expiration_date, 
+            p.stock_status,
+            p.expiry_status
+        FROM Products p
+        JOIN Suppliers s ON p.supplier_id = s.supplier_id
+    `;
+
+    const conditions = [];
+    if (lowStock === 'true') {
+        conditions.push(`p.current_stock_level <= p.reorder_level`);
+    }
+    if (nearExpiry === 'true') {
+        conditions.push(`DATEDIFF(p.expiration_date, CURDATE()) < 30`);
+    }
+    if (brand) {
+        conditions.push(`s.supplier_name = ${db.escape(brand)}`);
+    }
+
+    if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(' AND ')}`;
+    }
+
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving filtered data');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
   // inventory side bar
   app.get('/api/alerts', (req, res) => {
     const query = `
@@ -593,6 +637,73 @@ app.get('/api/products/:productId', (req, res) => {
       }
     });
 });
+
+app.get('/api/sales-by-brand', (req, res) => {
+    const query = `
+      SELECT 
+        s.supplier_name AS brand, 
+        SUM(od.quantity) AS total_sales
+      FROM 
+        OrderDetails od
+      JOIN 
+        Products p ON od.product_id = p.product_id
+    JOIN 
+        Suppliers s ON p.supplier_id = s.supplier_id
+      GROUP BY 
+        s.supplier_name
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).send('Error retrieving sales data by brand');
+            return;
+        }
+        if (results.length > 0) {
+            res.json(results); // Send the aggregated sales data
+        } else {
+            res.status(404).send('No sales data found');
+        }
+    });
+});
+
+app.get('/api/restocks-per-brand', (req, res) => {
+    const query = `
+        SELECT 
+            s.supplier_name AS brand,
+            COUNT(po.porder_id) AS number_of_restocks
+        FROM 
+            PurchaseOrders po
+        JOIN 
+            PurchaseOrderDetails pod ON po.porder_id = pod.porder_id
+        JOIN 
+            Products p ON pod.product_id = p.product_id
+        JOIN 
+            Suppliers s ON p.supplier_id = s.supplier_id
+        WHERE 
+            po.status = 'confirmed'  -- Only confirmed orders are considered restocks
+        GROUP BY 
+            s.supplier_name
+        ORDER BY 
+            number_of_restocks DESC
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error querying database:', err);  // Log the error
+            res.status(500).send('Error retrieving sales data by brand');
+            return;
+        }
+        if (results.length > 0) {
+            res.json(results); // Send the aggregated sales data
+        } else {
+            res.status(404).send('No sales data found');
+        }
+    });
+});
+
+
+
+
 
 app.get('/api/reorder-report', (req, res) => {
     const query = `

@@ -66,10 +66,10 @@
        <!-- Inventory table -->
     <div class="inventory-list">
         <div class="section-header">
-            <button class="add-btn" a href= "#" id="add-prod">Add</button>
+            <!-- <button class="add-btn" a href= "#" id="add-prod">Add</button> -->
             <div class="button-container">
                 <input type="text" class="search-input" placeholder="Search" oninput="searchInventory()" />
-                <button class="filter-btn" onclick="downloadStockAging()">Filter</button>
+                <button class="filter-btn" onclick="openFilterModal()">Filter</button>
             </div>
         </div>
         <table border="1">
@@ -93,6 +93,31 @@
         </table>
     </div>
 
+        <!-- Filter Modal -->
+    <div id="filter-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeFilterModal()">&times;</span>
+            <h3>Filter Inventory</h3>
+            <form id="filter-form">
+                <label>
+                    <input type="checkbox" name="filter-low-stock" value="low-stock"> Low Stock
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" name="filter-near-expiry" value="near-expiry"> Near Expiry
+                </label>
+                <br>
+                <label>
+                    Brand:
+                    <select id="filter-brand" name="filter-brand">
+                        <option value="">All Brands</option>
+                    </select>
+                </label>
+                <br>
+                <button type="button" onclick="applyFilters()">Apply</button>
+            </form>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <section class="gap"></section>

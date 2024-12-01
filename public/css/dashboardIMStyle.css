@@ -223,7 +223,25 @@
     background-color: #4b4b99; /* Lighter shade on hover */
 }
 
+/* graph */
 
+.chart-section {
+    margin: 100px auto; /* Centers the chart section and adds space above */
+    text-align: center;
+    width: 80%; /* Restricts the chart section width to make it more centered */
+}
+
+#salesChart {
+    width: 100%;  /* Ensures the chart fills the width of its parent */
+    height: 300px;  /* Adjusted height for the chart */
+    margin: 0 auto; /* Ensures the chart itself is centered */
+}
+
+#restockChart {
+    width: 100%;  /* Ensures the chart fills the width of its parent */
+    height: 300px;  /* Adjusted height for the chart */
+    margin: 0 auto; /* Ensures the chart itself is centered */
+}
 
 
 /* FAST SELLING */
@@ -243,7 +261,7 @@
 .table-section {
     margin: 20px auto; /* Center the table horizontally */
     text-align: center;
-    top: 100px;
+    /* top: 100px; */
     position: relative;
     padding: 20px 80px;
     flex-grow: 1;

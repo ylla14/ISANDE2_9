@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/headerAndFooter.css">
     <!-- <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> for live server -->
     <script src="/js/dashboardIM.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     <!-- HEADER -->
@@ -112,8 +114,16 @@
                 </div>
             </section>
         </div>
-        
-        
+
+        <div class="chart-section">
+            <h2>Items Sold per Brand</h2>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <div class="chart-section">
+            <h2>Number of Restock Per Brand</h2>
+            <canvas id="restocksChart"></canvas>
+        </div>
 
         <!-- Stock Aging Section -->
         <div class="table-section">
@@ -213,6 +223,72 @@
         // Logic to download Stock Aging Report data
         alert("Download Stock Aging Report data.");
          }
+
+         
+
+     // Fetch sales data by brand
+     fetch('/api/sales-by-brand')
+            .then(response => response.json())
+            .then(data => {
+                // Prepare the data for the chart
+                const brands = data.map(row => row.brand);
+                const totalSales = data.map(row => row.total_sales);
+
+                // Create and render the chart
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: brands,
+                        datasets: [{
+                            label: 'Total Items Sold per Brand',
+                            data: totalSales,
+                            backgroundColor: '#000058',  // Green for the bars
+                            borderColor: '#000058',  // Green border color
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true  // Ensures the y-axis starts at zero
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(err => console.error('Error fetching sales data by brand:', err));
+
+    fetch('/api/restocks-per-brand')  // Your API endpoint for the restocks data
+    .then(response => response.json())
+    .then(data => {
+        const brands = data.map(row => row.brand);  // Extract brand names
+        const restocks = data.map(row => row.number_of_restocks);  // Extract the restock count
+
+        const ctx = document.getElementById('restocksChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: brands,
+                datasets: [{
+                    label: 'Number of Restocks',
+                    data: restocks,
+                    backgroundColor: '#4caf50',  // Green color for restocks
+                    borderColor: '#4caf50',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    })
+    .catch(err => console.error('Error fetching restocks data:', err));
+
     </script>
 </body>
 </html>

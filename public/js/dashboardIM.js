@@ -132,6 +132,41 @@ async function loadSalesOrderData() {
     }
 }
 
+// // Fetch sales data by brand
+// fetch('/api/sales-by-brand')
+//     .then(response => response.json())
+//     .then(data => {
+//         // Prepare the data for the chart
+//         const brands = data.map(row => row.brand);
+//         const totalSales = data.map(row => row.total_sales);
+
+//         // Create and render the chart
+//         const ctx = document.getElementById('salesByBrandChart').getContext('2d');
+//         new Chart(ctx, {
+//             type: 'bar',
+//             data: {
+//                 labels: brands,
+//                 datasets: [{
+//                     label: 'Total Sales per Brand',
+//                     data: totalSales,
+//                     backgroundColor: '#008000',
+//                     borderColor: '#008000',
+//                     borderWidth: 1
+//                 }]
+//             },
+//             options: {
+//                 scales: {
+//                     y: {
+//                         beginAtZero: true
+//                     }
+//                 }
+//             }
+//         });
+//     })
+//     .catch(err => console.error('Error fetching sales data by brand:', err));
+
+
+
 // Call the function when the page loads
 document.addEventListener('DOMContentLoaded', async () => {
     await loadRecentRestocks();
