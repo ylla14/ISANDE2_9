@@ -422,12 +422,13 @@ app.get('/api/purchase-orders', (req, res) => {
     });
   });
   
-// Endpoint to get recent restocks with products and delivery date
+// Endpoint to get recent restocks with products, delivery date, and status
 app.get('/api/recent-restocks', (req, res) => {
     const query = `
       SELECT 
         po.porder_id,
         po.delivery_date,
+        po.status,  -- Include the status column
         pod.product_id,
         p.product_name
       FROM 
@@ -453,6 +454,7 @@ app.get('/api/recent-restocks', (req, res) => {
           acc[restockId] = {
             porder_id: row.porder_id,
             delivery_date: row.delivery_date,
+            status: row.status,  // Add the status to the grouped data
             products: []
           };
         }
@@ -463,7 +465,7 @@ app.get('/api/recent-restocks', (req, res) => {
       // Send the grouped data as JSON response
       res.json(groupedData);
     });
-  });
+});
 
 // Endpoint to update purchase order status to 'confirmed'
 app.post('/api/confirm-order', (req, res) => {
