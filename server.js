@@ -1363,7 +1363,7 @@ app.get('/api/recent-sales-orders', (req, res) => {
         FROM OrdersSR osr
         WHERE osr.status = 'paid' -- Filter for paid status
         ORDER BY osr.delivery_date DESC
-        LIMIT 5; -- Adjust the limit as needed
+        LIMIT 20; -- Adjust the limit as needed
     `;
 
     db.query(recentPaidOrdersQuery, (err, orders) => {
