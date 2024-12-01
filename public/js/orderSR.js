@@ -38,7 +38,20 @@ async function loadOrderSRData(filter = {}, sort = {}) {
         const ordersSR = await response.json();
         console.log('Fetched orders:', ordersSR);
 
-        ordersSR.sort((a, b) => a.order_id - b.order_id);
+        // Default to sorting by order_id if no sortField is provided
+        if (!sort.sortField) {
+            ordersSR.sort((a, b) => a.order_id - b.order_id);
+        } else {
+            // Apply dynamic sorting based on sortField and sortOrder
+            const field = sort.sortField;
+            const order = sort.sortOrder === 'asc' ? 1 : -1;
+
+            ordersSR.sort((a, b) => {
+                if (a[field] < b[field]) return -1 * order;
+                if (a[field] > b[field]) return 1 * order;
+                return 0;
+            });
+        }
 
         const tbody = document.querySelector('.order-list table tbody');
         tbody.innerHTML = '';
@@ -102,6 +115,8 @@ async function loadOrderSRData(filter = {}, sort = {}) {
         console.error('Error loading sales order data:', error);
     }
 }
+
+
 
 
 
