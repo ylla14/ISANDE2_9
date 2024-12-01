@@ -1239,6 +1239,63 @@ app.get('/api/so-details/:orderId', (req, res) => {
     });
 });
 
+app.get('/api/recent-sales-orders', (req, res) => {
+    const recentPaidOrdersQuery = `
+        SELECT 
+            osr.order_id, 
+            osr.customer_id, 
+            DATE(osr.delivery_date) AS delivery_date,
+            osr.status,
+            osr.inventory_status -- Include inventory_status
+        FROM OrdersSR osr
+        WHERE osr.status = 'paid' -- Filter for paid status
+        ORDER BY osr.delivery_date DESC
+        LIMIT 5; -- Adjust the limit as needed
+    `;
+
+    db.query(recentPaidOrdersQuery, (err, orders) => {
+        if (err) {
+            console.error('Error fetching recent paid sales orders:', err);
+            return res.status(500).json({ message: 'Error fetching recent paid sales orders' });
+        }
+
+        const orderIds = orders.map(order => order.order_id);
+        const orderItemsQuery = `
+            SELECT 
+                od.order_id, 
+                p.product_name, 
+                od.quantity, 
+                od.unit_price
+            FROM OrderDetails od
+            JOIN Products p ON od.product_id = p.product_id
+            WHERE od.order_id IN (?);
+        `;
+
+        db.query(orderItemsQuery, [orderIds], (err, orderItems) => {
+            if (err) {
+                console.error('Error fetching order items:', err);
+                return res.status(500).json({ message: 'Error fetching order items' });
+            }
+
+            const orderItemsGrouped = orderItems.reduce((acc, item) => {
+                if (!acc[item.order_id]) acc[item.order_id] = [];
+                acc[item.order_id].push(item);
+                return acc;
+            }, {});
+
+            const detailedOrders = orders.map(order => ({
+                ...order,
+                order_items: orderItemsGrouped[order.order_id] || []
+            }));
+
+            res.json(detailedOrders);
+        });
+    });
+});
+
+
+
+
 app.post('/api/confirm-order/:orderId', (req, res) => {
     const orderId = req.params.orderId;
 

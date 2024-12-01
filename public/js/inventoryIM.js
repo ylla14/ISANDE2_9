@@ -118,46 +118,42 @@ function searchInventory() {
     });
 }
 
-async function loadSidebarAlerts() {
+async function loadSidebarRecentSalesOrders() {
     try {
-        const response = await fetch('/api/alerts');
-        const products = await response.json();
-
-        const lowStockProducts = products.filter(product => product.stock_status === 'Low Stock');
-        const nearExpiryProducts = products.filter(product => product.expiry_status === 'Near Expiry');
+        const response = await fetch('/api/recent-sales-orders');
+        const orders = await response.json();
 
         const sidebarContent = document.querySelector('.sidebar-content');
         sidebarContent.innerHTML = `
-            <h2>Product Alerts</h2>
-            <div class="low-stock-group">
-                <h3 style="color: red;">Low Stock Products</h3>
-                ${lowStockProducts.length ? `
-                    <ul>
-                        ${lowStockProducts.map(product => `
-                            <li>${product.product_name} (ID: ${product.product_id}, Stock: ${product.current_stock_level})</li>
-                        `).join('')}
-                    </ul>
-                ` : '<p>No low-stock products</p>'}
-            </div>
-            <hr>
-            <div class="near-expiry-group">
-                <h3 style="color: orange;">Near Expiry Products</h3>
-                ${nearExpiryProducts.length ? `
-                    <ul>
-                        ${nearExpiryProducts.map(product => `
-                            <li>${product.product_name} (ID: ${product.product_id}, Expiry: ${new Date(product.expiration_date).toLocaleDateString()})</li>
-                        `).join('')}
-                    </ul>
-                ` : '<p>No near-expiry products</p>'}
-            </div>
+            <h2>Recent Sales Orders</h2>
+            ${orders.length ? `
+                ${orders.map(order => {
+                    const statusColor = order.inventory_status === 'confirmed' ? 'green' : 'red'; // Color based on inventory_status
+                    return `
+                        <div class="order-group" style="border-left: 5px solid ${statusColor}; padding-left: 10px;">
+                            <p><strong>Order #${order.order_id} - ${order.customer_id}</strong> <br> 
+                            Delivery Date: ${new Date(order.delivery_date).toLocaleDateString()}</p>
+                            <ul>
+                                ${order.order_items.map(item => `
+                                    <li>${item.product_name} (Quantity: ${item.quantity}, Price: ₱${item.unit_price})</li>
+                                `).join('')}
+                            </ul>
+                            <hr>
+                        </div>
+                    `;
+                }).join('')}
+            ` : '<p>No recent paid sales orders</p>'}
         `;
     } catch (error) {
-        console.error('Error loading alerts:', error);
+        console.error('Error loading recent paid sales orders:', error);
     }
 }
 
+
+
+
 // Initialize the sidebar alerts
-document.addEventListener('DOMContentLoaded', loadSidebarAlerts);
+document.addEventListener('DOMContentLoaded', loadSidebarRecentSalesOrders);
 
 // Call the function to load data when the page loads
 window.onload = loadInventoryData;
