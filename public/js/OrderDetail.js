@@ -48,7 +48,7 @@ function SendInvoice() {
     console.log(params);
 
     emailjs.send("service_voi1upb", "template_2llj3f1", params).then(function (res) {
-        alert("Success!" + res.status);
+        alert("Email Sent Successfully!");
     }).catch(function (error) {
         alert("Failed to send email: " + error);
     });
