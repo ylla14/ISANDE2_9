@@ -30,6 +30,15 @@ document.getElementById("back-link").addEventListener("click", function(event) {
     event.preventDefault(); // Prevent the default action of the link
     window.location.href = "inventoryIM.html"; // Redirect to the inventory page
 });
+document.getElementById("cancel-btn").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the button
+
+    const confirmCancel = confirm("Are you sure you want to cancel? Any unsaved changes will be lost.");
+    
+    if (confirmCancel) {
+        window.location.href = "inventoryIM.html"; // Redirect to the inventory page if confirmed
+    }
+});
 
 // Fetch and populate brand dropdown
 async function loadBrands() {
@@ -120,9 +129,64 @@ async function generateSku(brand) {
     }
 }
 
+function validateNumericFields() {
+    let isValid = true;
+    const numericFields = [
+        { id: "price", name: "Selling Price" },
+        { id: "cost-price", name: "Cost Price" },
+        { id: "stock-level", name: "Current Stock Level" },
+        { id: "reorder-level", name: "Reorder Level" },
+        { id: "min-order", name: "Minimum Order Quantity" },
+        { id: "lead-time", name: "Lead Time" }
+    ];
 
-// Save product details
+    numericFields.forEach(field => {
+        const input = document.getElementById(field.id);
+        const errorSpan = document.getElementById(`${field.id}-error`);
+
+        if (!/^\d+(\.\d+)?$/.test(input.value.trim())) {
+            input.style.border = "2px solid red";
+            errorSpan.textContent = `${field.name} must be a valid number.`;
+            isValid = false;
+        } else {
+            input.style.border = "";
+            errorSpan.textContent = "";
+        }
+    });
+
+    return isValid;
+}
+
+
+
+// Function to validate expiration date
+function validateExpirationDate() {
+    const expirationInput = document.querySelector("#expiration");
+    const expirationDate = new Date(expirationInput.value);
+    const today = new Date();
+    
+    // Set time to midnight for accurate comparison
+    today.setHours(0, 0, 0, 0);
+
+    if (expirationDate < today) {
+        expirationInput.style.border = "2px solid red";
+        alert("Expiration date cannot be in the past.");
+        return false;
+    }
+
+    expirationInput.style.border = "";
+    return true;
+}
+
+// Attach event listener to validate expiration on input change
+document.querySelector("#expiration").addEventListener("change", validateExpirationDate);
+
 saveButton.addEventListener("click", async () => {
+    // Validate expiration date and numeric fields before proceeding
+    if (!validateExpirationDate() || !validateNumericFields()) {
+        return;
+    }
+
     const brandSelect = document.querySelector("#brand");
     const selectedBrand = brandSelect.options[brandSelect.selectedIndex].text;
 

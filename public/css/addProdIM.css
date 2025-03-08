@@ -140,3 +140,8 @@ h1 {
     background-color: #f44336; /* Red color for Cancel */
     color: white;
 }
+
+.error-message {
+    font-size: smaller;
+    color: red;
+}

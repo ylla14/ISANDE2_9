@@ -6,15 +6,13 @@
     <title>Create New Product</title>
     <link rel="stylesheet" href="css/addProdIM.css">
     <link rel="stylesheet" href="css/headerAndFooter.css">
-    <!-- <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> for live server -->
     <script src="js/addProdIM.js" defer></script>
 </head>
 <body>
-     <!-- HEADER -->
-     <nav>
+    <!-- HEADER -->
+    <nav>
         <div class="nav-content">
             <div class="logo">
-                <!-- <img src="/public/resources/logo.png" alt="Logo" class="logo-icon"> -->
                 <img src="/resources/logo.png" alt="Logo" class="logo-icon">
             </div>
             <div class="nav-left">
@@ -37,10 +35,9 @@
 
     <div class="prod-details">
         <div class="header"> 
-             <a href="#" id="back-link">← Inventory > Create</a>
+            <a href="#" id="back-link">← Inventory > Create</a>
             <h1>Create New Product</h1>
         </div>
-       
 
         <div class="container">
             <!-- Product Image Section -->
@@ -84,23 +81,26 @@
                         <div class="form-group">
                             <label for="price">Selling Price</label>
                             <input type="text" id="price" placeholder="Enter SRP">
+                            <span id="price-error" class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="cost-price">Cost Price</label>
                             <input type="text" id="cost-price" placeholder="Enter Cost Price">
+                            <span id="cost-price-error" class="error-message"></span>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="expiration">Expiration Date</label>
                         <input type="date" id="expiration">
+                        <span id="expiration-error" class="error-message"></span>
                     </div>
-                    
 
                     <div class="form-group">
                         <label for="description">Description</label>
                         <input type="text" id="description" placeholder="Enter Description">
                     </div>
+                </div>
 
                 <!-- Inventory Details -->
                 <div>
@@ -110,10 +110,12 @@
                         <div class="form-group">
                             <label for="stock-level">Current Stock Level</label>
                             <input type="text" id="stock-level" placeholder="Enter Stock Level">
+                            <span id="stock-level-error" class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="reorder-level">Reorder Level</label>
                             <input type="text" id="reorder-level" placeholder="Enter Reorder Level">
+                            <span id="reorder-level-error" class="error-message"></span>
                         </div>
                     </div>
 
@@ -121,26 +123,26 @@
                         <div class="form-group">
                             <label for="min-order">Min Order Quantity</label>
                             <input type="text" id="min-order" placeholder="Enter Min. Order">
+                            <span id="min-order-error" class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label for="lead-time">Lead Time</label>
                             <input type="text" id="lead-time" placeholder="Enter Lead Time">
+                            <span id="lead-time-error" class="error-message"></span>
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
-    </div>
     
-    <div class="button-container">
-        <button class="save-button">Save</button>
-        <button class="cancel-button">Cancel</button>
+        <div class="button-container">
+            <button class="save-button">Save</button>
+            <button class="cancel-button" id="cancel-btn">Cancel</button>
+        </div>
     </div>
-    
 
-     <!-- FOOTER -->
-     <section class="footer">
+    <!-- FOOTER -->
+    <section class="footer">
         <div class="footer-logo">
             <img src="/resources/logo.png" alt="footer-logo" class="logo-icon">
         </div>
