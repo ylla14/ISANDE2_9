@@ -28,10 +28,10 @@ document.getElementById("profile-link").addEventListener("click", function(event
     window.location.href = "profileIM.html";
 });
 
-// document.getElementById("add-prod").addEventListener("click", function(event) {
-//     event.preventDefault(); // Prevent the default action of the link
-//     window.location.href = "addProdIM.html"; // Redirect to the inventory page
-// });
+document.getElementById("add-prod").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    window.location.href = "addProdIM.html"; // Redirect to the inventory page
+});
 
 
 

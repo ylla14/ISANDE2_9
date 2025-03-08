@@ -6,6 +6,7 @@ const app = express();
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require('uuid'); // For generating unique IDs
 const PORT =  3000;
+const multer = require("multer");
 
 app.use(express.json()); // For parsing JSON bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -276,6 +277,51 @@ app.get('/api/products/filter', (req, res) => {
         res.json(results);
     });
 });
+
+// Multer setup for image upload
+const storage = multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ dest: 'public/resources' }); // Store images in "uploads" folder
+
+app.post('/api/products/add', upload.single('product_image'), (req, res) => {
+    const { 
+        product_id, product_category, product_name, supplier_id, pack_size, selling_price, cost_price, expiration_date, description, 
+        current_stock_level, reorder_level, min_order_quantity, lead_time 
+    } = req.body;
+    
+    const productImage = req.file ? req.file.filename : null; // Handle image
+
+    const query = `INSERT INTO Products (product_id, product_category, product_name, supplier_id, pack_size, selling_price, cost_price, expiration_date, 
+                  description, current_stock_level, reorder_level, min_order_quantity, lead_time, product_image) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    db.query(query, [product_id, product_category, product_name, supplier_id, pack_size, selling_price, cost_price, expiration_date, 
+                     description, current_stock_level, reorder_level, min_order_quantity, lead_time, productImage], 
+                     (err, result) => {
+        if (err) {
+            res.status(500).json({ message: "Error adding product" });
+        } else {
+            res.json({ message: "Product added successfully" });
+        }
+    });
+});
+
+
+app.get('/api/products/skus', (req, res) => {
+    const query = "SELECT product_id FROM Products";
+    db.query(query, (err, results) => {
+        if (err) {
+            res.status(500).json({ message: "Error fetching SKUs" });
+        } else {
+            res.json(results.map(row => row.product_id));
+        }
+    });
+});
+
 
 
   // inventory side bar

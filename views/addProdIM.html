@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/addProdIM.css">
     <link rel="stylesheet" href="css/headerAndFooter.css">
     <!-- <link rel="stylesheet" href="/public/css/dashboardIMStyle.css"> for live server -->
-    <script src="/js/addProdIM.js" defer></script>
+    <script src="js/addProdIM.js" defer></script>
 </head>
 <body>
      <!-- HEADER -->
@@ -37,7 +37,7 @@
 
     <div class="prod-details">
         <div class="header"> 
-             <a href="#" class="back-link">← Inventory > Create</a>
+             <a href="#" id="back-link">← Inventory > Create</a>
             <h1>Create New Product</h1>
         </div>
        
@@ -70,24 +70,32 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="brand">Brand</label>
-                            <input type="text" id="brand" placeholder="Enter Brand">
+                            <select id="brand">
+                                <option value="">Select Brand</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="pack-size">Pack Size</label>
                             <input type="text" id="pack-size" placeholder="Enter Pack Size">
                         </div>
                     </div>
-
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="price">Selling Price</label>
                             <input type="text" id="price" placeholder="Enter SRP">
                         </div>
                         <div class="form-group">
-                            <label for="expiration">Expiration Date</label>
-                            <input type="text" id="expiration" placeholder="Enter mm/yyyy">
+                            <label for="cost-price">Cost Price</label>
+                            <input type="text" id="cost-price" placeholder="Enter Cost Price">
                         </div>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="expiration">Expiration Date</label>
+                        <input type="date" id="expiration">
+                    </div>
+                    
 
                     <div class="form-group">
                         <label for="description">Description</label>
